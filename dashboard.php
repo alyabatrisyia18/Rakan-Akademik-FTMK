@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rakan Akademik</title>
+
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, sans-serif;
+        }
+
+        body{
+            background:#f5f5f5;
+        }
+
+        header{
+            background:#1f3f98;
+            color:white;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:15px 30px;
+        }
+
+        .search-box{
+            width:40%;
+            position:relative;
+        }
+
+        .search-box input{
+            width:100%;
+            padding:10px 40px 10px 15px;
+            border:none;
+            border-radius:30px;
+        }
+
+        .search-box i{
+            position:absolute;
+            right:15px;
+            top:50%;
+            transform:translateY(-50%);
+            color:gray;
+        }
+
+        .icons i{
+            font-size:24px;
+            margin-left:20px;
+            cursor:pointer;
+        }
+
+        .welcome{
+            background:#284db6;
+            color:white;
+            text-align:center;
+            padding:20px;
+        }
+
+        .welcome h1{
+            font-size:32px;
+        }
+
+        .menu-container{
+            width:85%;
+            margin:30px auto;
+            display:grid;
+            grid-template-columns:repeat(2,1fr);
+            gap:25px;
+        }
+
+        .card{
+            background:white;
+            border:2px solid #ddd;
+            border-radius:20px;
+            text-align:center;
+            padding:30px;
+            cursor:pointer;
+            transition:0.3s;
+        }
+
+        .card:hover{
+            transform:translateY(-5px);
+            box-shadow:0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .card img{
+            width:180px;
+            height:180px;
+            object-fit:contain;
+        }
+
+        .card h2{
+            margin-top:15px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <h2>RAKAN AKADEMIK</h2>
+    </div>
+
+    <div class="search-box">
+        <input type="text" placeholder="Search">
+        <i class="fas fa-search"></i>
+    </div>
+
+    <div class="icons">
+        <i class="far fa-bookmark"></i>
+        <i class="far fa-bell"></i>
+        <i class="far fa-user-circle"></i>
+    </div>
+</header>
+
+<section class="welcome">
+    <h1>WELCOME TO RAKAN AKADEMIK</h1>
+</section>
+
+<section class="menu-container">
+
+    <div class="card" onclick="openPage('module')">
+        <img src="images/module.png" alt="">
+        <h2>Learning Module</h2>
+    </div>
+
+    <div class="card" onclick="openPage('quiz')">
+        <img src="images/quiz.png" alt="">
+        <h2>Quiz</h2>
+    </div>
+
+    <div class="card" onclick="openPage('timetable')">
+        <img src="images/timetable.png" alt="">
+        <h2>Timetable</h2>
+    </div>
+
+    <div class="card" onclick="openPage('mentor')">
+        <img src="images/mentor.png" alt="">
+        <h2>Rakan Akademik</h2>
+    </div>
+
+</section>
+
+<script>
+function openPage(page){
+
+    switch(page){
+        case "module":
+            window.location.href="module.php";
+            break;
+
+        case "quiz":
+            window.location.href="quiz.php";
+            break;
+
+        case "timetable":
+            window.location.href="timetable.php";
+            break;
+
+        case "mentor":
+            window.location.href="mentor.php";
+            break;
+
+        default:
+            alert("Page not found");
+    }
+}
+</script>
+
+</body>
+</html>
