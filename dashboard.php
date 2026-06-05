@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rakan Akademik</title>
+
 
     <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -126,22 +126,22 @@
 <section class="menu-container">
 
     <div class="card" onclick="openPage('module')">
-        <img src="images/module.png" alt="">
+        <img src="images/module.jpg" alt="">
         <h2>Learning Module</h2>
     </div>
 
     <div class="card" onclick="openPage('quiz')">
-        <img src="images/quiz.png" alt="">
+        <img src="images/quiz.jpg" alt="">
         <h2>Quiz</h2>
     </div>
 
     <div class="card" onclick="openPage('timetable')">
-        <img src="images/timetable.png" alt="">
+        <img src="images/timetable.jpg" alt="">
         <h2>Timetable</h2>
     </div>
 
     <div class="card" onclick="openPage('mentor')">
-        <img src="images/mentor.png" alt="">
+        <img src="images/tutor.jpg" alt="">
         <h2>Rakan Akademik</h2>
     </div>
 
