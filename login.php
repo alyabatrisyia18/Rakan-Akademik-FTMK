@@ -1,13 +1,35 @@
+<?php
+
+$username = "";
+$password = "";
+
+if(isset($_POST["btnLogin"]))
+{
+    $username = $_POST["txtUser"];
+    $password = $_POST["txtPassword"];
+
+    // nanti sambung semakan database di sini
+
+    if($username == "admin" && $password == "1234")
+    {
+        echo "<script>alert('Login Successful');</script>";
+    }
+    else
+    {
+        echo "<script>alert('Invalid Username or Password');</script>";
+    }
+}
+
+?>
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Rakan Akademik</title>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
 
@@ -18,12 +40,12 @@
 }
 
 body{
-    font-family:'Segoe UI',sans-serif;
+    font-family:Segoe UI,sans-serif;
     background:white;
     overflow:hidden;
 }
 
-/* ================= HEADER ================= */
+/* HEADER */
 
 .header{
     height:95px;
@@ -32,9 +54,8 @@ body{
     overflow:hidden;
 }
 
-.header-doodle{
+.headerBackground{
     position:absolute;
-
     top:22px;
     left:0;
 
@@ -45,85 +66,82 @@ body{
     background-size:cover;
     background-position:center;
 
-    opacity:0.40;
+    opacity:0.4;
 }
 
-.header-logo{
+.logoArea{
     position:relative;
-    z-index:3;
+    z-index:2;
 
-    display:flex;
-    align-items:center;
-
-    height:100%;
+    height:95px;
 
     padding-left:25px;
-    padding-top:8px;
+    padding-top:20px;
 }
 
-.utem-logo{
-    height:48px;
-    width:auto;
+.logoUtem{
+    height:50px;
 }
 
-.ftmk-logo{
+.logoFtmk{
     height:48px;
-    width:auto;
     margin-left:12px;
 }
 
-/* ================= CONTENT ================= */
+/* CONTENT */
 
-.main-content{
+.mainContent{
     height:calc(100vh - 95px);
 }
 
-/* ================= LEFT PANEL ================= */
+.leftPanel{
+    width:50%;
+    height:100%;
+    float:left;
 
-.left-panel{
-    background:white;
     position:relative;
     overflow:hidden;
 }
 
-/* Coral Shape */
+.rightPanel{
+    width:50%;
+    height:100%;
+    float:left;
 
-.coral-top{
-    position:absolute;
+    position:relative;
+}
 
+/* SHAPES */
+
+.circleTop{
     width:620px;
     height:430px;
 
     background:#DCECF8;
-
     border-radius:50%;
+
+    position:absolute;
 
     top:100px;
     left:70px;
-
-    z-index:1;
 }
 
-.coral-bottom{
-    position:absolute;
-
+.circleBottom{
     width:430px;
     height:430px;
 
     background:#DCECF8;
-
     border-radius:50%;
+
+    position:absolute;
 
     left:-220px;
     bottom:-220px;
-
-    z-index:1;
 }
 
-/* Main Illustration */
+/* IMAGE */
 
-.main-image{
-
+.mainImage{
     width:75%;
     max-width:550px;
 
@@ -133,14 +151,9 @@ body{
     top:50%;
 
     transform:translate(-50%,-50%);
-
-    z-index:2;
 }
 
-/* Copyright */
-
-.footer-text{
-
+.footerText{
     position:absolute;
 
     width:100%;
@@ -148,145 +161,211 @@ body{
     bottom:28px;
 
     text-align:center;
-
     font-size:13px;
-
     color:#666;
-
-    z-index:3;
 }
 
-/* ================= RIGHT PANEL ================= */
+/* LOGIN */
 
-.right-panel{
-
-    background:white;
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
-
-.login-container{
+.loginBox{
     width:430px;
+
+    position:absolute;
+
+    left:50%;
+    top:50%;
+
+    transform:translate(-50%,-50%);
 }
 
-/* Logo Rakan Akademik */
-
-.logo-rakan{
-
+.logoRakan{
     width:190px;
 
     display:block;
 
     margin:auto;
-
     margin-bottom:60px;
 }
 
-/* Input */
+.textBox{
+    width:100%;
 
-.form-control{
+    padding:10px 0;
 
     border:none;
-
     border-bottom:1px solid #d6d6d6;
 
-    border-radius:0;
+    margin-bottom:25px;
 }
 
-.form-control:focus{
-
-    box-shadow:none;
-
+.textBox:focus{
+    outline:none;
     border-bottom:2px solid #6CB6E9;
 }
 
-/* Password */
-
-.password-wrapper{
+.passwordBox{
     position:relative;
 }
 
-.password-wrapper span{
-
+.eyeIcon{
     position:absolute;
 
     right:10px;
-    top:10px;
+    top:8px;
 
     cursor:pointer;
-
-    font-size:18px;
 }
 
-/* Remember Me */
-
-.login-options{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    margin-top:15px;
-
+.optionArea{
+    margin-top:10px;
     font-size:14px;
 }
 
-.login-options a{
-
+.optionArea a{
+    float:right;
     text-decoration:none;
-
     color:#4f84c4;
 }
 
-/* Login Button */
-
-.btn-login{
-
+.loginButton{
     width:100%;
+
+    padding:10px;
 
     margin-top:22px;
 
-    background:#6CB6E9;
-
     border:none;
 
+    background:#6CB6E9;
     color:white;
 
-    padding:10px;
+    cursor:pointer;
 }
 
-.btn-login:hover{
+.loginButton:hover{
     background:#54A8E2;
 }
 
-/* Sign Up */
-
-.signup-section{
-
+.signupArea{
     text-align:center;
-
     margin-top:35px;
 }
 
-.btn-signup{
-
-    background:#6CB6E9;
-
-    border:none;
-
-    color:white;
+.signupButton{
+    padding:6px 24px;
 
     margin-left:12px;
 
-    padding:6px 24px;
+    border:none;
+
+    background:#6CB6E9;
+    color:white;
+
+    cursor:pointer;
 }
 
-.btn-signup:hover{
+.signupButton:hover{
     background:#54A8E2;
+}
+
+/* MODAL */
+
+.modal{
+    display:none;
+
+    position:fixed;
+
+    left:0;
+    top:0;
+
+    width:100%;
+    height:100%;
+
+    background:rgba(0,0,0,0.45);
+}
+
+.modalBox{
+    width:420px;
+
+    background:white;
+
+    position:absolute;
+
+    left:50%;
+    top:50%;
+
+    transform:translate(-50%,-50%);
+}
+
+.modalHeader{
+    padding:15px 20px;
+    border-bottom:1px solid #ddd;
+}
+
+.closeButton{
+    float:right;
+    cursor:pointer;
+    font-size:22px;
+}
+
+.modalBody{
+    padding:20px;
+}
+
+.registerButton{
+    display:block;
+
+    text-align:center;
+
+    padding:15px;
+
+    margin-bottom:15px;
+
+    text-decoration:none;
+
+    border:1px solid #ddd;
+
+    color:#333;
+}
+
+.registerButton:hover{
+    background:#f5f5f5;
+}
+
+/* RESPONSIVE */
+
+@media screen and (max-width:768px)
+{
+    body{
+        overflow:auto;
+    }
+
+    .leftPanel,
+    .rightPanel{
+        width:100%;
+        float:none;
+    }
+
+    .leftPanel{
+        height:450px;
+    }
+
+    .loginBox{
+        width:90%;
+
+        position:relative;
+
+        left:auto;
+        top:auto;
+
+        transform:none;
+
+        margin:40px auto;
+    }
+
+    .mainImage{
+        width:85%;
+    }
 }
 
 </style>
@@ -295,79 +374,70 @@ body{
 
 <body>
 
-<!-- HEADER -->
-
 <div class="header">
 
-    <div class="header-doodle"></div>
+    <div class="headerBackground"></div>
 
-    <div class="header-logo">
+    <div class="logoArea">
 
-        <img src="images/utem.png" class="utem-logo">
+        <img src="images/utem.png" class="logoUtem">
 
-        <img src="images/ftmk.png" class="ftmk-logo">
+        <img src="images/ftmk.png" class="logoFtmk">
 
     </div>
 
 </div>
 
-<!-- CONTENT -->
+<div class="mainContent">
 
-<div class="container-fluid">
+    <div class="leftPanel">
 
-<div class="row main-content">
+        <div class="circleTop"></div>
+        <div class="circleBottom"></div>
 
-    <!-- LEFT -->
+        <img src="images/logoMain.png" class="mainImage">
 
-    <div class="col-md-6 left-panel">
-
-        <div class="coral-top"></div>
-
-        <div class="coral-bottom"></div>
-
-        <img src="images/logoMain.png"
-             class="main-image">
-
-        <div class="footer-text">
-
+        <div class="footerText">
             Copyright © 2026 Rakan Akademik |
             Faculty of Information & Communication Technology
-
         </div>
 
     </div>
 
-    <!-- RIGHT -->
+    <div class="rightPanel">
 
-    <div class="col-md-6 right-panel">
+        <div class="loginBox">
 
-        <div class="login-container">
-
-            <img src="images/logoRakan.png"
-                 class="logo-rakan">
+            <img src="images/logoRakan.png" class="logoRakan">
 
             <form method="POST">
 
                 <input
                     type="text"
-                    class="form-control mb-4"
+                    name="txtUser"
+                    class="textBox"
                     placeholder="Student ID / Admin">
 
-                <div class="password-wrapper">
+                <div class="passwordBox">
 
                     <input
                         type="password"
-                        class="form-control"
                         id="password"
+                        name="txtPassword"
+                        class="textBox"
                         placeholder="Password">
 
-                    <span onclick="togglePassword()">
+                    <span
+                        class="eyeIcon"
+                        onclick="togglePassword()">
+
                         👁
+
                     </span>
 
                 </div>
 
-                <div class="login-options">
+                <div class="optionArea">
 
                     <label>
                         <input type="checkbox">
@@ -380,74 +450,25 @@ body{
 
                 </div>
 
-                <button
+                <input
                     type="submit"
-                    class="btn btn-login">
-
-                    Log In
-
-                </button>
+                    name="btnLogin"
+                    value="Log In"
+                    class="loginButton">
 
             </form>
-            
-            <div class="signup-section">
+
+            <div class="signupArea">
+
                 Don't have an account?
-                <button type="button" class="btn btn-signup" data-bs-toggle="modal" data-bs-target="#signupModal">
-                    Sign Up
-                </button>
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-</div>
-<!-- MODAL SIGNUP -->
-
-<div class="modal fade"
-     id="signupModal"
-     tabindex="-1"
-     aria-hidden="true">
-
-    <div class="modal-dialog modal-dialog-centered">
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-
-                <h5 class="modal-title">
-                    Choose To Register
-                </h5>
 
                 <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal">
+                    class="signupButton"
+                    onclick="openModal()">
+
+                    Sign Up
+
                 </button>
-
-            </div>
-
-            <div class="modal-body">
-
-                <div class="d-grid gap-3">
-
-                    <a href="register_student.php"
-                       class="btn btn-outline-primary p-3">
-
-                        👤 Register As Student
-
-                    </a>
-
-                    <a href="register_rakan.php"
-                       class="btn btn-outline-success p-3">
-
-                        👨‍🏫 Register As Rakan Akademik
-
-                    </a>
-
-                </div>
 
             </div>
 
@@ -457,27 +478,70 @@ body{
 
 </div>
 
-<script> 
+<div id="signupModal" class="modal">
 
-function togglePassword(){ 
-    let password = document.getElementById("password"); 
-    
-    if(password.type==="password"){ 
-        
-    password.type="text"; 
+    <div class="modalBox">
 
+        <div class="modalHeader">
+
+            <span
+                class="closeButton"
+                onclick="closeModal()">
+
+                &times;
+
+            </span>
+
+            <h3>Choose To Register</h3>
+
+        </div>
+
+        <div class="modalBody">
+
+            <a href="register_student.php" class="registerButton">
+                Register As Student
+            </a>
+
+            <a href="register_rakan.php" class="registerButton">
+                Register As Rakan Akademik
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+function togglePassword()
+{
+    var passwordField;
+
+    passwordField =
+        document.getElementById("password");
+
+    if(passwordField.type=="password")
+    {
+        passwordField.type="text";
     }
-
-    else{ 
-
-        password.type="password";
-
+    else
+    {
+        passwordField.type="password";
     }
-} 
+}
 
-</script> 
+function openModal()
+{
+    document.getElementById("signupModal").style.display="block";
+}
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+function closeModal()
+{
+    document.getElementById("signupModal").style.display="none";
+}
+
+</script>
 
 </body>
 </html>
