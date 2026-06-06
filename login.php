@@ -28,7 +28,7 @@ if(isset($_POST["btnLogin"]))
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <title>Rakan Akademik</title>
 
 <style>
@@ -40,12 +40,12 @@ if(isset($_POST["btnLogin"]))
 }
 
 body{
-    font-family:Segoe UI,sans-serif;
+    font-family:Segoe UI, sans-serif;
     background:white;
     overflow:hidden;
 }
 
-/* HEADER */
+/* Header */
 
 .header{
     height:95px;
@@ -58,25 +58,20 @@ body{
     position:absolute;
     top:22px;
     left:0;
-
     width:100%;
     height:73px;
-
     background:url("images/edubackground.jpg");
     background-size:cover;
     background-position:center;
-
     opacity:0.4;
 }
 
 .logoArea{
     position:relative;
     z-index:2;
-
     height:95px;
-
-    padding-left:25px;
     padding-top:20px;
+    padding-left:25px;
 }
 
 .logoUtem{
@@ -88,7 +83,7 @@ body{
     margin-left:12px;
 }
 
-/* CONTENT */
+/* Content */
 
 .mainContent{
     height:calc(100vh - 95px);
@@ -98,7 +93,6 @@ body{
     width:50%;
     height:100%;
     float:left;
-
     position:relative;
     overflow:hidden;
 }
@@ -107,94 +101,74 @@ body{
     width:50%;
     height:100%;
     float:left;
-
     position:relative;
 }
 
-/* SHAPES */
+/* Background Shapes */
 
 .circleTop{
-    width:620px;
-    height:430px;
-
+    width:500px;
+    height:350px;
     background:#DCECF8;
     border-radius:50%;
-
     position:absolute;
-
-    top:100px;
-    left:70px;
+    top:130px;
+    left:50%;
+    transform:translateX(-50%);
 }
 
 .circleBottom{
-    width:430px;
-    height:430px;
-
+    width:250px;
+    height:250px;
     background:#DCECF8;
     border-radius:50%;
-
     position:absolute;
-
-    left:-220px;
-    bottom:-220px;
+    left:-120px;
+    bottom:-120px;
 }
 
-/* IMAGE */
+/* Main Image */
 
 .mainImage{
-    width:75%;
-    max-width:550px;
-
+    width:55%;
+    max-width:380px;
     position:absolute;
-
     left:50%;
     top:50%;
-
-    transform:translate(-50%,-50%);
+    transform:translate(-50%, -50%);
 }
 
 .footerText{
     position:absolute;
-
-    width:100%;
-
     bottom:28px;
-
+    width:100%;
     text-align:center;
     font-size:13px;
     color:#666;
 }
 
-/* LOGIN */
+/* Login Section */
 
 .loginBox{
     width:430px;
-
     position:absolute;
-
     left:50%;
     top:50%;
-
-    transform:translate(-50%,-50%);
+    transform:translate(-50%, -50%);
 }
 
 .logoRakan{
-    width:190px;
-
+    width:250px;
     display:block;
-
     margin:auto;
-    margin-bottom:60px;
+    margin-bottom:50px;
 }
 
 .textBox{
     width:100%;
-
     padding:10px 0;
-
     border:none;
     border-bottom:1px solid #d6d6d6;
-
     margin-bottom:25px;
 }
 
@@ -209,11 +183,11 @@ body{
 
 .eyeIcon{
     position:absolute;
-
     right:10px;
     top:8px;
-
     cursor:pointer;
+    font-size:18px;
+    color:#666;
 }
 
 .optionArea{
@@ -229,16 +203,11 @@ body{
 
 .loginButton{
     width:100%;
-
     padding:10px;
-
     margin-top:22px;
-
     border:none;
-
     background:#6CB6E9;
     color:white;
-
     cursor:pointer;
 }
 
@@ -253,14 +222,10 @@ body{
 
 .signupButton{
     padding:6px 24px;
-
     margin-left:12px;
-
     border:none;
-
     background:#6CB6E9;
     color:white;
-
     cursor:pointer;
 }
 
@@ -268,33 +233,25 @@ body{
     background:#54A8E2;
 }
 
-/* MODAL */
+/* Modal */
 
 .modal{
     display:none;
-
     position:fixed;
-
     left:0;
     top:0;
-
     width:100%;
     height:100%;
-
     background:rgba(0,0,0,0.45);
 }
 
 .modalBox{
     width:420px;
-
     background:white;
-
     position:absolute;
-
     left:50%;
     top:50%;
-
-    transform:translate(-50%,-50%);
+    transform:translate(-50%, -50%);
 }
 
 .modalHeader{
@@ -314,17 +271,11 @@ body{
 
 .registerButton{
     display:block;
-
     text-align:center;
-
     padding:15px;
-
     margin-bottom:15px;
-
     text-decoration:none;
-
     border:1px solid #ddd;
-
     color:#333;
 }
 
@@ -332,10 +283,10 @@ body{
     background:#f5f5f5;
 }
 
-/* RESPONSIVE */
+/* Responsive */
 
-@media screen and (max-width:768px)
-{
+@media screen and (max-width:768px){
+
     body{
         overflow:auto;
     }
@@ -347,24 +298,39 @@ body{
     }
 
     .leftPanel{
-        height:450px;
+        height:350px;
+    }
+
+    .circleTop{
+        width:320px;
+        height:220px;
+        top:70px;
+    }
+
+    .circleBottom{
+        width:180px;
+        height:180px;
+        left:-90px;
+        bottom:-90px;
+    }
+
+    .mainImage{
+        width:70%;
+        max-width:250px;
     }
 
     .loginBox{
         width:90%;
-
         position:relative;
-
         left:auto;
         top:auto;
-
         transform:none;
-
         margin:40px auto;
     }
 
-    .mainImage{
-        width:85%;
+    .logoRakan{
+        width:180px;
+        margin-bottom:35px;
     }
 }
 
@@ -398,8 +364,7 @@ body{
         <img src="images/logoMain.png" class="mainImage">
 
         <div class="footerText">
-            Copyright © 2026 Rakan Akademik |
-            Faculty of Information & Communication Technology
+            Copyright © 2026 Rakan Akademik | Faculty of Information & Communication Technology
         </div>
 
     </div>
@@ -426,14 +391,11 @@ body{
                         name="txtPassword"
                         class="textBox"
                         placeholder="Password">
-
-                    <span
-                        class="eyeIcon"
+                        
+                        <span 
+                        class="eyeIcon glyphicon glyphicon-eye-close"
                         onclick="togglePassword()">
-
-                        👁
-
-                    </span>
+                        </span>
 
                 </div>
 
@@ -516,18 +478,25 @@ body{
 
 function togglePassword()
 {
-    var passwordField;
-
-    passwordField =
+    var passwordField =
         document.getElementById("password");
 
-    if(passwordField.type=="password")
+    var eyeIcon =
+        document.querySelector(".eyeIcon");
+
+    if(passwordField.type == "password")
     {
-        passwordField.type="text";
+        passwordField.type = "text";
+
+        eyeIcon.classList.remove("glyphicon-eye-close");
+        eyeIcon.classList.add("glyphicon-eye-open");
     }
     else
     {
-        passwordField.type="password";
+        passwordField.type = "password";
+
+        eyeIcon.classList.remove("glyphicon-eye-open");
+        eyeIcon.classList.add("glyphicon-eye-close");
     }
 }
 
