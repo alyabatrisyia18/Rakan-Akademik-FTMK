@@ -1,30 +1,99 @@
 <?php
 
+include("db_connect.php");
+
 if(isset($_POST["btnRegister"]))
 {
     $name = $_POST["txtName"];
     $matric = $_POST["txtMatric"];
+    $course = $_POST["txtCourse"];
     $email = $_POST["txtEmail"];
     $phone = $_POST["txtPhone"];
     $gender = $_POST["gender"];
     $password = $_POST["txtPassword"];
     $confirmPassword = $_POST["txtConfirmPassword"];
-
-
-
+    
     if($password != $confirmPassword)
     {
         echo "<script>alert('Password does not match!');</script>";
     }
     else
     {
+        $checkUser = mysqli_query(
+            $conn,
+            "SELECT * FROM user WHERE userId='$matric'"
+        );
 
-        echo "<script>
-                alert('Registration Successful');
-                window.location='login.php';
-              </script>";
+        if(mysqli_num_rows($checkUser) > 0)
+        {
+            echo "<script>
+                    alert('Matric Number Already Registered!');
+                  </script>";
+        }
+        else
+        {
+            $hashedPassword = password_hash(
+                $password,
+                PASSWORD_DEFAULT
+            );
+
+            $sqlUser = "
+            INSERT INTO user
+            (
+                userId,
+                name,
+                email,
+                mobile_phone,
+                gender,
+                password,
+                status,
+                role
+            )
+            VALUES
+            (
+                '$matric',
+                '$name',
+                '$email',
+                '$phone',
+                '$gender',
+                '$hashedPassword',
+                'Active',
+                'Student'
+            )";
+
+            if(mysqli_query($conn, $sqlUser))
+            {
+                $sqlStudent = "
+                INSERT INTO student
+                (
+                    matricNoStudent,
+                    userID,
+                    course
+                )
+                VALUES
+                (
+                    '$matric',
+                    '$matric',
+                    '$course'
+                )";
+
+                mysqli_query($conn, $sqlStudent);
+
+                echo "<script>
+                        alert('Registration Successful');
+                        window.location='login.php';
+                      </script>";
+            }
+            else
+            {
+                echo "<script>
+                        alert('Registration Failed!');
+                      </script>";
+            }
+        }
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -253,6 +322,14 @@ body{
                     name="txtMatric"
                     class="textBox"
                     placeholder="Example: B032310123"
+                    required>
+
+                <label class="formLabel">Course</label>
+                <input
+                    type="text"
+                    name="txtCourse"
+                    class="textBox"
+                    placeholder="Example: Diploma in Computer Science"
                     required>
 
                 <label class="formLabel">Email</label>
