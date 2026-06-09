@@ -12,16 +12,19 @@ if(isset($_POST['addSession']))
 
     $recordID = "R" . rand(100,999);
 
-    $sql = "INSERT INTO teaching_record
-            (recordID, matricNoTutor, subject, sessionDate, teachingStatus, startTime, endTime)
-            VALUES
-            ('$recordID','$matricNoTutor','$subject','$sessionDate','Available','$startTime','$endTime')";
+    $sql = "INSERT INTO `teaching record`
+(recordID, matricNoTutor, subject, sessionDate, teachingStatus, startTime, endTime)
+VALUES
+('$recordID','$matricNoTutor','$subject','$sessionDate','Available','$startTime','$endTime')";
 
-    mysqli_query($conn,$sql);
-
-    echo "<script>
-            alert('Tutoring Session Added Successfully!');
-          </script>";
+    if(mysqli_query($conn,$sql))
+{
+    echo "<script>alert('Success');</script>";
+}
+else
+{
+    echo mysqli_error($conn);
+}
 }
 ?>
 
@@ -117,10 +120,7 @@ if(isset($_POST['addSession']))
 
             <label>Date</label>
 
-            <input
-                type="date"
-                name="sessionDate"
-                required>
+            <input type="date" name="sessionDate" required>
 
             <div class="time-row">
 
@@ -148,14 +148,9 @@ if(isset($_POST['addSession']))
 
             </div>
 
-            <button
-                type="submit"
-                name="addSession"
-                class="add-btn">
-
-                ADD SESSION
-
-            </button>
+            <button type="submit" name="addSession" class="add-btn">
+    ADD SESSION
+</button>
 
         </form>
 
