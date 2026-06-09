@@ -1,10 +1,11 @@
 <?php
 
 $conn = mysqli_connect(
-    "localhost",
+    "127.0.0.1",
     "root",
-    "",
-    "rakan_akademik"
+    "root123",
+    "rakan_akademik",
+    3307
 );
 
 if(!$conn)

@@ -1,0 +1,426 @@
+<?php
+include("db_connect.php");
+
+$matricNoStudent = "B032410001";
+
+if(isset($_POST['bookSession']))
+{
+    $bookingID = "B" . rand(100,999);
+
+    $recordID = $_POST['recordID'];
+    $matricNoTutor = $_POST['matricNoTutor'];
+    $subject = $_POST['subject'];
+    $startTime = $_POST['startTime'];
+    $endTime = $_POST['endTime'];
+
+    $schedule = date("Y-m-d H:i:s");
+
+    $insert = "INSERT INTO booking
+    (
+        bookingID,
+        matricNoTutor,
+        matricNoStudent,
+        schedule,
+        bookingStatus,
+        subject,
+        startTime,
+        endTime,
+        recordID
+    )
+    VALUES
+    (
+        '$bookingID',
+        '$matricNoTutor',
+        '$matricNoStudent',
+        '$schedule',
+        'Booked',
+        '$subject',
+        '$startTime',
+        '$endTime',
+        '$recordID'
+    )";
+
+    mysqli_query($conn,$insert);
+
+    echo "
+    <script>
+    alert('Booking Successful!');
+    window.location='booking.php';
+    </script>";
+}
+
+$sql = "SELECT *
+        FROM `teaching record`
+        WHERE teachingStatus='Available'";
+        
+
+$result = mysqli_query($conn,$sql);
+
+$pastSql = "SELECT *
+            FROM booking
+            WHERE matricNoStudent='$matricNoStudent'";
+
+$pastResult = mysqli_query($conn,$pastSql);
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Book Tutoring Session</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="header">
+
+    <div class="header-left">
+
+        <img src="images/logoRakan.png"
+             alt="Rakan Akademik"
+             class="header-logo">
+
+        <img src="images/logoUtem.png"
+             alt="UTeM"
+             class="header-logo">
+
+        <img src="images/logoFtmk.png"
+             alt="FTMK"
+             class="header-logo">
+
+    </div>
+
+    <div class="search-box">
+        <input type="text" placeholder="Hinted search text">
+        <i class="fas fa-search"></i>
+    </div>
+
+    <div class="header-icons">
+        <i class="far fa-bookmark"></i>
+        <i class="far fa-bell"></i>
+        <i class="far fa-user-circle"></i>
+    </div>
+
+</div>
+
+<div id="sidebar" class="sidebar">
+
+    <div class="menu-btn" onclick="toggleSidebar()">
+        ☰
+    </div>
+
+    <h2>Student/Tutor</h2>
+
+    <nav>
+        <ul>
+            <li><a href="booking.php" class="active-menu">Booking Class</a></li>
+            <li><a href="myclassschedule.php">My Class Schedule</a></li>
+            <li><a href="mytutoringsession.php">My Tutoring Session</a></li>
+            <li><a href="addtutoringsession.php">Add Tutoring Session</a></li>
+            <li><a href="teachingsessionrecord.php">Add Teaching Session</a></li>
+            <li><a href="sessionrecord.php">Session Record</a></li>
+            <li><a href="earningsdashboard.php">Earnings Dashboard</a></li>
+            <li><a href="#">Logout</a></li>
+        </ul>
+    </nav>
+
+</div>
+
+<div class="content">
+
+    <h1>Book Tutoring Session</h1>
+
+    <div class="tab">
+
+        <span id="upcomingTab"
+              class="active-tab"
+              onclick="showUpcoming()">
+
+            Upcoming
+
+        </span>
+
+        <span id="pastTab"
+              onclick="showPast()">
+
+            Past
+
+        </span>
+
+    </div>
+
+    <!-- UPCOMING -->
+
+    <div id="upcomingTable">
+
+        <table>
+
+            <tr>
+                <th>DATE & TIME</th>
+                <th>SUBJECT</th>
+                <th>TUTOR NAME</th>
+                <th>ACTION</th>
+            </tr>
+
+            <?php
+            while($row = mysqli_fetch_assoc($result))
+{
+
+    $recordID = $row['recordID'];
+
+    $checkBooking = mysqli_query(
+        $conn,
+        "SELECT *
+         FROM booking
+         WHERE recordID='$recordID'
+         AND matricNoStudent='$matricNoStudent'"
+    );
+
+    $alreadyBooked = mysqli_num_rows($checkBooking);
+
+                
+            ?>
+
+            <tr>
+                
+                <td>
+
+                    <?php
+                    echo date(
+                        "d F Y",
+                        strtotime($row['sessionDate'])
+                    );
+                    ?>
+
+                    <br>
+
+                    <small>
+
+                        <?php
+                        echo date(
+                            "h:i A",
+                            strtotime($row['startTime'])
+                        );
+                        ?>
+
+                        -
+
+                        <?php
+                        echo date(
+                            "h:i A",
+                            strtotime($row['endTime'])
+                        );
+                        ?>
+
+                    </small>
+
+                </td>
+
+                <td>
+                    <?php echo $row['subject']; ?>
+                </td>
+
+                <td>
+                    <?php echo $row['matricNoTutor']; ?>
+                </td>
+
+                <td>
+
+                    <form method="POST">
+
+                        <input
+                        type="hidden"
+                        name="recordID"
+                        value="<?php echo $row['recordID']; ?>">
+
+                        <input
+                        type="hidden"
+                        name="matricNoTutor"
+                        value="<?php echo $row['matricNoTutor']; ?>">
+
+                        <input
+                        type="hidden"
+                        name="subject"
+                        value="<?php echo $row['subject']; ?>">
+
+                        <input
+                        type="hidden"
+                        name="startTime"
+                        value="<?php echo $row['startTime']; ?>">
+
+                        <input
+                        type="hidden"
+                        name="endTime"
+                        value="<?php echo $row['endTime']; ?>">
+
+                        <?php
+if($alreadyBooked > 0)
+{
+?>
+    <button
+    type="button"
+    class="attended"
+    disabled>
+
+        ATTENDED
+
+    </button>
+<?php
+}
+else
+{
+?>
+    <button
+    type="submit"
+    name="bookSession"
+    class="available">
+
+        ATTEND
+
+    </button>
+<?php
+}
+?>
+
+                        <?php
+
+$recordID = $row['recordID'];
+
+$countSql = "SELECT COUNT(*) AS total
+             FROM booking
+             WHERE recordID='$recordID'";
+
+$countResult = mysqli_query($conn,$countSql);
+
+$countRow = mysqli_fetch_assoc($countResult);
+
+$totalStudent = $countRow['total'];
+
+?>
+
+<span class="student-count">
+    👥 <?php echo $totalStudent; ?>/10
+</span>
+
+                    </form>
+
+                </td>
+
+            </tr>
+
+            <?php
+            }
+            ?>
+
+        </table>
+
+    </div>
+
+    <!-- PAST -->
+
+    <div id="pastTable" style="display:none;">
+
+        <table>
+
+            <tr>
+                <th>BOOKING ID</th>
+                <th>SUBJECT</th>
+                <th>TUTOR</th>
+                <th>STATUS</th>
+            </tr>
+
+            <?php
+            while($pastRow = mysqli_fetch_assoc($pastResult))
+            {
+            ?>
+
+            <tr>
+
+                <td>
+                    <?php echo $pastRow['bookingID']; ?>
+                </td>
+
+                <td>
+                    <?php echo $pastRow['subject']; ?>
+                </td>
+
+                <td>
+                    <?php echo $pastRow['matricNoTutor']; ?>
+                </td>
+
+                <td>
+
+                    <button class="completed">
+
+                        <?php
+                        echo $pastRow['bookingStatus'];
+                        ?>
+
+                    </button>
+
+                </td>
+
+            </tr>
+
+            <?php
+            }
+            ?>
+
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+
+function toggleSidebar()
+{
+    const sidebar =
+        document.getElementById("sidebar");
+
+    const content =
+        document.querySelector(".content");
+
+    sidebar.classList.toggle("collapsed");
+
+    if(sidebar.classList.contains("collapsed"))
+    {
+        content.style.marginLeft = "80px";
+    }
+    else
+    {
+        content.style.marginLeft = "250px";
+    }
+}
+
+function showPast()
+{
+    document.getElementById("upcomingTable").style.display = "none";
+    document.getElementById("pastTable").style.display = "block";
+
+    document.getElementById("upcomingTab").classList.remove("active-tab");
+    document.getElementById("pastTab").classList.add("active-tab");
+}
+
+function showUpcoming()
+{
+    document.getElementById("upcomingTable").style.display = "block";
+    document.getElementById("pastTable").style.display = "none";
+
+    document.getElementById("pastTab").classList.remove("active-tab");
+    document.getElementById("upcomingTab").classList.add("active-tab");
+}
+
+</script>
+
+</body>
+</html>

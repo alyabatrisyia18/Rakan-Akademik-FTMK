@@ -200,6 +200,13 @@ td{
     cursor:pointer;
 }
 
+.upcoming{
+    background:rgb(255, 253, 161);
+    border:none;
+    padding:10px 20px;
+    cursor:pointer;
+}
+
 .missed{
     background:#dc3545;
     color:white;
@@ -228,6 +235,30 @@ td{
     background:#78d88a;
 }
 
+.join{
+    background:#9be3a5;
+    border:none;
+    padding:10px 18px;
+    border-radius:6px;
+    font-weight:bold;
+    cursor:pointer;
+}
+.join:hover{
+    background:#78d88a;
+}
+
+.view-btn{
+    background:#afd3f0;
+    border:none;
+    padding:10px 18px;
+    border-radius:6px;
+    font-weight:bold;
+    cursor:pointer;
+}
+.view-btn:hover{
+    background:#84d8ef;
+}
+
 .full{
     background:#ff4d4d;
     color:white;
@@ -254,4 +285,151 @@ td{
     cursor:pointer;
     margin-right:20px;
     font-size:20px;
+}
+
+/* ADD TUTORING SESSION FORM */
+
+.session-form{
+    width:500px;
+    background:white;
+    border:1px solid #ddd;
+    border-radius:10px;
+    padding:25px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.08);
+}
+
+.session-form label{
+    display:block;
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:8px;
+    margin-top:15px;
+}
+
+.session-form select,
+.session-form input{
+    width:100%;
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:6px;
+    font-size:15px;
+    box-sizing:border-box;
+}
+
+.time-row{
+    display:flex;
+    gap:20px;
+}
+
+.time-row div{
+    flex:1;
+}
+
+.add-btn{
+    margin-top:25px;
+    background:#9be3a5;
+    border:none;
+    padding:12px 25px;
+    border-radius:25px;
+    font-weight:bold;
+    cursor:pointer;
+    float:right;
+}
+
+.add-btn:hover{
+    background:#78d88a;
+}
+.submit-btn{
+    margin-top:25px;
+    background:#55c46a;
+    color:black;
+    border:none;
+    padding:12px 30px;
+    border-radius:25px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.submit-btn:hover{
+    background:#41af57;
+}
+small{
+    color:#666;
+    font-size:13px;
+    display:block;
+    margin-top:5px;
+}
+
+.approved{
+    background:#4CAF50;
+    color:white;
+    padding:10px 20px;
+    border-radius:5px;
+    font-weight:bold;
+}
+
+.pending{
+    background:#E4EB76;
+    color:black;
+    padding:10px 20px;
+    border-radius:5px;
+    font-weight:bold;
+}
+
+.note{
+    margin-top:25px;
+    font-size:14px;
+    font-weight:600;
+}
+.attended{
+    background:#bdbdbd;
+    color:white;
+    border:none;
+    padding:10px 18px;
+    border-radius:6px;
+    font-weight:bold;
+    cursor:not-allowed;
+}
+/* DASHBOARD CARDS */
+
+.dashboard-cards{
+    display:flex;
+    gap:30px;
+    margin-bottom:25px;
+}
+
+.card{
+    width:180px;
+    border:1px solid #999;
+    text-align:center;
+    padding:15px;
+    background:white;
+}
+
+.card h3{
+    font-size:18px;
+    margin-bottom:15px;
+}
+
+.card p{
+    font-size:40px;
+    font-weight:bold;
+    margin:0;
+}
+
+/* APPROVED BUTTON */
+
+.approved-btn{
+    background:#4caf50;
+    color:white;
+    border:none;
+    padding:10px 20px;
+    font-weight:bold;
+}
+
+/* TOTAL ROW */
+
+.total-row{
+    background:#f5f5f5;
+    font-weight:bold;
 }
