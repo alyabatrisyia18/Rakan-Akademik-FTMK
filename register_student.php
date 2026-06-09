@@ -3,11 +3,14 @@
 if(isset($_POST["btnRegister"]))
 {
     $name = $_POST["txtName"];
+    $matric = $_POST["txtMatric"];
     $email = $_POST["txtEmail"];
     $phone = $_POST["txtPhone"];
     $gender = $_POST["gender"];
     $password = $_POST["txtPassword"];
     $confirmPassword = $_POST["txtConfirmPassword"];
+
+
 
     if($password != $confirmPassword)
     {
@@ -242,6 +245,14 @@ body{
                     type="text"
                     name="txtName"
                     class="textBox"
+                    required>
+
+                <label class="formLabel">Matric Number</label>
+                <input
+                    type="text"
+                    name="txtMatric"
+                    class="textBox"
+                    placeholder="Example: B032310123"
                     required>
 
                 <label class="formLabel">Email</label>
