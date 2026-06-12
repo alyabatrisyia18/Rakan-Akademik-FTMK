@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-
     <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
@@ -17,7 +16,11 @@
         }
 
         body{
-            background:#f5f5f5;
+            background-image: url('images/edubackground.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
         }
 
         header{
@@ -53,6 +56,11 @@
             font-size:24px;
             margin-left:20px;
             cursor:pointer;
+        }
+
+        .logo img{
+            height:60px;   /* ubah ikut saiz yang nak */
+            width:auto;
         }
 
         .welcome{
@@ -104,7 +112,9 @@
 
 <header>
     <div class="logo">
-        <h2>RAKAN AKADEMIK</h2>
+        <img src="images/logoRakan.png" alt="Rakan Akademik Logo">
+        <img src="images/logoUtem.png" alt="UTeM Logo">
+        <img src="images/logoFtmk.png" alt="FTMK Logo">
     </div>
 
     <div class="search-box">
@@ -115,7 +125,7 @@
     <div class="icons">
         <i class="far fa-bookmark"></i>
         <i class="far fa-bell"></i>
-        <i class="far fa-user-circle"></i>
+        <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
     </div>
 </header>
 
@@ -160,7 +170,7 @@ function openPage(page){
             break;
 
         case "timetable":
-            window.location.href="timetable.php";
+            window.location.href="booking.php";
             break;
 
         case "mentor":

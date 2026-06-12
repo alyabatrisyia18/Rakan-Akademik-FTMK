@@ -1,5 +1,7 @@
 <?php
 
+include("db_connect.php");
+
 $username = "";
 $password = "";
 
@@ -8,15 +10,51 @@ if(isset($_POST["btnLogin"]))
     $username = $_POST["txtUser"];
     $password = $_POST["txtPassword"];
 
-    // nanti sambung semakan database di sini
-
+    // Admin Login
     if($username == "admin" && $password == "1234")
     {
-        echo "<script>alert('Login Successful');</script>";
+        echo "
+        <script>
+            alert('Admin Login Successful');
+            window.location.href='dashboard.php';
+        </script>
+        ";
     }
     else
     {
-        echo "<script>alert('Invalid Username or Password');</script>";
+        $sql = "SELECT * FROM user WHERE userId='$username'";
+        $result = mysqli_query($conn,$sql);
+
+        if(mysqli_num_rows($result) > 0)
+        {
+            $row = mysqli_fetch_assoc($result);
+
+            if(password_verify($password, $row['password']))
+            {
+                echo "
+                <script>
+                    alert('Login Successful');
+                    window.location.href='dashboard.php';
+                </script>
+                ";
+            }
+            else
+            {
+                echo "
+                <script>
+                    alert('Wrong Password');
+                </script>
+                ";
+            }
+        }
+        else
+        {
+            echo "
+            <script>
+                alert('User Not Found');
+            </script>
+            ";
+        }
     }
 }
 
