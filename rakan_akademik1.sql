@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1:3307
--- Generation Time: Jun 12, 2026 at 11:28 AM
+-- Host: 127.0.0.1
+-- Generation Time: Jun 09, 2026 at 03:47 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -43,11 +43,7 @@ CREATE TABLE `booking` (
   `matricNoTutor` varchar(20) NOT NULL COMMENT 'Tutor assigned',
   `matricNoStudent` varchar(20) NOT NULL COMMENT 'Student making booking',
   `schedule` datetime NOT NULL COMMENT 'Booking schedule',
-  `bookingStatus` varchar(20) NOT NULL COMMENT 'Booking status',
-  `subject` varchar(100) NOT NULL,
-  `startTime` time NOT NULL,
-  `endTime` time NOT NULL,
-  `recordID` varchar(20) NOT NULL
+  `bookingStatus` varchar(20) NOT NULL COMMENT 'Booking status'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -102,14 +98,6 @@ CREATE TABLE `student` (
   `course` varchar(100) NOT NULL COMMENT 'Student course'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `student`
---
-
-INSERT INTO `student` (`matricNoStudent`, `userID`, `course`) VALUES
-('B032410001', 'U001', 'BITP'),
-('d011', 'd011', 'sc');
-
 -- --------------------------------------------------------
 
 --
@@ -120,21 +108,9 @@ CREATE TABLE `teaching record` (
   `recordID` varchar(20) NOT NULL COMMENT 'Teaching record identifier',
   `matricNoTutor` varchar(20) NOT NULL COMMENT 'Reference to tutor',
   `subject` varchar(100) NOT NULL COMMENT 'Subject taught',
-  `sessionDate` date NOT NULL COMMENT 'Session date and time',
-  `teachingStatus` varchar(20) NOT NULL COMMENT 'Teaching session status',
-  `startTime` time NOT NULL,
-  `endTime` time NOT NULL,
-  `sessionType` varchar(20) NOT NULL,
-  `meetingLink` varchar(20) NOT NULL,
-  `venue` varchar(255) NOT NULL
+  `date_time` datetime NOT NULL COMMENT 'Session date and time',
+  `teachingStatus` varchar(20) NOT NULL COMMENT 'Teaching session status'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `teaching record`
---
-
-INSERT INTO `teaching record` (`recordID`, `matricNoTutor`, `subject`, `sessionDate`, `teachingStatus`, `startTime`, `endTime`, `sessionType`, `meetingLink`, `venue`) VALUES
-('R526', 'd0112', 'Programming', '2026-03-12', 'Available', '17:22:00', '18:22:00', 'Online', 'https://teams.live.c', '');
 
 -- --------------------------------------------------------
 
@@ -148,14 +124,6 @@ CREATE TABLE `tutor` (
   `expertise` varchar(100) NOT NULL COMMENT 'Tutor expertise',
   `availability` varchar(100) NOT NULL COMMENT 'Tutor availability'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tutor`
---
-
-INSERT INTO `tutor` (`matricNoTutor`, `userID`, `expertise`, `availability`) VALUES
-('d0112', 'd0112', 'Programming, Data Structure & Algorithm', 'Available'),
-('T001', 'U002', 'Programming', 'Available');
 
 -- --------------------------------------------------------
 
@@ -175,16 +143,6 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `user`
---
-
-INSERT INTO `user` (`userId`, `name`, `email`, `mobile_phone`, `gender`, `password`, `status`, `role`) VALUES
-('d011', 'sofea', 'aisya@gmail.com', '011', 'Female', '$2y$10$J02DKpbisCXpFJ4tdi8DrudUJmJBBz6O4ExpKuAfyOfhldoOAyeLu', 'Active', 'Student'),
-('d0112', 'sofea', 'sofea@gmail.com', '011', 'Female', '$2y$10$88BQsIt8Q3ugxVe./il2..JBSD8MZme2A1/OHWG4J2ycfGJRifqGC', 'Active', 'Tutor'),
-('U001', 'Aisya', 'aisya@gmail.com', '0123456789', 'Female', '123456', 'Active', 'Student'),
-('U002', 'Ahmad ', 'ahmad@gmail.com', '01111111111', 'Male', '123456', 'Active', 'Tutor');
-
---
 -- Indexes for dumped tables
 --
 
@@ -201,8 +159,7 @@ ALTER TABLE `admin`
 ALTER TABLE `booking`
   ADD PRIMARY KEY (`bookingID`),
   ADD KEY `matricNoTutor` (`matricNoTutor`,`matricNoStudent`),
-  ADD KEY `matricNoStudent` (`matricNoStudent`),
-  ADD KEY `recordID` (`recordID`);
+  ADD KEY `matricNoStudent` (`matricNoStudent`);
 
 --
 -- Indexes for table `payment`
@@ -287,6 +244,12 @@ ALTER TABLE `quiz`
 --
 ALTER TABLE `quiz_result`
   ADD CONSTRAINT `quiz_result_ibfk_2` FOREIGN KEY (`matricNoStudent`) REFERENCES `student` (`matricNoStudent`);
+
+--
+-- Constraints for table `student`
+--
+ALTER TABLE `student`
+  ADD CONSTRAINT `student_ibfk_1` FOREIGN KEY (`matricNoStudent`) REFERENCES `user` (`userId`);
 
 --
 -- Constraints for table `teaching record`
