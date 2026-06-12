@@ -170,7 +170,7 @@ function openPage(page){
             break;
 
         case "timetable":
-            window.location.href="timetable.php";
+            window.location.href="booking.php";
             break;
 
         case "mentor":

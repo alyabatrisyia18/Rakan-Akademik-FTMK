@@ -10,14 +10,15 @@ if(isset($_POST["btnLogin"]))
 
     // nanti sambung semakan database di sini
 
-    if($username == "admin" && $password == "1234")
-    {
-        echo "<script>alert('Login Successful');</script>";
-    }
-    else
-    {
-        echo "<script>alert('Invalid Username or Password');</script>";
-    }
+   if($username == "admin" && $password == "1234")
+{
+    echo "
+    <script>
+        alert('Login Successful');
+        window.location.href='dashboard.php';
+    </script>
+    ";
+}
 }
 
 ?>
