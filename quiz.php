@@ -33,170 +33,198 @@ if(isset($_POST['save_details']))
 <head>
     <title>Create New Quiz</title>
     <link rel="stylesheet" href="style2.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
 <style>
-body{
-    background:#e9eef5;
-}
+    *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, sans-serif;
+        }
 
-header{
-    background:#1f3f98;
-    color:white;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:10px 25px;
-}
+        body{
+            background:#e9eef5;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
 
-.logo{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
+        header{
+            background:#1f3f98;
+            color:white;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:15px 30px;
+        }
 
-.logo img{
-    height:45px;
-    width:auto;
-}
+        .search-box{
+            width:40%;
+            position:relative;
+        }
 
-.search-box input{
-    width:100%;
-    padding:12px 20px;
-    border:none;
-    border-radius:30px;
-}
+        .search-box input{
+            width:100%;
+            padding:10px 40px 10px 15px;
+            border:none;
+            border-radius:30px;
+        }
 
-.main-container{
-    display:flex;
-    gap:30px;
-    padding:20px;
-    align-items:flex-start;
-}
+        .search-box i{
+            position:absolute;
+            right:15px;
+            top:50%;
+            transform:translateY(-50%);
+            color:gray;
+        }
 
-.form-area{
-    flex:2;
-}
+        .icons i{
+            font-size:24px;
+            margin-left:20px;
+            cursor:pointer;
+        }
 
-.preview-area{
-    flex:1;
-    position:sticky;
-    top:20px;
-}
+        .logo img{
+            height:60px;   /* ubah ikut saiz yang nak */
+            width:auto;
+        }
+        
+        .main-container{
+            display:flex;
+            gap:30px;
+            padding:20px;
+            align-items:flex-start;
+        }
 
-.tabs{
-    display:flex;
-    gap:15px;
-    margin-bottom:25px;
-}
+        .form-area{
+            flex:2;
+        }
+        
+        .preview-area{
+            flex:1;
+            position:sticky;
+            top:20px;
+        }
+        
+        .tabs{
+            display:flex;
+            gap:15px;
+            margin-bottom:25px;
+        }
+        
+        .tab{
+            background:#dcdcdc;
+            padding:12px 25px;
+            border-radius:25px;
+            cursor:pointer;
+            font-size:14px;
+            min-width:180px;
+        }
 
-.tab{
-    background:#dcdcdc;
-    padding:12px 25px;
-    border-radius:25px;
-    cursor:pointer;
-    font-size:14px;
-    min-width:180px;
-}
+        .tab.active{
+            background:#1f3f98;
+            color:white;
+        }
+        
+        .tab .num
+        {
+            font-weight:bold;
+            margin-right:10px;
+        }
 
-.tab.active{
-    background:#1f3f98;
-    color:white;
-}
+        .page{
+            display:none;
+        }
 
-.tab .num{
-    font-weight:bold;
-    margin-right:10px;
-}
+        .page.show
+        {
+            display:block;
+        }
+        
+        .page label{
+            display:block;
+            margin-top:15px;
+            margin-bottom:8px;
+            font-weight:bold;
+        }
 
-.page{
-    display:none;
-}
+        .page input[type=text],
+        .page input[type=number],
+        .page textarea,
+        .page select,
+        .page input[type=file]
+        {
+            width:100%;
+            padding:12px;
+            border:1px solid #ccc;
+            border-radius:10px;
+        }
+        
+        .page textarea{
+            height:100px;
+            resize:none;
+        }
 
-.page.show{
-    display:block;
-}
-
-.page label{
-    display:block;
-    margin-top:15px;
-    margin-bottom:8px;
-    font-weight:bold;
-}
-
-.page input[type=text],
-.page input[type=number],
-.page textarea,
-.page select,
-.page input[type=file]{
-    width:100%;
-    padding:12px;
-    border:1px solid #ccc;
-    border-radius:10px;
-}
-
-.page textarea{
-    height:100px;
-    resize:none;
-}
-
-.difficulty-inline{
-    display:flex;
-    gap:10px;
-}
-
-.difficulty-inline input[type=radio]{
-    display:none;
-}
-
-.difficulty-inline label{
-    background:#dcdcdc;
-    padding:10px 20px;
-    border-radius:20px;
-    cursor:pointer;
-    margin-top:0;
-}
-
-.difficulty-inline input[type=radio]:checked + label{
-    background:#1f3f98;
-    color:white;
-}
-
-button{
-    background:#1f3f98;
-    color:white;
-    border:none;
-    padding:12px 30px;
-    border-radius:25px;
-    cursor:pointer;
-}
-
-button:hover{
-    opacity:0.9;
-}
-
-.preview-card{
-    background:white;
-    border-radius:15px;
-    padding:20px;
-    box-shadow:0 3px 12px rgba(0,0,0,0.1);
-}
-
-.preview-card h3{
-    color:#1f3f98;
-    font-size:32px;
-    margin-bottom:10px;
-}
-
-.preview-card p{
-    margin-bottom:10px;
-}
-
-.preview-card img{
-    width:100%;
-    border-radius:10px;
-    margin-top:10px;
-}
-    </style>
+        .difficulty-inline{
+            display:flex;
+            gap:10px;
+        }
+        
+        .difficulty-inline input[type=radio]{
+            display:none;
+        }
+        
+        .difficulty-inline label{
+            background:#dcdcdc;
+            padding:10px 20px;
+            border-radius:20px;
+            cursor:pointer;
+            margin-top:0;
+        }
+        
+        .difficulty-inline input[type=radio]:checked + label{
+            background:#1f3f98;
+            color:white;
+        }
+        
+        button{
+            background:#1f3f98;
+            color:white;
+            border:none;
+            padding:12px 30px;
+            border-radius:25px;
+            cursor:pointer;
+        }
+        
+        button:hover{
+            opacity:0.9;
+        }
+        
+        .preview-card{
+            background:white;
+            border-radius:15px;
+            padding:20px;
+            box-shadow:0 3px 12px rgba(0,0,0,0.1);
+        }
+        
+        .preview-card h3{
+            color:#1f3f98;
+            font-size:32px;
+            margin-bottom:10px;
+        }
+        
+        .preview-card p{
+            margin-bottom:10px;
+        }
+        
+        .preview-card img{
+            width:100%;
+            border-radius:10px;
+            margin-top:10px;
+        }
+        </style>
 </head>
 <body>
 
@@ -213,10 +241,12 @@ button:hover{
     </div>
 
     <div class="icons">
-        <i class="far fa-bookmark"></i>
-        <i class="far fa-bell"></i>
-        <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
-    </div>
+    <i class="fas fa-home" onclick="location.href='dashboard.php'" title="Dashboard"></i>
+    <i class="far fa-bookmark"></i>
+    <i class="far fa-bell"></i>
+    <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
+</div>
+
 </header>
     <div class="main-container">
     <div class="form-area">
