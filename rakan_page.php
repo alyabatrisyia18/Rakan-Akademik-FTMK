@@ -50,8 +50,7 @@
 
     </div>
 
-    <div class="home-btn">
-
+    <div class="home-btn" onclick="location.href='dashboard.php'">
         <i class="fa-solid fa-house"></i>
 
         Home
