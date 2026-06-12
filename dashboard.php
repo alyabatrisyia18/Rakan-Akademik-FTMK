@@ -174,7 +174,7 @@ function openPage(page){
             break;
 
         case "mentor":
-            window.location.href="mentor.php";
+            window.location.href="rakan_page.php";
             break;
 
         default:

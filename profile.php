@@ -1,7 +1,7 @@
 <?php
-$name = "Rogayah Binti Isnin";
-$email = "gayah@gmail.com";
-$phone = "010-9665902";
+$name = "Puteri Sarah";
+$email = "puterisarah@gmail.com";
+$phone = "013-4789014";
 $university = "Universiti Teknikal Malaysia Melaka, UTeM";
 $education = "Diploma in Computer Science";
 ?>
@@ -389,8 +389,8 @@ $education = "Diploma in Computer Science";
             <div class="info-box">
                 <h3><i class="fas fa-book-open"></i> Education</h3>
                 <p><i class="fas fa-graduation-cap"></i> <?php echo htmlspecialchars($education); ?></p>
-                <p style="margin-top: 14px;"><i class="fas fa-clock"></i> Status: Active Semester (Year 2)</p>
-                <p><i class="fas fa-chalkboard-user"></i> CGPA: 3.89 / 4.00</p>
+                <p style="margin-top: 14px;"><i class="fas fa-clock"></i> Status: Active Student (Year 2)</p>
+                <p><i class="fas fa-chalkboard-user"></i> CGPA: 3.70 / 4.00</p>
             </div>
 
             <div class="info-box">
