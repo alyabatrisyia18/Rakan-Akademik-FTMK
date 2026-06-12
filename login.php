@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 include("db_connect.php");
 
 $username = "";
@@ -30,22 +30,19 @@ if(isset($_POST["btnLogin"]))
             $row = mysqli_fetch_assoc($result);
 
             if(password_verify($password, $row['password']))
-            {
-                echo "
-                <script>
-                    alert('Login Successful');
-                    window.location.href='dashboard.php';
-                </script>
-                ";
-            }
-            else
-            {
-                echo "
-                <script>
-                    alert('Wrong Password');
-                </script>
-                ";
-            }
+{
+    $_SESSION['matric'] = $row['userId'];
+    $_SESSION['name'] = $row['name'];
+    $_SESSION['role'] = $row['role'];
+
+    echo "
+    <script>
+        alert('Login Successful');
+        window.location.href='dashboard.php';
+    </script>
+    ";
+}
+
         }
         else
         {
@@ -55,6 +52,7 @@ if(isset($_POST["btnLogin"]))
             </script>
             ";
         }
+        
     }
 }
 

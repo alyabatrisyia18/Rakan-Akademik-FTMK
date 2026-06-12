@@ -1,4 +1,5 @@
 <?php
+session_start();
 include("db_connect.php");
 
 if(isset($_POST['addSession']))
@@ -8,23 +9,73 @@ if(isset($_POST['addSession']))
     $startTime = $_POST['startTime'];
     $endTime = $_POST['endTime'];
 
-    $matricNoTutor = "T001";
+    $sessionType = $_POST['sessionType'];
 
-    $recordID = "R" . rand(100,999);
+    $meetingLink = !empty($_POST['meetingLink'])
+        ? $_POST['meetingLink']
+        : '';
 
-    $sql = "INSERT INTO `teaching record`
-(recordID, matricNoTutor, subject, sessionDate, teachingStatus, startTime, endTime)
-VALUES
-('$recordID','$matricNoTutor','$subject','$sessionDate','Available','$startTime','$endTime')";
+    $venue = !empty($_POST['venue'])
+        ? $_POST['venue']
+        : '';
 
-    if(mysqli_query($conn,$sql))
-{
-    echo "<script>alert('Success');</script>";
-}
-else
-{
-    echo mysqli_error($conn);
-}
+    if($sessionType == "Online" && empty($meetingLink))
+    {
+        echo "<script>
+        alert('Please enter Meeting Link');
+        </script>";
+    }
+    elseif($sessionType == "Face to Face" && empty($venue))
+    {
+        echo "<script>
+        alert('Please enter Venue');
+        </script>";
+    }
+    else
+    {
+        // nanti ambil dari login
+        $matricNoTutor = $_SESSION['matric'];
+
+        $recordID = "R" . rand(100,999);
+
+        $sql = "INSERT INTO `teaching record`
+        (
+            recordID,
+            matricNoTutor,
+            subject,
+            sessionDate,
+            teachingStatus,
+            startTime,
+            endTime,
+            sessionType,
+            meetingLink,
+            venue
+        )
+        VALUES
+        (
+            '$recordID',
+            '$matricNoTutor',
+            '$subject',
+            '$sessionDate',
+            'Available',
+            '$startTime',
+            '$endTime',
+            '$sessionType',
+            '$meetingLink',
+            '$venue'
+        )";
+
+        if(mysqli_query($conn,$sql))
+        {
+            echo "<script>
+            alert('Tutoring Session Added Successfully!');
+            </script>";
+        }
+        else
+        {
+            echo mysqli_error($conn);
+        }
+    }
 }
 ?>
 
@@ -71,6 +122,7 @@ else
             <i class="far fa-bookmark"></i>
             <i class="far fa-bell"></i>
             <i class="far fa-user-circle"></i>
+            <i class="fas fa-home" onclick="location.href='dashboard.php'" title="Dashboard"></i>
         </div>
 
     </div>
@@ -124,27 +176,54 @@ else
 
             <div class="time-row">
 
-                <div>
+    <div>
+        <label>Start Time</label>
+        <input type="time" name="startTime" required>
+    </div>
 
-                    <label>Start Time</label>
+    <div>
+        <label>End Time</label>
+        <input type="time" name="endTime" required>
+    </div>
 
-                    <input
-                        type="time"
-                        name="startTime"
-                        required>
+</div>
 
-                </div>
+<label>Session Type</label>
 
-                <div>
+<select
+name="sessionType"
+id="sessionType"
+onchange="toggleSessionType()"
+required>
 
-                    <label>End Time</label>
+    <option value="">Select Type</option>
+    <option value="Online">Online</option>
+    <option value="Face to Face">Face to Face</option>
 
-                    <input
-                        type="time"
-                        name="endTime"
-                        required>
+</select>
 
-                </div>
+<div id="onlineSection">
+
+    <label>Meeting Link</label>
+
+    <input
+    type="text"
+    name="meetingLink"
+    placeholder="Paste Teams Link">
+
+</div>
+
+<div id="f2fSection" style="display:none;">
+
+    <label>Venue</label>
+
+    <input
+    type="text"
+    name="venue"
+    placeholder="Example: FTMK Discussion Room 2">
+
+</div>
+
 
             </div>
 
@@ -158,25 +237,27 @@ else
 
     <script>
 
-        function toggleSidebar()
-        {
-            const sidebar =
-                document.getElementById("sidebar");
+        function toggleSessionType()
+{
+    let type =
+        document.getElementById("sessionType").value;
 
-            const content =
-                document.querySelector(".content");
-
-            sidebar.classList.toggle("collapsed");
-
-            if(sidebar.classList.contains("collapsed"))
-            {
-                content.style.marginLeft = "80px";
-            }
-            else
-            {
-                content.style.marginLeft = "250px";
-            }
-        }
+    if(type == "Online")
+    {
+        document.getElementById("onlineSection").style.display = "block";
+        document.getElementById("f2fSection").style.display = "none";
+    }
+    else if(type == "Face to Face")
+    {
+        document.getElementById("onlineSection").style.display = "none";
+        document.getElementById("f2fSection").style.display = "block";
+    }
+    else
+    {
+        document.getElementById("onlineSection").style.display = "none";
+        document.getElementById("f2fSection").style.display = "none";
+    }
+}
 
     </script>
 
