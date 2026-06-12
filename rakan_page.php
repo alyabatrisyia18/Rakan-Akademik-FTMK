@@ -30,16 +30,9 @@
         </div>
     </div>
 
-<<<<<<< HEAD
-    <div class="home-btn" onclick="location.href='dashboard.php'">
-        <i class="fa-solid fa-house"></i>
-
-        Home
-
-=======
     <div class="home-btn">
         <i class="fas fa-home" onclick="location.href='dashboard.php'" title="Dashboard"></i>
->>>>>>> 8c5783ea3548f5c08111db0aedd87a98c0c61c7c
+        Home
     </div>
 
     <div class="main-panel">
