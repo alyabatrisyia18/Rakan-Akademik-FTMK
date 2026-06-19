@@ -1,7 +1,8 @@
 <?php
+session_start();
 include("db_connect.php");
 
-$matricNoStudent = "B032410001";
+$matricNoStudent = $_SESSION['matric'];
 
 if(isset($_POST['bookSession']))
 {
