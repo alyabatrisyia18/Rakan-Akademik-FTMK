@@ -341,7 +341,7 @@ if(isset($_POST['save_details']))
         <option value="later">Show later (manual release)</option>
     </select>
     <br><br>
-    <button type="submit" name="save_settings">Publish</button>
+    <button type="button" onclick="publishQuiz()">Publish</button>
 </div>
     </div>
 

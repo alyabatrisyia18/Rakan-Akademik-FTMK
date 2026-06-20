@@ -40,14 +40,23 @@ function deleteQuestion(btn){
 }
 
 function saveDraft(){
-    let confirmSave = confirm("Save draft?");
+    let questions = [];
 
-    if(confirmSave){
-        // pergi ke settings tab
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('show'));
-        document.getElementById('settings').classList.add('show');
+    document.querySelectorAll(".question-box").forEach(box => {
+        questions.push({
+            question: box.querySelector('input[name="question[]"]').value,
+            A: box.querySelectorAll('input[name="optionA[]"]')[0].value,
+            B: box.querySelectorAll('input[name="optionB[]"]')[0].value,
+            C: box.querySelectorAll('input[name="optionC[]"]')[0].value,
+            D: box.querySelectorAll('input[name="optionD[]"]')[0].value
+        });
+    });
 
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab')[2].classList.add('active');
-    }
+    fetch("save_questions.php", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(questions)
+    }).then(() => {
+        alert("Draft saved!");
+    });
 }
