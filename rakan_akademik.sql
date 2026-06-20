@@ -2,8 +2,8 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1:3307
--- Generation Time: Jun 12, 2026 at 11:28 AM
+-- Host: 127.0.0.1
+-- Generation Time: Jun 20, 2026 at 10:17 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -73,8 +73,32 @@ CREATE TABLE `payment` (
 CREATE TABLE `quiz` (
   `quizID` varchar(20) NOT NULL COMMENT 'Quiz identifier',
   `matricNoTutor` varchar(20) NOT NULL COMMENT 'Tutor who created quiz',
-  `question` varchar(255) NOT NULL COMMENT 'Quiz creation',
-  `answer` varchar(255) NOT NULL COMMENT 'Correct answer'
+  `title` varchar(255) NOT NULL,
+  `description` varchar(100) NOT NULL,
+  `category` varchar(100) DEFAULT NULL,
+  `difficulty` varchar(50) DEFAULT NULL,
+  `cover` varchar(255) DEFAULT NULL,
+  `time_limit` int(11) DEFAULT NULL,
+  `attempts` int(11) DEFAULT NULL,
+  `visibility` varchar(20) NOT NULL,
+  `show_results` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `quiz_question`
+--
+
+CREATE TABLE `quiz_question` (
+  `questionID` int(11) NOT NULL,
+  `quizID` varchar(20) NOT NULL,
+  `question` text NOT NULL,
+  `optionA` varchar(255) NOT NULL,
+  `optionB` varchar(255) NOT NULL,
+  `optionC` varchar(255) NOT NULL,
+  `optionD` varchar(255) NOT NULL,
+  `correct_answer` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -219,6 +243,13 @@ ALTER TABLE `quiz`
   ADD KEY `matricNoTutor` (`matricNoTutor`);
 
 --
+-- Indexes for table `quiz_question`
+--
+ALTER TABLE `quiz_question`
+  ADD PRIMARY KEY (`questionID`),
+  ADD KEY `quizID` (`quizID`);
+
+--
 -- Indexes for table `quiz_result`
 --
 ALTER TABLE `quiz_result`
@@ -254,6 +285,16 @@ ALTER TABLE `user`
   ADD PRIMARY KEY (`userId`);
 
 --
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `quiz_question`
+--
+ALTER TABLE `quiz_question`
+  MODIFY `questionID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- Constraints for dumped tables
 --
 
@@ -281,6 +322,12 @@ ALTER TABLE `payment`
 --
 ALTER TABLE `quiz`
   ADD CONSTRAINT `quiz_ibfk_1` FOREIGN KEY (`matricNoTutor`) REFERENCES `tutor` (`matricNoTutor`);
+
+--
+-- Constraints for table `quiz_question`
+--
+ALTER TABLE `quiz_question`
+  ADD CONSTRAINT `quiz_question_ibfk_1` FOREIGN KEY (`quizID`) REFERENCES `quiz` (`quizID`);
 
 --
 -- Constraints for table `quiz_result`
