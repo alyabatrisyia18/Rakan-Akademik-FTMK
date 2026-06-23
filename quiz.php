@@ -288,22 +288,13 @@ if (isset($_POST['publish'])) {
         <img src="images/logoFtmk.png" alt="FTMK Logo">
     </div>
 
-    <div class="search-box">
-        <input type="text" placeholder="Search">
-        <i class="fas fa-search"></i>
-    </div>
-
     <div class="icons">
         <i class="fas fa-home" onclick="location.href='dashboard.php'"></i>
-        <i class="far fa-bookmark"></i>
-        <i class="far fa-bell"></i>
         <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
     </div>
-
 </header>
 
 <div class="main-container">
-
     <div class="form-area">
 
         <div class="tabs">
