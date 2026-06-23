@@ -431,9 +431,9 @@ body{
                         <input type="checkbox">
                         Remember Me
                     </label>
-
-                    <a href="#">
-                        Forgot Password?
+                    
+                    <a href="forgot_password.php">
+                       Forgot Password?
                     </a>
 
                 </div>
