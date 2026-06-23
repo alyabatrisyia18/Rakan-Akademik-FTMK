@@ -20,14 +20,15 @@ if (isset($_POST['publish'])) {
     $category = $_POST['category'];
     $difficulty = $_POST['difficulty'];
 
-    $time_limit = !empty($_POST['time_limit']) ? $_POST['time_limit'] : 30;
-    $attempts = !empty($_POST['attempts']) ? $_POST['attempts'] : 1;
+    $time_limit = !empty($_POST['time_limit']) ? $_POST['time_limit'] : 30; //user tak isi time limit auto akan set 90 minit masa utk jwab
+    $attempts = !empty($_POST['attempts']) ? $_POST['attempts'] : 1; //auto akan set 1 kali attempt
 
     $visibility = "Public";
     $show_results = "Yes";
 
     $cover = "";
 
+    //utk check sama ada tutor upload gambar cover plus tkde error time upload
     if (isset($_FILES['cover']) && $_FILES['cover']['error'] == 0) {
 
         $folder = "uploads/";
@@ -36,12 +37,12 @@ if (isset($_POST['publish'])) {
             mkdir($folder, 0777, true);
         }
 
-        $filename = time() . "_" . basename($_FILES['cover']['name']);
+        $filename = time() . "_" . basename($_FILES['cover']['name']); //elak supaya nama fail sme
         $targetFile = $folder . $filename;
 
-        move_uploaded_file($_FILES['cover']['tmp_name'], $targetFile);
+        move_uploaded_file($_FILES['cover']['tmp_name'], $targetFile); //pindh gmba kpd folder upload
 
-        $cover = $targetFile;
+        $cover = $targetFile; //simpn gmbr path dekat database
     }
 
     $sqlQuiz = "
