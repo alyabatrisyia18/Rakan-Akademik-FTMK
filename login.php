@@ -10,13 +10,12 @@ if(isset($_POST["btnLogin"]))
     $username = $_POST["txtUser"];
     $password = $_POST["txtPassword"];
 
-    // Admin Login
     if($username == "admin" && $password == "1234")
     {
         echo "
         <script>
             alert('Admin Login Successful');
-            window.location.href='dashboard.php';
+            window.location.href='admin_dashboard.php';
         </script>
         ";
     }
@@ -81,8 +80,6 @@ body{
     overflow:hidden;
 }
 
-/* Header */
-
 .header{
     height:95px;
     background:#2748A5;
@@ -140,8 +137,6 @@ body{
     position:relative;
 }
 
-/* Background Shapes */
-
 .circleTop{
     width:500px;
     height:350px;
@@ -182,8 +177,6 @@ body{
     font-size:13px;
     color:#666;
 }
-
-/* Login Section */
 
 .loginBox{
     width:430px;
@@ -269,8 +262,6 @@ body{
     background:#54A8E2;
 }
 
-/* Modal */
-
 .modal{
     display:none;
     position:fixed;
@@ -319,7 +310,6 @@ body{
     background:#f5f5f5;
 }
 
-/* Responsive */
 
 @media screen and (max-width:768px){
 

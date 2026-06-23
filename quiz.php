@@ -1,29 +1,92 @@
 <?php
 session_start();
+include 'db_connect.php';
 
-if(isset($_POST['save_details']))
-{
-    $_SESSION['quiz_title'] = $_POST['quiz_title'];
-    $_SESSION['description'] = $_POST['description'];
-    $_SESSION['category'] = $_POST['category'];
-    $_SESSION['difficulty'] = $_POST['difficulty'];
+if (!isset($_SESSION['matric'])) {
+    echo "<script>
+        alert('Please login first');
+        window.location.href='login.php';
+    </script>";
+    exit();
+}
 
-    // handle cove img
-    if(isset($_FILES['cover']) && $_FILES['cover']['error'] == 0)
-    {
-        $imgName = time() . "_" . $_FILES['cover']['name'];
-        $target = "uploads/" . $imgName;
+if (isset($_POST['publish'])) {
 
-        // if folde doesnt exits
-        if(!file_exists("uploads")){
-            mkdir("uploads", 0777, true);
+    $quizID = "Q" . time();
+    $matricNoTutor = $_SESSION['matric'];
+
+    $title = $_POST['title'];
+    $description = $_POST['description'];
+    $category = $_POST['category'];
+    $difficulty = $_POST['difficulty'];
+
+    $time_limit = !empty($_POST['time_limit']) ? $_POST['time_limit'] : 30;
+    $attempts = !empty($_POST['attempts']) ? $_POST['attempts'] : 1;
+
+    $visibility = "Public";
+    $show_results = "Yes";
+
+    $cover = "";
+
+    if (isset($_FILES['cover']) && $_FILES['cover']['error'] == 0) {
+
+        $folder = "uploads/";
+
+        if (!file_exists($folder)) {
+            mkdir($folder, 0777, true);
         }
 
-        move_uploaded_file($_FILES['cover']['tmp_name'], $target);
+        $filename = time() . "_" . basename($_FILES['cover']['name']);
+        $targetFile = $folder . $filename;
 
-        $_SESSION['cover'] = $target;
+        move_uploaded_file($_FILES['cover']['tmp_name'], $targetFile);
+
+        $cover = $targetFile;
     }
-    header("Location: quiz.php?page=questions");
+
+    $sqlQuiz = "
+        INSERT INTO quiz
+        (quizID, matricNoTutor, title, description, category, difficulty, cover, time_limit, attempts)
+        VALUES
+        ('$quizID', '$matricNoTutor', '$title', '$description', '$category', '$difficulty', '$cover', '$time_limit', '$attempts')
+    ";
+
+    mysqli_query($conn, $sqlQuiz);
+
+    $questions = $_POST['question'];
+    $optionA = $_POST['optionA'];
+    $optionB = $_POST['optionB'];
+    $optionC = $_POST['optionC'];
+    $optionD = $_POST['optionD'];
+    $correct = $_POST['correct_answer'];
+
+    for ($i = 0; $i < count($questions); $i++) {
+
+        if (trim($questions[$i]) != "") {
+
+            $sqlQuestion = "
+                INSERT INTO quiz_question
+                (quizID, question, optionA, optionB, optionC, optionD, correct_answer)
+                VALUES
+                (
+                    '$quizID',
+                    '{$questions[$i]}',
+                    '{$optionA[$i]}',
+                    '{$optionB[$i]}',
+                    '{$optionC[$i]}',
+                    '{$optionD[$i]}',
+                    '{$correct[$i]}'
+                )
+            ";
+
+            mysqli_query($conn, $sqlQuestion);
+        }
+    }
+
+    echo "<script>
+        alert('Quiz published successfully!');
+        window.location.href='quiz.php';
+    </script>";
     exit();
 }
 ?>
@@ -32,203 +95,193 @@ if(isset($_POST['save_details']))
 <html>
 <head>
     <title>Create New Quiz</title>
-    <link rel="stylesheet" href="style2.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-<style>
-    *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:Arial, sans-serif;
+
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
         }
 
-        body{
-            background:#e9eef5;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
+        body {
+            background: #e9eef5;
         }
 
-        header{
-            background:#1f3f98;
-            color:white;
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            padding:15px 30px;
+        .topbar {
+            background: #233f99;
+            height: 110px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            gap: 25px;
         }
 
-        .search-box{
-            width:40%;
-            position:relative;
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .search-box input{
-            width:100%;
-            padding:10px 40px 10px 15px;
-            border:none;
-            border-radius:30px;
+        .logo img {
+            height: 48px;
+            width: auto;
+            object-fit: contain;
         }
 
-        .search-box i{
-            position:absolute;
-            right:15px;
-            top:50%;
-            transform:translateY(-50%);
-            color:gray;
+        .search-box {
+            width: 40%;
+            background: white;
+            border-radius: 30px;
+            padding: 0 18px;
+            display: flex;
+            align-items: center;
         }
 
-        .icons i{
-            font-size:24px;
-            margin-left:20px;
-            cursor:pointer;
+        .search-box input {
+            width: 100%;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 16px;
+            padding: 14px 0;
         }
 
-        .logo img{
-            height:60px;   /* ubah ikut saiz yang nak */
-            width:auto;
-        }
-        
-        .main-container{
-            display:flex;
-            gap:30px;
-            padding:20px;
-            align-items:flex-start;
+        .search-box i {
+            font-size: 22px;
+            color: #777;
+            cursor: pointer;
         }
 
-        .form-area{
-            flex:2;
-        }
-        
-        .preview-area{
-            flex:1;
-            position:sticky;
-            top:20px;
-        }
-        
-        .tabs{
-            display:flex;
-            gap:15px;
-            margin-bottom:25px;
-        }
-        
-        .tab{
-            background:#dcdcdc;
-            padding:12px 25px;
-            border-radius:25px;
-            cursor:pointer;
-            font-size:14px;
-            min-width:180px;
+        .icons {
+            display: flex;
+            align-items: center;
+            gap: 20px;
         }
 
-        .tab.active{
-            background:#1f3f98;
-            color:white;
-        }
-        
-        .tab .num
-        {
-            font-weight:bold;
-            margin-right:10px;
+        .icons i {
+            font-size: 26px;
+            cursor: pointer;
+            color: white;
         }
 
-        .page{
-            display:none;
+        .main-container {
+            display: flex;
+            gap: 30px;
+            padding: 25px;
         }
 
-        .page.show
-        {
-            display:block;
-        }
-        
-        .page label{
-            display:block;
-            margin-top:15px;
-            margin-bottom:8px;
-            font-weight:bold;
+        .form-area {
+            flex: 2;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
         }
 
-        .page input[type=text],
-        .page input[type=number],
-        .page textarea,
-        .page select,
-        .page input[type=file]
-        {
-            width:100%;
-            padding:12px;
-            border:1px solid #ccc;
-            border-radius:10px;
-        }
-        
-        .page textarea{
-            height:100px;
-            resize:none;
+        .preview-area {
+            flex: 1;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            height: fit-content;
         }
 
-        .difficulty-inline{
-            display:flex;
-            gap:10px;
+        .tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
         }
-        
-        .difficulty-inline input[type=radio]{
-            display:none;
+
+        .tab {
+            background: #dcdcdc;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
         }
-        
-        .difficulty-inline label{
-            background:#dcdcdc;
-            padding:10px 20px;
-            border-radius:20px;
-            cursor:pointer;
-            margin-top:0;
+
+        .tab.active {
+            background: #233f99;
+            color: white;
         }
-        
-        .difficulty-inline input[type=radio]:checked + label{
-            background:#1f3f98;
-            color:white;
+
+        .page {
+            display: none;
         }
-        
-        button{
-            background:#1f3f98;
-            color:white;
-            border:none;
-            padding:12px 30px;
-            border-radius:25px;
-            cursor:pointer;
+
+        .page.show {
+            display: block;
         }
-        
-        button:hover{
-            opacity:0.9;
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            font-weight: bold;
         }
-        
-        .preview-card{
-            background:white;
-            border-radius:15px;
-            padding:20px;
-            box-shadow:0 3px 12px rgba(0,0,0,0.1);
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
         }
-        
-        .preview-card h3{
-            color:#1f3f98;
-            font-size:32px;
-            margin-bottom:10px;
+
+        textarea {
+            height: 100px;
+            resize: none;
         }
-        
-        .preview-card p{
-            margin-bottom:10px;
+
+        button {
+            background: #233f99;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 20px;
+            margin-right: 10px;
         }
-        
-        .preview-card img{
-            width:100%;
-            border-radius:10px;
-            margin-top:10px;
+
+        .question-box {
+            background: #f1f3f8;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
         }
-        </style>
+
+        .delete-btn {
+            background: crimson;
+        }
+
+        .preview-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .preview-card h2 {
+            color: #233f99;
+            margin-bottom: 15px;
+        }
+
+        .preview-card p {
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
+
 <body>
 
-<header>
+<header class="topbar">
+
     <div class="logo">
         <img src="images/logoRakan.png" alt="Rakan Akademik Logo">
         <img src="images/logoUtem.png" alt="UTeM Logo">
@@ -241,130 +294,234 @@ if(isset($_POST['save_details']))
     </div>
 
     <div class="icons">
-    <i class="fas fa-home" onclick="location.href='dashboard.php'" title="Dashboard"></i>
-    <i class="far fa-bookmark"></i>
-    <i class="far fa-bell"></i>
-    <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
-</div>
+        <i class="fas fa-home" onclick="location.href='dashboard.php'"></i>
+        <i class="far fa-bookmark"></i>
+        <i class="far fa-bell"></i>
+        <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
+    </div>
 
 </header>
-    <div class="main-container">
+
+<div class="main-container">
+
     <div class="form-area">
 
         <div class="tabs">
-            <div class="tab active" onclick="showPage('details',this)">
-                <div class="num">1</div> <div class="label">Quiz Details</div>
-            </div>
-            <div class="tab" onclick="showPage('questions',this)">
-                <div class="num">2</div> <div class="label">Questions</div>
-            </div>
-            <div class="tab" onclick="showPage('settings',this)">
-                <div class="num">3</div> <div class="label">Quiz Settings</div>
-            </div>
+            <div class="tab active" onclick="showPage('details', this)">1 Quiz Details</div>
+            <div class="tab" onclick="showPage('questions', this)">2 Questions</div>
+            <div class="tab" onclick="showPage('settings', this)">3 Quiz Settings</div>
         </div>
+
         <form method="POST" enctype="multipart/form-data">
 
-            <!-- quiz detail page -->
             <div id="details" class="page show">
                 <label>Quiz Title</label>
-                <input type="text" name="quiz_title" required>
+                <input type="text" name="title" id="title" required onkeyup="updatePreview()">
 
                 <label>Description</label>
-                <textarea name="description"></textarea>
+                <textarea name="description" id="description" onkeyup="updatePreview()"></textarea>
 
                 <label>Subject/Category</label>
-                <select name="category">
-                    <option>Programming</option>
-                    <option>Database</option>
+                <select name="category" id="category" onchange="updatePreview()">
+                    <option value="Programming">Programming</option>
+                    <option value="Data Structure & Algorithm">Data Structure & Algorithm</option>
                 </select>
 
                 <label>Difficulty Level</label>
-                <div class="difficulty-inline">
-                    <input type="radio" id="easy" name="difficulty" value="Easy">
-                    <label for="easy">Easy</label>
+                <select name="difficulty" id="difficulty" onchange="updatePreview()" required>
+                    <option value="">Choose Difficulty</option>
+                    <option value="Easy">Easy</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Hard">Hard</option>
+                </select>
 
-                    <input type="radio" id="medium" name="difficulty" value="Medium">
-                    <label for="medium">Medium</label>
+                <label>Quiz Cover Page</label>
+                <input type="file"
+                       name="cover"
+                       id="cover"
+                       accept="image/png,image/jpeg,image/jpg">
 
-                    <input type="radio" id="hard" name="difficulty" value="Hard">
-                    <label for="hard">Hard</label>
-                </div>
-
-                <label>Quiz Cover</label>
-                <input type="file" name="cover" accept="image/png, image/jpeg">
-
-                <br><br>
-                <button type="submit" name="save_details">Save</button>
+                <button type="button" onclick="showPageById('questions')">Next</button>
             </div>
-        </form>
 
-        <!-- question page -->
-        <div id="questions" class="page">
-            <div id="questionContainer">
-                <div class="question-box">
-                    <label>Question 1</label>
-                    <input type="text" name="question[]" placeholder="Enter your question">
+            <div id="questions" class="page">
+                <div id="questionContainer">
 
-                    <div class="options">
+                    <div class="question-box">
+                        <label>Question 1</label>
+                        <input type="text" name="question[]" placeholder="Enter your question">
+
+                        <label>Option A</label>
                         <input type="text" name="optionA[]" placeholder="Option A">
-                        <input type="text" name="optionB[]" placeholder="Option B">
-                        <input type="text" name="optionC[]" placeholder="Option C">
-                        <input type="text" name="optionD[]" placeholder="Option D">
-                    </div>
 
-                    <div class="q-actions">
+                        <label>Option B</label>
+                        <input type="text" name="optionB[]" placeholder="Option B">
+
+                        <label>Option C</label>
+                        <input type="text" name="optionC[]" placeholder="Option C">
+
+                        <label>Option D</label>
+                        <input type="text" name="optionD[]" placeholder="Option D">
+
+                        <label>Correct Answer</label>
+                        <select name="correct_answer[]">
+                            <option value="">Choose Answer</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+
                         <button type="button" class="delete-btn" onclick="deleteQuestion(this)">Delete</button>
                     </div>
+
                 </div>
+
+                <button type="button" onclick="addQuestion()">+ Add Question</button>
+                <button type="button" onclick="showPageById('settings')">Next</button>
             </div>
-            <button type="button" onclick="addQuestion()">+ Add Question</button>
-            <button type="button" onclick="saveDraft()">Save Draft</button>
-        </div>
 
-        <!-- setting page -->
-    <div id="settings" class="page">
-         <h2>Quiz Settings</h2>
-         <label>Time Limit (minutes)</label>
-         <input type="number" name="time_limit" placeholder="Minutes">
-         <label>Attempts Allowed</label>
-         <input type="number" name="attempts" placeholder="Number of attempts">
-         
-         <label>Visibility</label>
-         <select name="visibility">
-            <option value="public">Public – Anyone can access</option>
-            <option value="private">Private – Only invited students</option>
-        </select>
+            <div id="settings" class="page">
+                <h2>Quiz Settings</h2>
 
-    <label>Show Results</label>
-    <select name="show_results">
-        <option value="immediate">Show immediately after submission</option>
-        <option value="later">Show later (manual release)</option>
-    </select>
-    <br><br>
-    <button type="submit" name="save_settings">Publish</button>
-</div>
+                <label>Time Limit (minutes)</label>
+                <input type="number" name="time_limit" placeholder="Enter time limit">
+
+                <label>Attempts Allowed</label>
+                <input type="number" name="attempts" placeholder="Enter attempts allowed">
+
+                <button type="submit" name="publish">Publish</button>
+            </div>
+
+        </form>
+
     </div>
 
-    <!-- quiz title preview -->
     <div class="preview-area">
         <div class="preview-card">
-            <h2>
-                <?php echo $_SESSION['quiz_title'] ?? 'Quiz Title Preview'; ?>
-            </h2>
-            <p>
-                <?php echo $_SESSION['description'] ?? 'Description preview will appear here'; ?>
+
+            <img id="previewImage" src="images/default_cover.jpg" alt="Quiz Cover Preview">
+
+            <h2 id="previewTitle">Quiz Title Preview</h2>
+
+            <p id="previewDescription">
+                Description preview will appear here
             </p>
+
             <p>
-                <?php if(isset($_SESSION['category'])) echo "Subject: ".$_SESSION['category']; ?>
+                <b>Subject:</b>
+                <div id="previewCategory">Programming</div>
             </p>
+
             <p>
-                <?php if(isset($_SESSION['difficulty'])) echo "Difficulty: ".$_SESSION['difficulty']; ?>
+                <b>Difficulty:</b>
+                <div id="previewDifficulty">-</div>
             </p>
-            <img src="<?php echo $_SESSION['cover'] ?? 'default.png'; ?>" alt="Quiz Cover">
+
         </div>
     </div>
+
 </div>
-</div>
-<script src="quiz.js"></script>
+
+<script>
+function showPage(pageId, element) {
+    document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('show');
+    });
+
+    document.getElementById(pageId).classList.add('show');
+
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+
+    element.classList.add('active');
+}
+
+function showPageById(pageId) {
+    document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('show');
+    });
+
+    document.getElementById(pageId).classList.add('show');
+
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+
+    if (pageId === 'details') {
+        document.querySelectorAll('.tab')[0].classList.add('active');
+    } else if (pageId === 'questions') {
+        document.querySelectorAll('.tab')[1].classList.add('active');
+    } else if (pageId === 'settings') {
+        document.querySelectorAll('.tab')[2].classList.add('active');
+    }
+}
+
+function addQuestion() {
+    let container = document.getElementById('questionContainer');
+    let questionCount = container.children.length + 1;
+
+    let div = document.createElement('div');
+    div.className = 'question-box';
+
+    div.innerHTML = `
+        <label>Question ${questionCount}</label>
+        <input type="text" name="question[]" placeholder="Enter your question">
+
+        <label>Option A</label>
+        <input type="text" name="optionA[]" placeholder="Option A">
+
+        <label>Option B</label>
+        <input type="text" name="optionB[]" placeholder="Option B">
+
+        <label>Option C</label>
+        <input type="text" name="optionC[]" placeholder="Option C">
+
+        <label>Option D</label>
+        <input type="text" name="optionD[]" placeholder="Option D">
+
+        <label>Correct Answer</label>
+        <select name="correct_answer[]">
+            <option value="">Choose Answer</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+        </select>
+
+        <button type="button" class="delete-btn" onclick="deleteQuestion(this)">Delete</button>
+    `;
+
+    container.appendChild(div);
+}
+
+function deleteQuestion(button) {
+    button.parentElement.remove();
+}
+
+function updatePreview() {
+    document.getElementById('previewTitle').innerText =
+        document.getElementById('title').value || 'Quiz Title Preview';
+
+    document.getElementById('previewDescription').innerText =
+        document.getElementById('description').value || 'Description preview will appear here';
+
+    document.getElementById('previewCategory').innerText =
+        document.getElementById('category').value;
+
+    document.getElementById('previewDifficulty').innerText =
+        document.getElementById('difficulty').value || '-';
+}
+
+document.getElementById('cover').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+
+    if (file) {
+        document.getElementById('previewImage').src = URL.createObjectURL(file);
+    }
+});
+</script>
+
 </body>
 </html>
