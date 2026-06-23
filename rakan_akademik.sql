@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 20, 2026 at 10:17 AM
+-- Generation Time: Jun 23, 2026 at 01:06 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -79,9 +79,23 @@ CREATE TABLE `quiz` (
   `difficulty` varchar(50) DEFAULT NULL,
   `cover` varchar(255) DEFAULT NULL,
   `time_limit` int(11) DEFAULT NULL,
-  `attempts` int(11) DEFAULT NULL,
-  `visibility` varchar(20) NOT NULL,
-  `show_results` varchar(50) NOT NULL
+  `attempts` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `quiz_attempts`
+--
+
+CREATE TABLE `quiz_attempts` (
+  `attemptID` int(11) NOT NULL,
+  `quizID` varchar(20) NOT NULL,
+  `userID` varchar(20) NOT NULL,
+  `score` int(11) NOT NULL,
+  `total_question` int(11) NOT NULL,
+  `user_answer` text NOT NULL,
+  `attempt_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -132,7 +146,8 @@ CREATE TABLE `student` (
 
 INSERT INTO `student` (`matricNoStudent`, `userID`, `course`) VALUES
 ('B032410001', 'U001', 'BITP'),
-('d011', 'd011', 'sc');
+('d011', 'd011', 'sc'),
+('D032410021', 'D032410021', 'Diploma in Science Computer');
 
 -- --------------------------------------------------------
 
@@ -203,8 +218,9 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`userId`, `name`, `email`, `mobile_phone`, `gender`, `password`, `status`, `role`) VALUES
-('d011', 'sofea', 'aisya@gmail.com', '011', 'Female', '$2y$10$J02DKpbisCXpFJ4tdi8DrudUJmJBBz6O4ExpKuAfyOfhldoOAyeLu', 'Active', 'Student'),
+('d011', 'sofea', 'aisya@gmail.com', '011', 'Female', '111', 'Active', 'Student'),
 ('d0112', 'sofea', 'sofea@gmail.com', '011', 'Female', '$2y$10$88BQsIt8Q3ugxVe./il2..JBSD8MZme2A1/OHWG4J2ycfGJRifqGC', 'Active', 'Tutor'),
+('D032410021', 'alya', 'batrisyiaalya13@gmail.com', '01153110996', 'Female', '$2y$10$jN15oCfbB899QoUZn9xkNOYqibLmFn1DWeOwxO40pYblDU.9MeKQq', 'Active', 'Student'),
 ('U001', 'Aisya', 'aisya@gmail.com', '0123456789', 'Female', '123456', 'Active', 'Student'),
 ('U002', 'Ahmad ', 'ahmad@gmail.com', '01111111111', 'Male', '123456', 'Active', 'Tutor');
 
@@ -241,6 +257,14 @@ ALTER TABLE `payment`
 ALTER TABLE `quiz`
   ADD PRIMARY KEY (`quizID`),
   ADD KEY `matricNoTutor` (`matricNoTutor`);
+
+--
+-- Indexes for table `quiz_attempts`
+--
+ALTER TABLE `quiz_attempts`
+  ADD PRIMARY KEY (`attemptID`),
+  ADD KEY `quizID` (`quizID`),
+  ADD KEY `userID` (`userID`);
 
 --
 -- Indexes for table `quiz_question`
@@ -289,10 +313,16 @@ ALTER TABLE `user`
 --
 
 --
+-- AUTO_INCREMENT for table `quiz_attempts`
+--
+ALTER TABLE `quiz_attempts`
+  MODIFY `attemptID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT for table `quiz_question`
 --
 ALTER TABLE `quiz_question`
-  MODIFY `questionID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `questionID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- Constraints for dumped tables
@@ -322,6 +352,13 @@ ALTER TABLE `payment`
 --
 ALTER TABLE `quiz`
   ADD CONSTRAINT `quiz_ibfk_1` FOREIGN KEY (`matricNoTutor`) REFERENCES `tutor` (`matricNoTutor`);
+
+--
+-- Constraints for table `quiz_attempts`
+--
+ALTER TABLE `quiz_attempts`
+  ADD CONSTRAINT `quiz_attempts_ibfk_1` FOREIGN KEY (`quizID`) REFERENCES `quiz` (`quizID`),
+  ADD CONSTRAINT `quiz_attempts_ibfk_2` FOREIGN KEY (`userID`) REFERENCES `user` (`userId`);
 
 --
 -- Constraints for table `quiz_question`
