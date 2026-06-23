@@ -1,39 +1,49 @@
 <?php
+
 include("db_connect.php");
 
-if(isset($_POST['btnReset']))
+if(isset($_POST["btnReset"]))
 {
-    $userId = $_POST['txtUserId'];
-    $newPassword = $_POST['txtPassword'];
-    $confirmPassword = $_POST['txtConfirmPassword'];
+    $userId = $_POST["txtUserId"];
+    $email = $_POST["txtEmail"];
+    $password = $_POST["txtPassword"];
+    $confirmPassword = $_POST["txtConfirmPassword"];
 
-    if($newPassword != $confirmPassword)
+    if($password != $confirmPassword)
     {
         echo "
         <script>
-        alert('Password does not match');
+        alert('Password does not match!');
         </script>
         ";
     }
     else
     {
-        $sql = "SELECT * FROM user WHERE userId='$userId'";
-        $result = mysqli_query($conn,$sql);
+        $checkUser = mysqli_query(
+            $conn,
+            "SELECT * FROM user
+             WHERE userId='$userId'
+             AND email='$email'"
+        );
 
-        if(mysqli_num_rows($result) > 0)
+        if(mysqli_num_rows($checkUser) > 0)
         {
-            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+            $hashedPassword = password_hash(
+                $password,
+                PASSWORD_DEFAULT
+            );
 
-            $update = "UPDATE user
-                       SET password='$hashedPassword'
-                       WHERE userId='$userId'";
-
-            mysqli_query($conn,$update);
+            mysqli_query(
+                $conn,
+                "UPDATE user
+                 SET password='$hashedPassword'
+                 WHERE userId='$userId'"
+            );
 
             echo "
             <script>
             alert('Password Successfully Reset');
-            window.location.href='login.php';
+            window.location='login.php';
             </script>
             ";
         }
@@ -41,68 +51,74 @@ if(isset($_POST['btnReset']))
         {
             echo "
             <script>
-            alert('User ID Not Found');
+            alert('Invalid User ID or Email');
             </script>
             ";
         }
     }
 }
+
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
+
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+
 <title>Forgot Password</title>
 
 <style>
 
 body{
-    font-family:Segoe UI;
-    background:#f5f7fa;
+    font-family:Segoe UI,sans-serif;
+    background:#EEF3FA;
 }
 
-.container{
-    width:400px;
+.resetBox{
+    width:420px;
     background:white;
     padding:30px;
     margin:80px auto;
-    border-radius:10px;
+    border-radius:8px;
     box-shadow:0 0 10px rgba(0,0,0,0.1);
 }
 
 h2{
     text-align:center;
-    margin-bottom:25px;
+    margin-bottom:20px;
 }
 
-.inputBox{
+.textBox{
     width:100%;
-    padding:12px;
+    padding:10px;
     margin-bottom:15px;
     border:1px solid #ccc;
-    border-radius:5px;
+    border-radius:4px;
 }
 
-.resetBtn{
+.resetButton{
     width:100%;
     padding:12px;
     border:none;
-    background:#6CB6E9;
+    background:#2748A5;
     color:white;
     cursor:pointer;
-    border-radius:5px;
 }
 
-.resetBtn:hover{
-    background:#54A8E2;
+.resetButton:hover{
+    background:#1d3987;
 }
 
-.backBtn{
-    display:block;
+.backLogin{
     text-align:center;
     margin-top:15px;
+}
+
+.backLogin a{
     text-decoration:none;
+    color:#2748A5;
 }
 
 </style>
@@ -111,44 +127,55 @@ h2{
 
 <body>
 
-<div class="container">
+<div class="resetBox">
 
     <h2>Reset Password</h2>
 
     <form method="POST">
 
         <input
-        type="text"
-        name="txtUserId"
-        class="inputBox"
-        placeholder="Enter Student ID"
-        required>
+            type="text"
+            name="txtUserId"
+            class="textBox"
+            placeholder="User ID"
+            required>
 
         <input
-        type="password"
-        name="txtPassword"
-        class="inputBox"
-        placeholder="New Password"
-        required>
+            type="email"
+            name="txtEmail"
+            class="textBox"
+            placeholder="Registered Email"
+            required>
 
         <input
-        type="password"
-        name="txtConfirmPassword"
-        class="inputBox"
-        placeholder="Confirm Password"
-        required>
+            type="password"
+            name="txtPassword"
+            class="textBox"
+            placeholder="New Password"
+            required>
 
         <input
-        type="submit"
-        name="btnReset"
-        value="Reset Password"
-        class="resetBtn">
+            type="password"
+            name="txtConfirmPassword"
+            class="textBox"
+            placeholder="Confirm Password"
+            required>
+
+        <input
+            type="submit"
+            name="btnReset"
+            value="Reset Password"
+            class="resetButton">
 
     </form>
 
-    <a href="login.php" class="backBtn">
-        Back To Login
-    </a>
+    <div class="backLogin">
+
+        <a href="login.php">
+            Back To Login
+        </a>
+
+    </div>
 
 </div>
 
