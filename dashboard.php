@@ -32,26 +32,6 @@
             padding:15px 30px;
         }
 
-        .search-box{
-            width:40%;
-            position:relative;
-        }
-
-        .search-box input{
-            width:100%;
-            padding:10px 40px 10px 15px;
-            border:none;
-            border-radius:30px;
-        }
-
-        .search-box i{
-            position:absolute;
-            right:15px;
-            top:50%;
-            transform:translateY(-50%);
-            color:gray;
-        }
-
         .icons i{
             font-size:24px;
             margin-left:20px;
@@ -117,14 +97,7 @@
         <img src="images/logoFtmk.png" alt="FTMK Logo">
     </div>
 
-    <div class="search-box">
-        <input type="text" placeholder="Search">
-        <i class="fas fa-search"></i>
-    </div>
-
     <div class="icons">
-        <i class="far fa-bookmark"></i>
-        <i class="far fa-bell"></i>
         <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
     </div>
 </header>
