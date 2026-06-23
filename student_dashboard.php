@@ -155,7 +155,7 @@ function openPage(page){
 
     switch(page){
         case "module":
-            window.location.href="module.php";
+            window.location.href="";
             break;
 
         case "quiz":
@@ -163,11 +163,11 @@ function openPage(page){
             break;
 
         case "timetable":
-            window.location.href="booking.php";
+            window.location.href="";
             break;
 
         case "mentor":
-            window.location.href="rakan_page.php";
+            window.location.href="";
             break;
 
         default:
