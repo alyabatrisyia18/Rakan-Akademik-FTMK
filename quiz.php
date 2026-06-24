@@ -96,9 +96,8 @@ if (isset($_POST['publish'])) {
 <html>
 <head>
     <title>Create New Quiz</title>
-
-    <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style2.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
         * {
@@ -294,6 +293,10 @@ if (isset($_POST['publish'])) {
         <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
     </div>
 </header>
+
+<div class="menu-bar">
+    <a href="progress.php" class="active-menu">Progress Tracker</a>
+</div>
 
 <div class="main-container">
     <div class="form-area">

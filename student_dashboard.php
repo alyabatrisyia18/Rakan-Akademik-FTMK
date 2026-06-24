@@ -154,7 +154,7 @@
 function openPage(page){
 
     switch(page){
-        case "module":
+        case "learning module":
             window.location.href="";
             break;
 
@@ -166,7 +166,7 @@ function openPage(page){
             window.location.href="";
             break;
 
-        case "mentor":
+        case "tutor profile":
             window.location.href="";
             break;
 
