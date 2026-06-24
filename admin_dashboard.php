@@ -35,26 +35,6 @@
             padding:15px 30px;
         }
 
-        .search-box{
-            width:40%;
-            position:relative;
-        }
-
-        .search-box input{
-            width:100%;
-            padding:10px 40px 10px 15px;
-            border:none;
-            border-radius:30px;
-        }
-
-        .search-box i{
-            position:absolute;
-            right:15px;
-            top:50%;
-            transform:translateY(-50%);
-            color:gray;
-        }
-
         .icons i{
             font-size:24px;
             margin-left:20px;
@@ -125,13 +105,7 @@
         <img src="images/logoFtmk.png" alt="FTMK Logo">
     </div>
 
-    <div class="search-box">
-        <input type="text" placeholder="Search">
-        <i class="fas fa-search"></i>
-    </div>
-
     <div class="icons">
-        <i class="far fa-bell"></i>
         <i class="far fa-user-circle"></i>
     </div>
 
@@ -145,17 +119,17 @@
 
     <div class="card">
         <img src="images/manageuser.jpg" alt="">
-        <h2>Manage Users</h2>
+        <h2>User List</h2>
     </div>
 
     <div class="card">
         <img src="images/application.jpg" alt="">
-        <h2>Tutor Applications</h2>
+        <h2>Tutor Approvals</h2>
     </div>
 
     <div class="card">
         <img src="images/managetutor.jpg" alt="">
-        <h2>Manage Tutors</h2>
+        <h2>Payment Approvals</h2>
     </div>
 
     <div class="card">
