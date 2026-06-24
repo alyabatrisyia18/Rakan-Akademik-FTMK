@@ -79,7 +79,7 @@ else if($cgpa < 3.50 || $cgpa > 4.00)
                 '$phone',
                 '$gender',
                 '$hashedPassword',
-                'Active',
+                'Pending',
                 'Tutor'
             )";
 
@@ -104,7 +104,7 @@ else if($cgpa < 3.50 || $cgpa > 4.00)
                 mysqli_query($conn, $sqlTutor);
 
                 echo "<script>
-                        alert('Rakan Akademik Registration Successful');
+                        alert('Registration successful! Please wait for admin approval.');
                         window.location='login.php';
                       </script>";
             }
