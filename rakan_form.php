@@ -253,7 +253,7 @@ enctype="multipart/form-data">
 
 <?php
 
-$image = "images/default.png";
+$image = "images/puterisarah.jpg";
 
 if(!empty($data['photo']))
 {
