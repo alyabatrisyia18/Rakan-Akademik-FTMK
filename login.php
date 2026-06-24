@@ -29,18 +29,12 @@ if(isset($_POST["btnLogin"]))
             $row = mysqli_fetch_assoc($result);
 
             if(password_verify($password, $row['password']))
-{
-    $_SESSION['matric'] = $row['userId'];
-    $_SESSION['name'] = $row['name'];
-    $_SESSION['role'] = $row['role'];
-
-    echo "
-    <script>
-        alert('Login Successful');
-        window.location.href='dashboard.php';
-    </script>
-    ";
-}
+                {
+                   $_SESSION['matric'] = $row['userId'];
+                   $_SESSION['name'] = $row['name'];
+                   $_SESSION['role'] = $row['role'];
+                   header("Location: choose_role.php"); exit();
+                }
 
         }
         else
