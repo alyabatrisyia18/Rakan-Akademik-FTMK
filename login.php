@@ -27,25 +27,30 @@ if(isset($_POST["btnLogin"]))
         if(mysqli_num_rows($result) > 0)
         {
             $row = mysqli_fetch_assoc($result);
-
-            if(password_verify($password, $row['password']))
-                {
-                   $_SESSION['matric'] = $row['userId'];
-                   $_SESSION['name'] = $row['name'];
-                   $_SESSION['role'] = $row['role'];
-                   header("Location: choose_role.php"); exit();
+            
+            if(password_verify($password, $row['password'])){
+                $_SESSION['matric'] = $row['userId'];
+                $_SESSION['name'] = $row['name'];
+                $_SESSION['role'] = $row['role'];
+                
+                if($row['role'] == "Tutor"){
+                     header("Location: choose_role.php");
+                     exit();
                 }
-
+                else
+                {
+                    header("Location: dashboard.php");
+                    exit();
+                }
+            }
+            else{
+                echo "<script> alert('Wrong Password'); </script> ";
+            }
         }
         else
         {
-            echo "
-            <script>
-                alert('User Not Found');
-            </script>
-            ";
-        }
-        
+            echo "<script> alert('User Not Found'); </script>";
+        }    
     }
 }
 
