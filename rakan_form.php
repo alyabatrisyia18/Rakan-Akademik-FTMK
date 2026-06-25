@@ -1,5 +1,9 @@
 <?php
 session_start();
+echo "Matric: " . $_SESSION['matric'];
+echo "<br>";
+echo "Role: " . $_SESSION['role'];
+exit();
 
 if(!isset($_SESSION['matric']))
 {
