@@ -60,7 +60,8 @@ if(isset($_POST['btnSubmit']))
             "images/profile/".$photoName
         );
     }
-
+    echo "Matric Session = ".$matric;
+exit();
     $check =
     mysqli_query($conn,
     "SELECT * FROM rakan_profile
