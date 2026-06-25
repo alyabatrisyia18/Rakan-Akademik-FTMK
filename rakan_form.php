@@ -1,6 +1,5 @@
 <?php
 session_start();
-include("db_connect.php");
 
 if(!isset($_SESSION['matric']))
 {
@@ -13,6 +12,8 @@ if($_SESSION['role'] != "Tutor")
     header("Location: dashboard.php");
     exit();
 }
+
+include("db_connect.php");
 
 $matric = $_SESSION['matric'];
 
