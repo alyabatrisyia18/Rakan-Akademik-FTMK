@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-/*
 if(!isset($_SESSION['matric']))
 {
     header("Location: login.php");
@@ -13,7 +12,7 @@ if($_SESSION['role'] != "Tutor")
     header("Location: dashboard.php");
     exit();
 }
-*/
+
 include("db_connect.php");
 
 $matric = $_SESSION['matric'];
@@ -60,8 +59,7 @@ if(isset($_POST['btnSubmit']))
             "images/profile/".$photoName
         );
     }
-    echo "Matric Session = ".$matric;
-exit();
+
     $check =
     mysqli_query($conn,
     "SELECT * FROM rakan_profile
@@ -165,20 +163,34 @@ exit();
 <style>
 
 body{
-    font-family:Arial;
-    background:#f4f6f9;
+    font-family: Arial;
+    margin: 0;
+    padding: 0;
+    background-image: url('images/edubackground.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 .container{
-    width:1000px;
-    margin:auto;
-    margin-top:30px;
+    width: 1000px;
+    margin: auto;
+    margin-top: 30px;
+    background: rgba(255, 255, 255, 0.85);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    backdrop-filter: blur(5px);
 }
 
 .title{
-    text-align:center;
-    color:#2748A5;
-    margin-bottom:30px;
+    text-align: center;
+    color: #1f3c88;
+    margin-bottom: 25px;
+    font-size: 28px;
+    font-weight: bold;
+    letter-spacing: 1px;
 }
 
 .form-box{
@@ -188,10 +200,11 @@ body{
 
 .left,
 .right{
-    flex:1;
-    background:#dcecf8;
-    padding:25px;
-    border-radius:10px;
+    flex: 1;
+    background: rgba(220, 236, 248, 0.7);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 label{
@@ -204,9 +217,19 @@ input[type=text],
 input[type=email],
 input[type=number],
 textarea{
-    width:100%;
-    padding:8px;
-    margin-top:5px;
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+    transition: 0.3s;
+}
+
+input:focus,
+textarea:focus{
+    border-color: #3fa9f5;
+    box-shadow: 0 0 5px rgba(63,169,245,0.5);
 }
 
 textarea{
@@ -231,16 +254,20 @@ textarea{
 }
 
 button{
-    padding:10px 25px;
-    border:none;
-    background:#3fa9f5;
-    color:white;
-    cursor:pointer;
-    margin:5px;
+    padding: 10px 25px;
+    border: none;
+    border-radius: 8px;
+    background: #3fa9f5;
+    color: white;
+    cursor: pointer;
+    margin: 5px;
+    transition: 0.3s;
+    font-weight: bold;
 }
 
 button:hover{
-    background:#1b8ce3;
+    background: #1b8ce3;
+    transform: translateY(-2px);
 }
 
 </style>
