@@ -1,10 +1,7 @@
 <?php
 session_start();
-echo "Matric: " . $_SESSION['matric'];
-echo "<br>";
-echo "Role: " . $_SESSION['role'];
-exit();
 
+/*
 if(!isset($_SESSION['matric']))
 {
     header("Location: login.php");
@@ -16,7 +13,7 @@ if($_SESSION['role'] != "Tutor")
     header("Location: dashboard.php");
     exit();
 }
-
+*/
 include("db_connect.php");
 
 $matric = $_SESSION['matric'];
