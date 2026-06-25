@@ -1,3 +1,11 @@
+<?php
+session_start();
+include("db_connect.php");
+
+$sql = mysqli_query($conn,
+"SELECT * FROM rakan_profile ORDER BY name ASC");
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -42,33 +50,35 @@
             Kindly, please choose Rakan Akademik
         </div>
 
-        <div class="student-card">
-            <i class="fa-regular fa-user"></i>
-            <div class="student-name">
-                Noor Aisya Sofea Bt Ahmad Jamal
-            </div>
-        </div>
+        <?php
+        
+        if(mysqli_num_rows($sql) > 0){
 
-        <div class="student-card">
-            <i class="fa-regular fa-user"></i>
-            <div class="student-name">
-                Ali Bin Umair
-            </div>
-        </div>
+            while($row = mysqli_fetch_assoc($sql))
 
-        <div class="student-card">
+        {
+        ?>
+        
+        <a href="student_viewrakan.php?id=
+        
+        <?php echo $row['profileID']; ?>" class="student-card">
             <i class="fa-regular fa-user"></i>
-            <div class="student-name">
-                Harraz Bin Husin
-            </div>
-        </div>
-
-        <a href="student_viewrakan.php" class="student-card">
-            <i class="fa-regular fa-user"></i>
-            <div class="student-name">
-                Puteri Sarah Bt Yusof
-            </div>
+            
+            <div class="student-name"> <?php echo $row['name']; ?> </div>
         </a>
+        <?php
+        }
+        }
+        else{
+        ?>
+        
+        <div class="student-card"> No Rakan Akademik Available </div>
+        
+        <?php
+        
+        }
+        
+        ?>
     </div>
 </body>
 </html>
