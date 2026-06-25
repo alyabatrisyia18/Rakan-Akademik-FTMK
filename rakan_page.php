@@ -29,7 +29,7 @@
     </div>
 
     <div class="home-btn">
-        <i class="fas fa-home" onclick="location.href='dashboard.php'" title="Dashboard"></i>
+        <i class="fas fa-home" onclick="location.href='student_dashboard.php'" title="Student Dashboard"></i>
         Home
     </div>
 
