@@ -34,26 +34,6 @@
             padding:15px 30px;
         }
 
-        .search-box{
-            width:40%;
-            position:relative;
-        }
-
-        .search-box input{
-            width:100%;
-            padding:10px 40px 10px 15px;
-            border:none;
-            border-radius:30px;
-        }
-
-        .search-box i{
-            position:absolute;
-            right:15px;
-            top:50%;
-            transform:translateY(-50%);
-            color:gray;
-        }
-
         .icons i{
             font-size:24px;
             margin-left:20px;
@@ -72,8 +52,7 @@
 
         .learning{
             background:white;
-            width:90%;
-            margin:20px auto 30px auto;
+            flex:1;
             padding:25px;
             text-align:center;
             border:1px solid #ccc;
@@ -84,38 +63,57 @@
             font-size:32px;
         }
 
-        .module-container{
+        .learning-wrapper{
             width:90%;
-            margin:auto;
+            margin:20px auto 30px auto;
+            display:flex;
+            align-items:center;
+            gap:20px;
+        }
+
+        .back-btn{
+            cursor:pointer;
+            font-size:28px;
+        }
+
+        .back-btn:hover{
+            transform:scale(1.1);
+            transition:0.2s;
+        }
+
+        .module-container{
+            width:100%;
+            min-height:70vh;
             display:flex;
             justify-content:center;
-            gap:40px;
-            align-items:flex-start;
+            align-items:center;
         }
 
-        .continue-section,
-        .progress-section{
-            flex:1;
+        .continue-section {
+            display:flex;
+            flex-direction:column;
+            align-items:center;
         }
 
-        .continue-section h2,
-        .progress-section h2{
+        .continue-section h2 {
             margin-bottom:15px;
         }
 
         .continue-card{
             background:white;
             border:1px solid #ccc;
-            padding:20px;
-            width:700px;
-            min-height:400px;
+            padding:30px;
+            width:900px;
+            max-width:90%;
+            height:550px;
             text-align:center;
             box-shadow:0 2px 8px rgba(0,0,0,0.1);
+            margin:0 auto; 
         }
 
         .continue-card img{
             width:100%;
-            height:280px;
+            height:400px;
             object-fit:cover;
         }
 
@@ -132,15 +130,6 @@
         .btn-continue:hover{
             background:#1f3f98;
             color:white;
-        }
-
-        .progress-card{
-            background:white;
-            border:1px solid #ccc;
-            width:700px;
-            height:400px; 
-            padding:20px;
-            box-shadow:0 2px 8px rgba(0,0,0,0.1);
         }
 
         .recommended{
@@ -203,21 +192,20 @@
         <img src="images/logoFtmk.png" alt="FTMK Logo">
     </div>
 
-    <div class="search-box">
-        <input type="text" placeholder="Search">
-        <i class="fas fa-search"></i>
-    </div>
-
     <div class="icons">
-        <i class="far fa-bookmark"></i>
-        <i class="far fa-bell"></i>
         <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
     </div>
-</header>
+    </header>
 
-<section class="learning">
-    <h1>LEARNING MODULE</h1>
-</section>
+<div class="learning-wrapper">
+    <h2 class="back-btn" onclick="location.href='dashboard.php'">
+        <i class="fas fa-arrow-left"></i>
+    </h2>
+
+    <section class="learning">
+        <h1>LEARNING MODULE</h1>
+    </section>
+</div>
 
 <div class="module-container">
 
@@ -230,42 +218,6 @@
                 Continue
             </a>
         </div>
-    </div>
-
-    <div class="progress-section">
-        <h2>Learning Progress</h2>
-
-        <div class="progress-card">
-            <h4>Recommended Subjects</h4>
-
-             <div class="subject-box">
-                <img src="images/programming.jpg">
-
-                <div class="subject-info">
-                    <h3>Programming</h3>
-                    <p>Array</p>
-                </div>
-
-                <a href="subject_progress.php">
-                    <i class="fas fa-chevron-right"></i>
-                </a>
-
-            </div>
-
-            <div class="subject-box">
-                <img src="images/dsa.jpg">
-
-                <div class="subject-info">
-                    <h3>DSA</h3>
-                    <p>Hashing</p>
-                </div>
-
-                <a href="subject_progress.php">
-                    <i class="fas fa-chevron-right"></i>
-                </a>
-            </div>
-        </div>
-
     </div>
 
 </div>
