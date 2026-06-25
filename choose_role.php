@@ -80,11 +80,11 @@ if(!isset($_SESSION['matric']))
 
         <h3>Choose Dashboard</h3>
 
-        <a href="dashboard.php" class="btn">
+        <a href="student_dashboard.php" class="btn">
             Student Dashboard
         </a>
 
-        <a href="rakan_dashboard.php" class="btn">
+        <a href="dashboard.php" class="btn">
             Rakan Akademik Dashboard
         </a>
 
