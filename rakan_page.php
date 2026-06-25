@@ -24,11 +24,6 @@ $sql = mysqli_query($conn,
             <img src="images/logoFtmk.png">
         </div>
 
-        <div class="search-box">
-            <input type="text" placeholder="Search">
-            <i class="fa-solid fa-magnifying-glass"></i>
-
-        </div>
         <div class="icon-section">
             <div class="profile-icon">
                 <i class="fa-regular fa-user"></i>
