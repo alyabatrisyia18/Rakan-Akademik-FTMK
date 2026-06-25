@@ -41,6 +41,31 @@
             cursor:pointer;
         }
 
+        .icons{
+            display:flex;
+            align-items:center;
+        }
+
+        .logout-btn{
+            background:#ff4d4f;
+            color:white;
+            border:none;
+            border-radius:30px;
+            padding:10px 20px;
+            font-size:15px;
+            font-weight:600;
+            display:flex;
+            align-items:center;
+            gap:8px;
+            cursor:pointer;
+            transition:0.3s;
+        }
+
+        .logout-btn:hover{
+            background:#d9363e;
+            transform:translateY(-2px);
+        }
+
         .logo img{
             height:60px;
             width:auto;
@@ -91,6 +116,8 @@
             color:#1f3f98;
         }
 
+        
+
     </style>
 
 </head>
@@ -106,7 +133,10 @@
     </div>
 
     <div class="icons">
-        <i class="far fa-user-circle"></i>
+    <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-right-from-bracket"></i>
+        Logout
+    </button>
     </div>
 
 </header>
