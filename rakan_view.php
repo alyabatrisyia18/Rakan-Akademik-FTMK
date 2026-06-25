@@ -50,94 +50,104 @@ if(!empty($data['photo']))
 <title>Rakan Akademik</title>
 
 <style>
-
+    
 body{
     margin:0;
-    font-family:Arial, sans-serif;
-    background:#f5f5f5;
+    font-family: Arial, sans-serif;
+    background-image: url('images/edubackground.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 .container{
-    width:1100px;
-    margin:auto;
-    padding-top:30px;
+    width: 1100px;
+    margin: 30px auto;
+    padding: 30px;
+    background: rgba(255,255,255,0.85);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    backdrop-filter: blur(5px);
 }
 
 .back-btn{
-    text-decoration:none;
-    font-size:30px;
-    color:black;
+    text-decoration: none;
+    font-size: 26px;
+    color: #1f3c88;
+    font-weight: bold;
 }
 
 .title{
-    text-align:center;
-    color:#2748A5;
-    font-size:50px;
-    font-weight:bold;
-    margin-bottom:30px;
+    text-align: center;
+    color: #1f3c88;
+    font-size: 42px;
+    font-weight: bold;
+    margin-bottom: 30px;
 }
 
 .content{
-    display:flex;
-    gap:25px;
-    align-items:flex-start;
+    display: flex;
+    gap: 25px;
+    align-items: flex-start;
+}
+
+/* responsive flex improvement */
+.left-box,
+.right-box{
+    flex: 1;
+    background: rgba(220,236,248,0.7);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 .photo-section{
-    width:180px;
-    text-align:center;
+    width: 180px;
+    text-align: center;
 }
 
 .photo-section img{
-    width:140px;
-    height:140px;
-    border-radius:50%;
-    object-fit:cover;
-}
-
-.left-box,
-.right-box{
-    background:#DCECF8;
-    padding:20px;
-    border-radius:8px;
-}
-
-.left-box{
-    width:450px;
-}
-
-.right-box{
-    width:400px;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #3fa9f5;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
 .section-title{
-    font-weight:bold;
-    margin-top:20px;
-}
-
-.edit-area{
-    text-align:center;
-    margin-top:40px;
-}
-
-.edit-btn{
-    background:#3FA9F5;
-    color:white;
-    border:none;
-    padding:12px 35px;
-    border-radius:5px;
-    cursor:pointer;
-    font-size:16px;
-}
-
-.edit-btn:hover{
-    background:#208be0;
+    font-weight: bold;
+    margin-top: 20px;
+    color: #1f3c88;
 }
 
 p{
-    line-height:1.6;
+    line-height: 1.6;
+    font-size: 15px;
 }
 
+.edit-area{
+    text-align: center;
+    margin-top: 40px;
+}
+
+.edit-btn{
+    background: #3fa9f5;
+    color: white;
+    border: none;
+    padding: 12px 35px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.edit-btn:hover{
+    background: #1b8ce3;
+    transform: translateY(-2px);
+}
 </style>
 
 </head>
