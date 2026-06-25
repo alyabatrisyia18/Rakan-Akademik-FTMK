@@ -17,24 +17,31 @@ $sql = mysqli_query($conn,
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body>
-    <div class="navbar-custom">
-        <div class="logo-section">
-            <img src="images/logoRakan.png">
-            <img src="images/logoUtem.png">
-            <img src="images/logoFtmk.png">
+<body>
+<div class="navbar-custom">
+
+    <div class="logo-section">
+        <img src="images/logoRakan.png">
+        <img src="images/logoUtem.png">
+        <img src="images/logoFtmk.png">
+    </div>
+
+    <div class="icon-section">
+
+        <div class="home-btn"
+             onclick="location.href='student_dashboard.php'">
+            <i class="fas fa-home"></i>
         </div>
 
-        <div class="icon-section">
+        <a href="profile.php" class="profile-link">
             <div class="profile-icon">
                 <i class="fa-regular fa-user"></i>
             </div>
-        </div>
+        </a>
+
     </div>
 
-    <div class="home-btn">
-        <i class="fas fa-home" onclick="location.href='student_dashboard.php'" title="Student Dashboard"></i>
-        Home
-    </div>
+</div>
 
     <div class="main-panel">
         <div class="title">
