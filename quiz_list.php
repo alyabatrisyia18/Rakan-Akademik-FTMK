@@ -170,18 +170,15 @@ $result = mysqli_stmt_get_result($stmt);
         <img src="images/logoFtmk.png" alt="FTMK Logo">
     </div>
 
-    <div class="search-box">
-        <input type="text" placeholder="Search">
-        <i class="fas fa-search"></i>
-    </div>
-
     <div class="icons">
-        <i class="fas fa-arrow-left" onclick="location.href='category.php'"></i>
-        <i class="far fa-bookmark"></i>
-        <i class="far fa-bell"></i>
         <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
     </div>
 </header>
+
+<div class="learning-wrapper">
+    <h2 class="back-btn" onclick="location.href='category.php'">
+        <i class="fas fa-arrow-left"></i>
+    </h2>
 
 <div class="container">
     <?php if (mysqli_num_rows($result) > 0) { ?>

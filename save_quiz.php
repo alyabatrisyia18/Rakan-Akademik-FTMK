@@ -21,7 +21,6 @@ $time_limit = $_POST['time_limit'];
 $attempts = $_POST['attempts'];
 $visibility = $_POST['visibility'];
 $show_results = $_POST['show_results'];
-
 $cover = "";
 
 if(isset($_FILES['cover']) && $_FILES['cover']['name'] != ""){
