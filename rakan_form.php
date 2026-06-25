@@ -161,7 +161,6 @@ if(isset($_POST['btnSubmit']))
 <title>Rakan Akademik Form</title>
 
 <style>
-
 body{
     font-family: Arial;
     margin: 0;
@@ -175,8 +174,7 @@ body{
 
 .container{
     width: 1000px;
-    margin: auto;
-    margin-top: 30px;
+    margin: 30px auto;
     background: rgba(255, 255, 255, 0.85);
     padding: 30px;
     border-radius: 15px;
@@ -190,7 +188,6 @@ body{
     margin-bottom: 25px;
     font-size: 28px;
     font-weight: bold;
-    letter-spacing: 1px;
 }
 
 .form-box{
@@ -204,7 +201,6 @@ body{
     background: rgba(220, 236, 248, 0.7);
     padding: 25px;
     border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 label{
@@ -223,17 +219,12 @@ textarea{
     border: 1px solid #ccc;
     border-radius: 8px;
     outline: none;
-    transition: 0.3s;
 }
 
 input:focus,
 textarea:focus{
     border-color: #3fa9f5;
     box-shadow: 0 0 5px rgba(63,169,245,0.5);
-}
-
-textarea{
-    resize:none;
 }
 
 .profile-photo{
@@ -248,11 +239,6 @@ textarea{
     object-fit:cover;
 }
 
-.button-area{
-    text-align:center;
-    margin-top:30px;
-}
-
 button{
     padding: 10px 25px;
     border: none;
@@ -261,13 +247,14 @@ button{
     color: white;
     cursor: pointer;
     margin: 5px;
-    transition: 0.3s;
-    font-weight: bold;
+}
+
+.button-area{
+    text-align: center;
 }
 
 button:hover{
     background: #1b8ce3;
-    transform: translateY(-2px);
 }
 
 </style>
