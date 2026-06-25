@@ -15,53 +15,67 @@ if(!isset($_SESSION['matric']))
 
     <style>
 
-    body{
-        margin:0;
-        font-family:Segoe UI;
-        background:#f4f8ff;
-    }
+body{
+    margin:0;
+    font-family:Segoe UI;
+    background-image: url('images/edubackground.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
 
-    .container{
-        height:100vh;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-    }
+.container{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
 
-    .box{
-        background:white;
-        padding:50px;
-        border-radius:15px;
-        width:450px;
-        text-align:center;
-        box-shadow:0 5px 15px rgba(0,0,0,0.15);
-    }
+.box{
+    background: rgba(255,255,255,0.85);
+    padding:40px;
+    border-radius:15px;
+    width:420px;
+    text-align:center;
+    box-shadow:0 10px 30px rgba(0,0,0,0.2);
+    backdrop-filter: blur(5px);
+}
 
-    h1{
-        color:#2748A5;
-        margin-bottom:10px;
-    }
+h1{
+    color:#1f3c88;
+    margin-bottom:10px;
+    font-size:28px;
+}
 
-    p{
-        color:#666;
-        margin-bottom:30px;
-    }
+h3{
+    color:#1f3c88;
+    margin-bottom:20px;
+}
 
-    .btn{
-        display:block;
-        width:100%;
-        padding:15px;
-        margin-bottom:15px;
-        text-decoration:none;
-        background:#6CB6E9;
-        color:white;
-        border-radius:8px;
-        font-size:16px;
-    }
+.welcome-text{
+    color:#555;
+    margin-bottom:25px;
+}
 
-    .btn:hover{
-        background:#4ea3dd;
-    }
+.btn{
+    display:block;
+    width:100%;
+    padding:14px;
+    margin-bottom:12px;
+    text-decoration:none;
+    background:#3fa9f5;
+    color:white;
+    border-radius:8px;
+    font-size:16px;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+.btn:hover{
+    background:#1b8ce3;
+    transform: translateY(-2px);
+}
 
     </style>
 </head>
