@@ -22,15 +22,8 @@
         <img class="quiz-logo" src="images/quiz.jpg" alt="Quiz Logo">
     </div>
 
-    <div class="search-box">
-        <input type="text" placeholder="Search">
-        <i class="fas fa-search"></i>
-    </div>
-
     <div class="icons">
-        <i class="fas fa-home" onclick="location.href='student_dashboard.php'" title="Dashboard"></i> <!-- kene tukar nnti  -->
-        <i class="far fa-bookmark"></i>
-        <i class="far fa-bell"></i>
+        <i class="fas fa-home" onclick="location.href='student_dashboard.php'" title="Dashboard"></i>
         <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
     </div>
 </header>
