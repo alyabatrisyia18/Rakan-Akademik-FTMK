@@ -254,7 +254,7 @@ function updateTimer() {
     let minutes = Math.floor(timeLeft / 60);
     let seconds = timeLeft % 60;
 
-    timerDisplay.innerHTML = minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+    timerDisplay.innerHTML = minutes + ":" + (seconds < 10 ? "0" : "") + seconds; //untuk paparkan masa (contoh: 5:08)
 
     if (timeLeft <= 0) {
         quizForm.submit();
