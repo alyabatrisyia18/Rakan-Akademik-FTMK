@@ -256,12 +256,109 @@ button{
 button:hover{
     background: #1b8ce3;
 }
+.navbar-custom{
+    background:#1f3f98;
+    height:70px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 25px;
+}
+
+.logo-section{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.logo-section img{
+    height:45px;
+}
+
+.icon-section{
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+
+/* HOME BUTTON (adapted to small navbar version) */
+.home-btn{
+    background:#1f3f98;
+    color:white;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 15px;
+    border-radius:0 0 8px 8px;
+    font-size:13px;
+    cursor:pointer;
+    transition:0.3s;
+    margin-left:25px;
+}
+
+.home-btn:hover{
+    background:#162f73;
+}
+
+.home-btn i{
+    font-size:20px;
+}
+
+/* PROFILE ICON */
+.profile-link{
+    text-decoration:none;
+}
+
+.profile-icon{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    background:#e8dcff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.profile-icon:hover{
+    transform:scale(1.1);
+}
+
+.profile-icon i{
+    color:#5b3c8c;
+}
 
 </style>
 
 </head>
 
 <body>
+    <div class="navbar-custom">
+
+    <div class="logo-section">
+        <img src="images/logoRakan.png">
+        <img src="images/logoUtem.png">
+        <img src="images/logoFtmk.png">
+    </div>
+
+    <div class="icon-section">
+
+<div class="home-btn"
+     onclick="location.href='student_dashboard.php'">
+
+    <i class="fas fa-home"></i>
+</div>
+
+        <a href="profile.php" class="profile-link">
+            <div class="profile-icon">
+                <i class="fa-regular fa-user"></i>
+            </div>
+        </a>
+
+    </div>
+
+</div>
 
 <div class="container">
 
