@@ -8,6 +8,12 @@ if(!isset($_SESSION['matric']))
     exit();
 }
 
+if($_SESSION['role'] != "Tutor")
+{
+    header("Location: dashboard.php");
+    exit();
+}
+
 $matric = $_SESSION['matric'];
 
 $sqlCheck = mysqli_query($conn,
