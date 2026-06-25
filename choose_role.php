@@ -7,141 +7,92 @@ if(!isset($_SESSION['matric']))
     exit();
 }
 
-$role = $_SESSION['role'];
+if($_SESSION['role'] != "Tutor")
+{
+    header("Location: dashboard.php");
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Choose Dashboard</title>
 
-<title>Choose Role</title>
+    <style>
 
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    body{
+        margin:0;
+        font-family:Segoe UI;
+        background:#f4f8ff;
+    }
 
-<style>
+    .container{
+        height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+    }
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Segoe UI,sans-serif;
-}
+    .box{
+        background:white;
+        padding:50px;
+        border-radius:15px;
+        width:450px;
+        text-align:center;
+        box-shadow:0 5px 15px rgba(0,0,0,0.15);
+    }
 
-body{
-    background:rgba(0,0,0,0.4);
-}
+    h1{
+        color:#2748A5;
+        margin-bottom:10px;
+    }
 
-.overlay{
-    position:fixed;
-    width:100%;
-    height:100%;
+    p{
+        color:#666;
+        margin-bottom:30px;
+    }
 
-    display:flex;
-    justify-content:center;
-    align-items:center;
+    .btn{
+        display:block;
+        width:100%;
+        padding:15px;
+        margin-bottom:15px;
+        text-decoration:none;
+        background:#6CB6E9;
+        color:white;
+        border-radius:8px;
+        font-size:16px;
+    }
 
-    background:rgba(0,0,0,0.35);
-}
+    .btn:hover{
+        background:#4ea3dd;
+    }
 
-.modalBox{
-    width:550px;
-    background:white;
-    border-radius:10px;
-    overflow:hidden;
-    box-shadow:0 5px 20px rgba(0,0,0,0.25);
-}
-
-.modalHeader{
-    padding:25px;
-    background:#f8f8f8;
-    font-size:24px;
-    font-weight:bold;
-}
-
-.modalBody{
-    padding:35px;
-}
-
-.roleButton{
-    width:100%;
-    height:80px;
-
-    border:1px solid #dcdcdc;
-    border-radius:10px;
-
-    text-decoration:none;
-    color:black;
-
-    display:flex;
-    align-items:center;
-
-    padding-left:25px;
-
-    font-size:26px;
-
-    margin-bottom:20px;
-
-    transition:0.3s;
-}
-
-.roleButton:hover{
-    background:#f3f9ff;
-    border-color:#6CB6E9;
-}
-
-.roleButton i{
-    margin-right:20px;
-}
-
-.closeBtn{
-    position:absolute;
-    top:30px;
-    right:40px;
-
-    font-size:32px;
-    color:black;
-    text-decoration:none;
-}
-
-</style>
-
+    </style>
 </head>
 
 <body>
 
-<div class="overlay">
+<div class="container">
 
-    <a href="login.php" class="closeBtn">
-        <i class="fa-solid fa-xmark"></i>
-    </a>
+    <div class="box">
 
-    <div class="modalBox">
+        <h1>Welcome</h1>
 
-        <div class="modalHeader">
-            Choose Your Role
-        </div>
+        <p>
+            <?php echo $_SESSION['name']; ?>
+        </p>
 
-        <div class="modalBody">
+        <h3>Choose Dashboard</h3>
 
-            <a href="dashboard.php" class="roleButton">
-                <i class="fa-regular fa-user"></i>
-                As Student
-            </a>
+        <a href="dashboard.php" class="btn">
+            Student Dashboard
+        </a>
 
-            <?php
-            if($role == "Tutor")
-            {
-            ?>
-                <a href="rakan_dashboard.php" class="roleButton">
-                    <i class="fa-regular fa-user"></i>
-                    As Rakan Akademik
-                </a>
-            <?php
-            }
-            ?>
-
-        </div>
+        <a href="rakan_dashboard.php" class="btn">
+            Rakan Akademik Dashboard
+        </a>
 
     </div>
 
