@@ -63,7 +63,7 @@
             </div>
         </div>
 
-        <a href="sarah_profile.php" class="student-card">
+        <a href="student_viewrakan.php" class="student-card">
             <i class="fa-regular fa-user"></i>
             <div class="student-name">
                 Puteri Sarah Bt Yusof
