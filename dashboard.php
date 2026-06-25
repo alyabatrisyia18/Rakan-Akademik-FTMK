@@ -9,7 +9,7 @@ if(!isset($_SESSION['matric']))
 
 if($_SESSION['role'] != "Tutor")
 {
-    header("Location: dashboard.php");
+    header("Location: choose_role.php");
     exit();
 }
 ?>
