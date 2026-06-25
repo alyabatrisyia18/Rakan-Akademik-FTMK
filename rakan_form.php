@@ -93,12 +93,12 @@ if(isset($_POST['btnSubmit']))
             name='$name',
             programme='$programme',
             institution='$institution',
-            current_status='$current_status',
-            academic_background='$academic_background',
-            academic_strengths='$academic_strengths',
+            currentStatus='$current_status',
+            academicBackground='$academic_background',
+            academicStrengths='$academic_strengths',
+            contactNumber='$contact_number',
             cgpa='$cgpa',
             availability='$availability',
-            contact_number='$contact_number',
             email='$email'
 
             WHERE matricNoTutor='$matric'";
@@ -115,12 +115,12 @@ if(isset($_POST['btnSubmit']))
         name,
         programme,
         institution,
-        current_status,
-        academic_background,
-        academic_strengths,
+        currentStatus,
+        academicBackground,
+        academicStrengths,
         cgpa,
         availability,
-        contact_number,
+        contactNumber,
         email
 
         )
