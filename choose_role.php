@@ -6,12 +6,6 @@ if(!isset($_SESSION['matric']))
     header("Location: login.php");
     exit();
 }
-
-if($_SESSION['role'] != "Tutor")
-{
-    header("Location: dashboard.php");
-    exit();
-}
 ?>
 
 <!DOCTYPE html>
