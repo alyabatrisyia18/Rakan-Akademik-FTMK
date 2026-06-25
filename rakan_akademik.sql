@@ -2,8 +2,8 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Jun 23, 2026 at 01:06 PM
+-- Host: 127.0.0.1:3306
+-- Generation Time: Jun 24, 2026 at 03:39 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -73,46 +73,8 @@ CREATE TABLE `payment` (
 CREATE TABLE `quiz` (
   `quizID` varchar(20) NOT NULL COMMENT 'Quiz identifier',
   `matricNoTutor` varchar(20) NOT NULL COMMENT 'Tutor who created quiz',
-  `title` varchar(255) NOT NULL,
-  `description` varchar(100) NOT NULL,
-  `category` varchar(100) DEFAULT NULL,
-  `difficulty` varchar(50) DEFAULT NULL,
-  `cover` varchar(255) DEFAULT NULL,
-  `time_limit` int(11) DEFAULT NULL,
-  `attempts` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `quiz_attempts`
---
-
-CREATE TABLE `quiz_attempts` (
-  `attemptID` int(11) NOT NULL,
-  `quizID` varchar(20) NOT NULL,
-  `userID` varchar(20) NOT NULL,
-  `score` int(11) NOT NULL,
-  `total_question` int(11) NOT NULL,
-  `user_answer` text NOT NULL,
-  `attempt_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `quiz_question`
---
-
-CREATE TABLE `quiz_question` (
-  `questionID` int(11) NOT NULL,
-  `quizID` varchar(20) NOT NULL,
-  `question` text NOT NULL,
-  `optionA` varchar(255) NOT NULL,
-  `optionB` varchar(255) NOT NULL,
-  `optionC` varchar(255) NOT NULL,
-  `optionD` varchar(255) NOT NULL,
-  `correct_answer` varchar(10) NOT NULL
+  `question` varchar(255) NOT NULL COMMENT 'Quiz creation',
+  `answer` varchar(255) NOT NULL COMMENT 'Correct answer'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -126,6 +88,28 @@ CREATE TABLE `quiz_result` (
   `matricNoStudent` varchar(20) NOT NULL COMMENT 'Student taking quiz',
   `quizID` varchar(20) NOT NULL COMMENT 'Reference to quiz',
   `score` int(3) NOT NULL COMMENT 'Quiz score'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `rakan_profile`
+--
+
+CREATE TABLE `rakan_profile` (
+  `profileID` int(11) NOT NULL,
+  `matricNoTutor` varchar(20) NOT NULL,
+  `photo` varchar(255) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `programme` varchar(100) NOT NULL,
+  `institution` varchar(255) NOT NULL,
+  `currentStatus` varchar(100) NOT NULL,
+  `academicBackground` text NOT NULL,
+  `academicStrengths` text NOT NULL,
+  `cgpa` decimal(3,2) NOT NULL,
+  `availability` varchar(100) NOT NULL,
+  `contactNumber` varchar(20) NOT NULL,
+  `email` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -146,8 +130,7 @@ CREATE TABLE `student` (
 
 INSERT INTO `student` (`matricNoStudent`, `userID`, `course`) VALUES
 ('B032410001', 'U001', 'BITP'),
-('d011', 'd011', 'sc'),
-('D032410021', 'D032410021', 'Diploma in Science Computer');
+('d011', 'd011', 'sc');
 
 -- --------------------------------------------------------
 
@@ -218,9 +201,8 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`userId`, `name`, `email`, `mobile_phone`, `gender`, `password`, `status`, `role`) VALUES
-('d011', 'sofea', 'aisya@gmail.com', '011', 'Female', '111', 'Active', 'Student'),
+('d011', 'sofea', 'aisya@gmail.com', '011', 'Female', '$2y$10$J02DKpbisCXpFJ4tdi8DrudUJmJBBz6O4ExpKuAfyOfhldoOAyeLu', 'Active', 'Student'),
 ('d0112', 'sofea', 'sofea@gmail.com', '011', 'Female', '$2y$10$88BQsIt8Q3ugxVe./il2..JBSD8MZme2A1/OHWG4J2ycfGJRifqGC', 'Active', 'Tutor'),
-('D032410021', 'alya', 'batrisyiaalya13@gmail.com', '01153110996', 'Female', '$2y$10$jN15oCfbB899QoUZn9xkNOYqibLmFn1DWeOwxO40pYblDU.9MeKQq', 'Active', 'Student'),
 ('U001', 'Aisya', 'aisya@gmail.com', '0123456789', 'Female', '123456', 'Active', 'Student'),
 ('U002', 'Ahmad ', 'ahmad@gmail.com', '01111111111', 'Male', '123456', 'Active', 'Tutor');
 
@@ -259,27 +241,19 @@ ALTER TABLE `quiz`
   ADD KEY `matricNoTutor` (`matricNoTutor`);
 
 --
--- Indexes for table `quiz_attempts`
---
-ALTER TABLE `quiz_attempts`
-  ADD PRIMARY KEY (`attemptID`),
-  ADD KEY `quizID` (`quizID`),
-  ADD KEY `userID` (`userID`);
-
---
--- Indexes for table `quiz_question`
---
-ALTER TABLE `quiz_question`
-  ADD PRIMARY KEY (`questionID`),
-  ADD KEY `quizID` (`quizID`);
-
---
 -- Indexes for table `quiz_result`
 --
 ALTER TABLE `quiz_result`
   ADD PRIMARY KEY (`resultID`),
   ADD KEY `matricNoStudent` (`matricNoStudent`,`quizID`),
   ADD KEY `quizID` (`quizID`);
+
+--
+-- Indexes for table `rakan_profile`
+--
+ALTER TABLE `rakan_profile`
+  ADD PRIMARY KEY (`profileID`),
+  ADD KEY `matricNoTutor` (`matricNoTutor`);
 
 --
 -- Indexes for table `student`
@@ -313,16 +287,10 @@ ALTER TABLE `user`
 --
 
 --
--- AUTO_INCREMENT for table `quiz_attempts`
+-- AUTO_INCREMENT for table `rakan_profile`
 --
-ALTER TABLE `quiz_attempts`
-  MODIFY `attemptID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
---
--- AUTO_INCREMENT for table `quiz_question`
---
-ALTER TABLE `quiz_question`
-  MODIFY `questionID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+ALTER TABLE `rakan_profile`
+  MODIFY `profileID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
@@ -354,23 +322,16 @@ ALTER TABLE `quiz`
   ADD CONSTRAINT `quiz_ibfk_1` FOREIGN KEY (`matricNoTutor`) REFERENCES `tutor` (`matricNoTutor`);
 
 --
--- Constraints for table `quiz_attempts`
---
-ALTER TABLE `quiz_attempts`
-  ADD CONSTRAINT `quiz_attempts_ibfk_1` FOREIGN KEY (`quizID`) REFERENCES `quiz` (`quizID`),
-  ADD CONSTRAINT `quiz_attempts_ibfk_2` FOREIGN KEY (`userID`) REFERENCES `user` (`userId`);
-
---
--- Constraints for table `quiz_question`
---
-ALTER TABLE `quiz_question`
-  ADD CONSTRAINT `quiz_question_ibfk_1` FOREIGN KEY (`quizID`) REFERENCES `quiz` (`quizID`);
-
---
 -- Constraints for table `quiz_result`
 --
 ALTER TABLE `quiz_result`
   ADD CONSTRAINT `quiz_result_ibfk_2` FOREIGN KEY (`matricNoStudent`) REFERENCES `student` (`matricNoStudent`);
+
+--
+-- Constraints for table `rakan_profile`
+--
+ALTER TABLE `rakan_profile`
+  ADD CONSTRAINT `rakan_profile_ibfk_1` FOREIGN KEY (`matricNoTutor`) REFERENCES `tutor` (`matricNoTutor`);
 
 --
 -- Constraints for table `teaching record`
@@ -388,3 +349,4 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/* edit */

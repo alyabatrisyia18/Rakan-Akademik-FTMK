@@ -29,19 +29,63 @@ if(isset($_POST["btnLogin"]))
             $row = mysqli_fetch_assoc($result);
 
             if(password_verify($password, $row['password']))
-{
-    $_SESSION['matric'] = $row['userId'];
-    $_SESSION['name'] = $row['name'];
-    $_SESSION['role'] = $row['role'];
+            {
+                if($row["role"] == "Tutor")
+                {
+                    if($row["status"] == "Approved")
+                    {
+                        $_SESSION['matric'] = $row['userId'];
+                        $_SESSION['name'] = $row['name'];
+                        $_SESSION['role'] = $row['role'];
 
-    echo "
-    <script>
-        alert('Login Successful');
-        window.location.href='dashboard.php';
-    </script>
-    ";
-}
+                        echo "
+                        <script>
+                            alert('Tutor Login Successful');
+                            window.location.href='dashboard.php';
+                        </script>
+                        ";
+                    }
+                    else if($row["status"] == "Pending")
+                    {
+                        echo "
+                        <script>
+                            alert('Your tutor account is still pending admin approval.');
+                            window.location.href='login.php';
+                        </script>
+                        ";
+                    }
+                    else if($row["status"] == "Rejected")
+                    {
+                        echo "
+                        <script>
+                            alert('Your tutor application has been rejected.');
+                            window.location.href='login.php';
+                        </script>
+                        ";
+                    }
+                }
+                else
+                {
+                    $_SESSION['matric'] = $row['userId'];
+                    $_SESSION['name'] = $row['name'];
+                    $_SESSION['role'] = $row['role'];
 
+                    echo "
+                    <script>
+                        alert('Login Successful');
+                        window.location.href='dashboard.php';
+                    </script>
+                    ";
+                }
+            }
+            else
+            {
+                echo "
+                <script>
+                    alert('Wrong Password');
+                </script>
+                ";
+            }
         }
         else
         {
@@ -51,10 +95,8 @@ if(isset($_POST["btnLogin"]))
             </script>
             ";
         }
-        
     }
 }
-
 ?>
 
 <!DOCTYPE html>

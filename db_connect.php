@@ -13,6 +13,4 @@ if(!$conn)
     die(mysqli_connect_error());
 }
 
-echo "Connected";
-
 ?>
