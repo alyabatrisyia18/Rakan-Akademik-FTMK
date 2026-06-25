@@ -167,7 +167,7 @@ function openPage(page){
             break;
 
         case "tutor profile":
-            window.location.href="";
+            window.location.href="rakan_page.php";
             break;
 
         default:
