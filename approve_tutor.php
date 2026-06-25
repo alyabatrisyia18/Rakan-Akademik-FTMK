@@ -115,7 +115,6 @@ th{
 
     <div class="icons">
         <i class="fas fa-home" onclick="location.href='admin_dashboard.php'"></i>
-        <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
     </div>
 </div>
 
