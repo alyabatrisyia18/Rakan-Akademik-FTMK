@@ -1,3 +1,19 @@
+<?php
+session_start();
+
+if(!isset($_SESSION['matric']))
+{
+    header("Location: login.php");
+    exit();
+}
+
+if($_SESSION['role'] != "Tutor")
+{
+    header("Location: dashboard.php");
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -147,7 +163,7 @@ function openPage(page){
             break;
 
         case "mentor":
-            window.location.href="rakan_page.php";
+            window.location.href="rakan_form.php";
             break;
 
         default:
