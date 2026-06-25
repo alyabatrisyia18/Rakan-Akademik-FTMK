@@ -1,173 +1,206 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+     <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+         *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, sans-serif;
+        }
 
-<title>Learning Module</title>
+        body{
+            background-image: url('images/edubackground.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
 
-<style>
+        /* Layout ats */
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial, sans-serif;
-}
+        header{
+            background:#1f3f98;
+            color:white;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:15px 30px;
+        }
 
-body{
-    background-image:url('images/edubackground.jpg');
-    background-size:cover;
-    background-position:center;
-    background-repeat:no-repeat;
-    background-attachment:fixed;
-}
+        .search-box{
+            width:40%;
+            position:relative;
+        }
 
-/* HEADER */
+        .search-box input{
+            width:100%;
+            padding:10px 40px 10px 15px;
+            border:none;
+            border-radius:30px;
+        }
 
-header{
-    background:#1f3f98;
-    color:white;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:15px 30px;
-}
+        .search-box i{
+            position:absolute;
+            right:15px;
+            top:50%;
+            transform:translateY(-50%);
+            color:gray;
+        }
 
-.logo img{
-    height:60px;
-    width:auto;
-}
+        .icons i{
+            font-size:24px;
+            margin-left:20px;
+            cursor:pointer;
+        }
 
-.search-box{
-    width:40%;
-    position:relative;
-}
+        .icons i:hover{
+            transform: scale(1.1);
+            transition: 0.2s;
+        } 
 
-.search-box input{
-    width:100%;
-    padding:10px 40px 10px 15px;
-    border:none;
-    border-radius:30px;
-}
+        .logo img{
+            height:60px;   
+            width:auto;
+        }
 
-.search-box i{
-    position:absolute;
-    right:15px;
-    top:50%;
-    transform:translateY(-50%);
-    color:gray;
-}
+        .learning{
+            background:white;
+            width:90%;
+            margin:20px auto 30px auto;
+            padding:25px;
+            text-align:center;
+            border:1px solid #ccc;
+            box-shadow:0 2px 5px rgba(0,0,0,0.1);
+        }
 
-.icons i{
-    font-size:24px;
-    margin-left:20px;
-    cursor:pointer;
-}
+        .learning h1{
+            font-size:32px;
+        }
 
-/* BACK BUTTON */
+        .module-container{
+            width:90%;
+            margin:auto;
+            display:flex;
+            justify-content:center;
+            gap:40px;
+            align-items:flex-start;
+        }
 
-.back-btn{
-    margin:20px 5%;
-    font-size:36px;
-    cursor:pointer;
-    color:black;
-}
+        .continue-section,
+        .progress-section{
+            flex:1;
+        }
 
-.back-btn i:hover{
-    color:#1f3f98;
-}
+        .continue-section h2,
+        .progress-section h2{
+            margin-bottom:15px;
+        }
 
-/* TITLE */
+        .continue-card{
+            background:white;
+            border:1px solid #ccc;
+            padding:20px;
+            width:700px;
+            min-height:400px;
+            text-align:center;
+            box-shadow:0 2px 8px rgba(0,0,0,0.1);
+        }
 
-.page-title{
-    width:90%;
-    margin:auto;
-    background:white;
-    border:1px solid #ddd;
-    text-align:center;
-    padding:20px;
-    font-size:32px;
-    font-weight:bold;
-    border-radius:10px;
-}
+        .continue-card img{
+            width:100%;
+            height:280px;
+            object-fit:cover;
+        }
 
-/* CONTENT */
+        .btn-continue{
+            display:inline-block;
+            margin-top:15px;
+            padding:10px 30px;
+            background:#eee;
+            color:black;
+            text-decoration:none;
+            border-radius:5px;
+        }
 
-.container{
-    width:90%;
-    margin:35px auto;
-    display:flex;
-    gap:30px;
-    flex-wrap:wrap;
-}
+        .btn-continue:hover{
+            background:#1f3f98;
+            color:white;
+        }
 
-.section{
-    flex:1;
-    min-width:400px;
-}
+        .progress-card{
+            background:white;
+            border:1px solid #ccc;
+            width:700px;
+            height:400px; 
+            padding:20px;
+            box-shadow:0 2px 8px rgba(0,0,0,0.1);
+        }
 
-.section h2{
-    margin-bottom:15px;
-    color:black;
-    font-size:28px;
-    font-weight:bold;
-}
+        .recommended{
+            width:60%;
+            border-left:1px solid #ccc;
+            padding:15px;
+        }
 
-/* CARD */
+        .subject-box{
+            background:white;
+            border:1px solid #dcdcdc;
+            border-radius:10px;
+            padding:15px;
+            margin-top:20px;
+            display:flex;
+            align-items:center;
+            height:110px;
+        }
 
-.card{
-    background:white;
-    border-radius:15px;
-    padding:15px;
-    cursor:pointer;
-    transition:0.3s;
-    box-shadow:0 4px 12px rgba(0,0,0,0.15);
-}
+        .subject-box img{
+            width:70px;
+            height:70px;
+            border-radius:50%;
+            object-fit:cover;
+        }
 
-.card:hover{
-    transform:translateY(-5px);
-    box-shadow:0 8px 20px rgba(0,0,0,0.25);
-}
+        .subject-info{
+            flex:1;
+            margin-left:15px;
+        }
 
-.card img{
-    width:100%;
-    height:350px;
-    object-fit:contain;
-    display:block;
-}
+        .subject-info h3{
+            margin-bottom:5px;
+        }
 
-/* RESPONSIVE */
+        .subject-info p{
+            color:#666;
+        }
 
-@media(max-width:900px){
+        .subject-box a{
+            font-size:24px;
+            color:#000;
+            text-decoration:none;
+        }
 
-    .container{
-        flex-direction:column;
-    }
+        .subject-box a:hover{
+            color:#1f3f98;
+        }
 
-    .section{
-        min-width:100%;
-    }
+    </style>
 
-    .search-box{
-        display:none;
-    }
-}
-
-</style>
 </head>
 
 <body>
 
-<header>
-
-    <div class="logo">
-        <img src="images/logoRakan.png" alt="">
-        <img src="images/logoUtem.png" alt="">
-        <img src="images/logoFtmk.png" alt="">
+    <header>
+     <div class="logo">
+        <img src="images/logoRakan.png" alt="Rakan Akademik Logo">
+        <img src="images/logoUtem.png" alt="UTeM Logo">
+        <img src="images/logoFtmk.png" alt="FTMK Logo">
     </div>
 
     <div class="search-box">
@@ -178,56 +211,63 @@ header{
     <div class="icons">
         <i class="far fa-bookmark"></i>
         <i class="far fa-bell"></i>
-        <i class="far fa-user-circle"
-           onclick="location.href='profile.php'"></i>
+        <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
     </div>
-
 </header>
 
-<div class="back-btn">
-    <i class="fas fa-arrow-left"
-       onclick="location.href='dashboard.php'"></i>
-</div>
+<section class="learning">
+    <h1>LEARNING MODULE</h1>
+</section>
 
-<div class="page-title">
-    Learning Module
-</div>
+<div class="module-container">
 
-<div class="container">
-
-    <!-- Continue Learning -->
-
-    <div class="section">
-
+    <div class="continue-section">
         <h2>Continue Learning</h2>
 
-        <div class="card"
-             onclick="location.href='programming.php'">
-
-            <img src="images/continuelearning.jpg"
-                 alt="Continue Learning">
-
+        <div class="continue-card">
+            <img src="images/continuelearning.jpg" alt="Continue Learning">
+            <a href="subjects.php" class="btn-continue">
+                Continue
+            </a>
         </div>
-
     </div>
 
-    <!-- Learning Progress -->
-
-    <div class="section">
-
+    <div class="progress-section">
         <h2>Learning Progress</h2>
 
-        <div class="card"
-             onclick="location.href='learningprogress.php'">
+        <div class="progress-card">
+            <h4>Recommended Subjects</h4>
 
-            <img src="images/learningprogress.jpg"
-                 alt="Learning Progress">
+             <div class="subject-box">
+                <img src="images/programming.jpg">
 
+                <div class="subject-info">
+                    <h3>Programming</h3>
+                    <p>Array</p>
+                </div>
+
+                <a href="subject_progress.php">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+
+            </div>
+
+            <div class="subject-box">
+                <img src="images/dsa.jpg">
+
+                <div class="subject-info">
+                    <h3>DSA</h3>
+                    <p>Hashing</p>
+                </div>
+
+                <a href="subject_progress.php">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </div>
         </div>
 
     </div>
 
 </div>
-
 </body>
 </html>

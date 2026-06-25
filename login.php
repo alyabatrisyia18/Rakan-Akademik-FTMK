@@ -26,43 +26,33 @@ if(isset($_POST["btnLogin"]))
         
         if(mysqli_num_rows($result) > 0){
             $row = mysqli_fetch_assoc($result);
-            if(password_verify($password, $row['password'])){
-                if($row['role'] == "Tutor"){
-                    if($row['status'] == "Approved"){
-                        
-                        $_SESSION['matric'] = $row['userId'];
-                        $_SESSION['name'] = $row['name'];
-                        $_SESSION['role'] = $row['role'];
 
-                        header("Location: choose_role.php");
-                        exit();
-                    }
-                    else if($row['status'] == "Pending"){
-                        echo "<script> alert('Your tutor account is still pending admin approval.');</script>";
-                    }
-                    else if($row['status'] == "Rejected"){
-                        echo "<script> alert('Your tutor application has been rejected.');</script>";
-                    }
-                }
-                else{
-                    $_SESSION['matric'] = $row['userId'];
-                    $_SESSION['name'] = $row['name'];
-                    $_SESSION['role'] = $row['role'];
+            if(password_verify($password, $row['password']))
+{
+    $_SESSION['matric'] = $row['userId'];
+    $_SESSION['name'] = $row['name'];
+    $_SESSION['role'] = $row['role'];
 
-                    header("Location: dashboard.php");
-                    exit();
-                }
-            }
-            else{
-                echo "<script> alert('Wrong Password');</script> ";
-            }
-        }
-        else{
-            echo " <script> alert('User Not Found');</script>";
-        }
-    }
+    echo "
+    <script>
+        alert('Login Successful');
+        window.location.href='dashboard.php';
+    </script>
+    ";
 }
 
+        }
+        else
+        {
+            echo "
+            <script>
+                alert('User Not Found');
+            </script>
+            ";
+        }
+        
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -439,9 +429,9 @@ body{
                         <input type="checkbox">
                         Remember Me
                     </label>
-                    
-                    <a href="forgot_password.php">
-                       Forgot Password?
+
+                    <a href="#">
+                        Forgot Password?
                     </a>
 
                 </div>
