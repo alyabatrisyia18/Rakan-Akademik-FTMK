@@ -84,7 +84,7 @@ $result = mysqli_query($conn, $sql);
 
                 <li>
                     <a href="booking.php">
-                        Booking Class
+                        Bookings Class
                     </a>
                 </li>
 
