@@ -15,7 +15,7 @@ SELECT
     user.email
     
     FROM tutor_application
-    INNER JOIN use
+    INNER JOIN user
     ON tutor_application.matricNoStudent = user.userId
     WHERE tutor_application.status = 'Pending'
     ";
