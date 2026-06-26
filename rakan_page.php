@@ -1,3 +1,11 @@
+<?php
+session_start();
+include("db_connect.php");
+
+$sql = mysqli_query($conn,
+"SELECT * FROM rakan_profile ORDER BY name ASC");
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -9,29 +17,31 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body>
-    <div class="navbar-custom">
-        <div class="logo-section">
-            <img src="images/logoRakan.png">
-            <img src="images/logoUtem.png">
-            <img src="images/logoFtmk.png">
+<body>
+<div class="navbar-custom">
+
+    <div class="logo-section">
+        <img src="images/logoRakan.png">
+        <img src="images/logoUtem.png">
+        <img src="images/logoFtmk.png">
+    </div>
+
+    <div class="icon-section">
+
+        <div class="home-btn"
+             onclick="location.href='student_dashboard.php'">
+            <i class="fas fa-home"></i>
         </div>
 
-        <div class="search-box">
-            <input type="text" placeholder="Search">
-            <i class="fa-solid fa-magnifying-glass"></i>
-
-        </div>
-        <div class="icon-section">
+        <a href="profile.php" class="profile-link">
             <div class="profile-icon">
                 <i class="fa-regular fa-user"></i>
             </div>
-        </div>
+        </a>
+
     </div>
 
-    <div class="home-btn">
-        <i class="fas fa-home" onclick="location.href='dashboard.php'" title="Dashboard"></i>
-        Home
-    </div>
+</div>
 
     <div class="main-panel">
         <div class="title">
@@ -42,33 +52,34 @@
             Kindly, please choose Rakan Akademik
         </div>
 
-        <div class="student-card">
-            <i class="fa-regular fa-user"></i>
-            <div class="student-name">
-                Noor Aisya Sofea Bt Ahmad Jamal
-            </div>
-        </div>
+        <?php
+        
+        if(mysqli_num_rows($sql) > 0){
 
-        <div class="student-card">
-            <i class="fa-regular fa-user"></i>
-            <div class="student-name">
-                Ali Bin Umair
-            </div>
-        </div>
+            while($row = mysqli_fetch_assoc($sql))
 
-        <div class="student-card">
+        {
+        ?>
+        
+        <a href="student_viewrakan.php?id=
+        
+        <?php echo $row['profileID']; ?>" class="student-card">
             <i class="fa-regular fa-user"></i>
-            <div class="student-name">
-                Harraz Bin Husin
-            </div>
-        </div>
-
-        <a href="sarah_profile.php" class="student-card">
-            <i class="fa-regular fa-user"></i>
-            <div class="student-name">
-                Puteri Sarah Bt Yusof
-            </div>
+            
+            <div class="student-name"> <?php echo $row['name']; ?> </div>
         </a>
+        <?php
+        }
+        }
+        else{
+        ?>
+        
+        <div class="student-card"> No Rakan Akademik Available </div>
+        
+        <?php
+        
+        }
+        ?>
     </div>
 </body>
 </html>
