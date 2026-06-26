@@ -22,7 +22,7 @@ $subject = isset($_GET['subject']) ? $_GET['subject'] : "Subject";
     }
 
     .progress-container{
-        background:white;
+        background:#fff;
         border-radius:15px;
         padding:30px;
         box-shadow:0 3px 10px rgba(0,0,0,0.15);
@@ -37,6 +37,13 @@ $subject = isset($_GET['subject']) ? $_GET['subject'] : "Subject";
     .progress-container p{
         text-align:center;
         color:#666;
+        margin-bottom:25px;
+    }
+
+    .progress-container h3{
+        color:#2748A5;
+        margin-top:25px;
+        margin-bottom:15px;
     }
 
     .summary-box{
@@ -59,6 +66,33 @@ $subject = isset($_GET['subject']) ? $_GET['subject'] : "Subject";
         color:#333;
     }
 
+    table{
+        width:100%;
+        border-collapse:collapse;
+        margin-top:20px;
+    }
+
+    th{
+        background:#2748A5;
+        color:white;
+        padding:15px;
+        font-size:16px;
+    }
+
+    td{
+        padding:15px;
+        text-align:center;
+        border-bottom:1px solid #ddd;
+    }
+
+    tr:nth-child(even){
+        background:#f8f8f8;
+    }
+
+    tr:hover{
+        background:#eef4ff;
+    }
+
     </style>
 
 </head>
@@ -68,10 +102,10 @@ $subject = isset($_GET['subject']) ? $_GET['subject'] : "Subject";
 <header class="topbar">
 
     <div class="logo">
-        <img src="images/logoRakan.png">
-        <img src="images/logoUtem.png">
-        <img src="images/logoFtmk.png">
-        <img class="quiz-logo" src="images/quiz.jpg">
+        <img src="images/logoRakan.png" alt="">
+        <img src="images/logoUtem.png" alt="">
+        <img src="images/logoFtmk.png" alt="">
+        <img class="quiz-logo" src="images/quiz.jpg" alt="">
     </div>
 
     <div class="icons">
@@ -85,23 +119,55 @@ $subject = isset($_GET['subject']) ? $_GET['subject'] : "Subject";
     <a href="student_progress.php" class="active-menu">Progress Tracker</a>
 </div>
 
-<<div class="progress-container">
+<div class="main-content">
 
-    <h2><?php echo htmlspecialchars($subject); ?> Progress</h2>
+    <div class="progress-container">
 
-    <p>
-        View detailed progress for this subject.
-    </p>
+        <h2><?php echo htmlspecialchars($subject); ?> Progress</h2>
 
-    <div class="summary-box">
+        <p>View detailed progress for this subject.</p>
 
-        <h3>Subject Summary</h3>
+        <div class="summary-box">
 
-        <p><strong>Quiz Attempt :</strong> 8</p>
+            <h3>Subject Summary</h3>
 
-        <p><strong>Highest Score :</strong> 95%</p>
+            <p><strong>Quiz Attempt :</strong> 8</p>
 
-        <p><strong>Average Score :</strong> 82%</p>
+            <p><strong>Highest Score :</strong> 95%</p>
+
+            <p><strong>Average Score :</strong> 82%</p>
+
+        </div>
+
+        <h3>Quiz History</h3>
+
+        <table>
+
+            <tr>
+                <th>Quiz</th>
+                <th>Score</th>
+                <th>Status</th>
+            </tr>
+
+            <tr>
+                <td>Quiz 1</td>
+                <td>95%</td>
+                <td>Completed</td>
+            </tr>
+
+            <tr>
+                <td>Quiz 2</td>
+                <td>82%</td>
+                <td>Completed</td>
+            </tr>
+
+            <tr>
+                <td>Quiz 3</td>
+                <td>75%</td>
+                <td>Completed</td>
+            </tr>
+
+        </table>
 
     </div>
 
