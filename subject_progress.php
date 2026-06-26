@@ -93,6 +93,26 @@ $subject = isset($_GET['subject']) ? $_GET['subject'] : "Subject";
         background:#eef4ff;
     }
 
+    .back-btn{
+        text-align:center;
+        margin-top:30px;
+    }
+
+    .back-btn a{
+        display:inline-block;
+        background:#2748A5;
+        color:white;
+        text-decoration:none;
+        padding:12px 25px;
+        border-radius:8px;
+        font-weight:bold;
+        transition:0.3s;
+    }
+
+    .back-btn a:hover{
+        background:#1d367f;
+    }
+
     </style>
 
 </head>
@@ -168,6 +188,12 @@ $subject = isset($_GET['subject']) ? $_GET['subject'] : "Subject";
             </tr>
 
         </table>
+
+        <div class="back-btn">
+            <a href="student_progress.php">
+            <i class="fas fa-arrow-left"></i> Back to Progress Tracker
+            </a>
+        </div>
 
     </div>
 
