@@ -1,7 +1,26 @@
 <?php
 include("db_connect.php");
 
-$sql = "SELECT userId, name, email, mobile_phone, role, status FROM user";
+$search = "";
+
+if(isset($_GET['search']))
+{
+    $search = mysqli_real_escape_string($conn, $_GET['search']);
+
+    $sql = "SELECT userId, name, email, mobile_phone, role, status
+            FROM user
+            WHERE userId LIKE '%$search%'
+            OR name LIKE '%$search%'
+            OR email LIKE '%$search%'
+            OR mobile_phone LIKE '%$search%'
+            ORDER BY userId";
+}
+else
+{
+    $sql = "SELECT userId, name, email, mobile_phone, role, status
+            FROM user
+            ORDER BY userId";
+}
 
 $result = mysqli_query($conn, $sql);
 ?>
@@ -162,7 +181,19 @@ tr:hover{
     <div class="top-bar">
 
         <div class="search-box">
-            <input type="text" placeholder="Search user...">
+        <form method="GET">
+
+        <input
+        type="text"
+        name="search"
+        placeholder="Search user..."
+        value="<?php echo htmlspecialchars($search); ?>">
+
+        <button type="submit">
+        <i class="fas fa-search"></i>
+    </button>
+
+</form>
         </div>
 
         <div class="filter">
