@@ -169,5 +169,20 @@
 
 </section>
 
+<script>
+
+function logout(){
+
+    if(confirm("Are you sure you want to logout?")){
+
+        alert("Logout Successful");
+        window.location.href = "logout.php";
+
+    }
+
+}
+
+</script>
+
 </body>
 </html>
