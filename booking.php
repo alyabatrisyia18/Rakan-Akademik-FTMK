@@ -143,12 +143,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
                 </a>
             </li>
 
-            <li>
-                <a href="logout.php">
-                    Logout
-                </a>
-            </li>
-
         </ul>
     </nav>
 
@@ -171,7 +165,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         <span id="bookingtab"
               onclick="showBookings()">
 
-            My Bookings
+            My Booking
 
         </span>
 
