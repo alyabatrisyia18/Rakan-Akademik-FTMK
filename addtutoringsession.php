@@ -2,8 +2,7 @@
 session_start();
 include("db_connect.php");
 
-if(isset($_POST['addSession']))
-{
+if (isset($_POST['addSession'])) {
     $subject = $_POST['subject'];
     $sessionDate = $_POST['sessionDate'];
     $startTime = $_POST['startTime'];
@@ -19,24 +18,19 @@ if(isset($_POST['addSession']))
         ? $_POST['venue']
         : '';
 
-    if($sessionType == "Online" && empty($meetingLink))
-    {
+    if ($sessionType == "Online" && empty($meetingLink)) {
         echo "<script>
         alert('Please enter Meeting Link');
         </script>";
-    }
-    elseif($sessionType == "Face to Face" && empty($venue))
-    {
+    } elseif ($sessionType == "Face to Face" && empty($venue)) {
         echo "<script>
         alert('Please enter Venue');
         </script>";
-    }
-    else
-    {
+    } else {
         // nanti ambil dari login
         $matricNoTutor = $_SESSION['matric'];
 
-        $recordID = "R" . rand(100,999);
+        $recordID = "R" . rand(100, 999);
 
         $sql = "INSERT INTO `teaching record`
         (
@@ -65,14 +59,11 @@ if(isset($_POST['addSession']))
             '$venue'
         )";
 
-        if(mysqli_query($conn,$sql))
-        {
+        if (mysqli_query($conn, $sql)) {
             echo "<script>
             alert('Tutoring Session Added Successfully!');
             </script>";
-        }
-        else
-        {
+        } else {
             echo mysqli_error($conn);
         }
     }
@@ -113,14 +104,8 @@ if(isset($_POST['addSession']))
 
         </div>
 
-        <div class="search-box">
-            <input type="text" placeholder="Hinted search text">
-            <i class="fas fa-search"></i>
-        </div>
 
         <div class="header-icons">
-            <i class="far fa-bookmark"></i>
-            <i class="far fa-bell"></i>
             <i class="far fa-user-circle"></i>
             <i class="fas fa-home" onclick="location.href='dashboard.php'" title="Dashboard"></i>
         </div>
@@ -139,14 +124,11 @@ if(isset($_POST['addSession']))
 
         <nav>
             <ul>
-                <li><a href="booking.php">Booking Class</a></li>
-                <li><a href="myclassschedule.php">My Class Schedule</a></li>
+                <li><a href="addtutoringsession.php" class="active-menu" >Add Tutoring Session</a></li>
                 <li><a href="mytutoringsession.php">My Tutoring Session</a></li>
-                <li><a href="addtutoringsession.php">Add Tutoring Session</a></li>
                 <li><a href="teachingsessionrecord.php">Add Teaching Session</a></li>
                 <li><a href="sessionrecord.php">Session Record</a></li>
-                <li><a href="earningsdashboard.php">Earnings Dashboard</a></li>
-                <li><a href="#">Logout</a></li>
+                <li><a href="earningdashboard.php">Earnings Dashboard</a></li>
             </ul>
         </nav>
 
@@ -176,89 +158,82 @@ if(isset($_POST['addSession']))
 
             <div class="time-row">
 
-    <div>
-        <label>Start Time</label>
-        <input type="time" name="startTime" required>
-    </div>
+                <div>
+                    <label>Start Time</label>
+                    <input type="time" name="startTime" required>
+                </div>
 
-    <div>
-        <label>End Time</label>
-        <input type="time" name="endTime" required>
-    </div>
-
-</div>
-
-<label>Session Type</label>
-
-<select
-name="sessionType"
-id="sessionType"
-onchange="toggleSessionType()"
-required>
-
-    <option value="">Select Type</option>
-    <option value="Online">Online</option>
-    <option value="Face to Face">Face to Face</option>
-
-</select>
-
-<div id="onlineSection">
-
-    <label>Meeting Link</label>
-
-    <input
-    type="text"
-    name="meetingLink"
-    placeholder="Paste Teams Link">
-
-</div>
-
-<div id="f2fSection" style="display:none;">
-
-    <label>Venue</label>
-
-    <input
-    type="text"
-    name="venue"
-    placeholder="Example: FTMK Discussion Room 2">
-
-</div>
-
-
+                <div>
+                    <label>End Time</label>
+                    <input type="time" name="endTime" required>
+                </div>
             </div>
 
-            <button type="submit" name="addSession" class="add-btn">
-    ADD SESSION
-</button>
 
+            <label>Session Type</label>
+
+            <select
+                name="sessionType"
+                id="sessionType"
+                onchange="toggleSessionType()"
+                required>
+
+                <option value="">Select Type</option>
+                <option value="Online">Online</option>
+                <option value="Face to Face">Face to Face</option>
+
+            </select>
+
+            <div id="onlineSection">
+
+                <label>Meeting Link</label>
+
+                <input
+                    type="text"
+                    name="meetingLink"
+                    placeholder="Paste Teams Link">
+
+            </div>
+            
+            <div id="f2fSection" style="display:none;">
+
+                <label>Venue</label>
+
+                <input
+                    type="text"
+                    name="venue"
+                    placeholder="Example: FTMK Discussion Room 2">   
+            </div>
+            <div class="button-row">
+                <button
+                    type="submit"
+                    name="addSession"
+                    class="add-btn">
+
+                    ADD SESSION
+
+                </button>
+            </div>
         </form>
 
     </div>
 
     <script>
+        function toggleSessionType() {
+            let type =
+                document.getElementById("sessionType").value;
 
-        function toggleSessionType()
-{
-    let type =
-        document.getElementById("sessionType").value;
-
-    if(type == "Online")
-    {
-        document.getElementById("onlineSection").style.display = "block";
-        document.getElementById("f2fSection").style.display = "none";
-    }
-    else if(type == "Face to Face")
-    {
-        document.getElementById("onlineSection").style.display = "none";
-        document.getElementById("f2fSection").style.display = "block";
-    }
-    else
-    {
-        document.getElementById("onlineSection").style.display = "none";
-        document.getElementById("f2fSection").style.display = "none";
-    }
-}
-
+            if (type == "Online") {
+                document.getElementById("onlineSection").style.display = "block";
+                document.getElementById("f2fSection").style.display = "none";
+            } else if (type == "Face to Face") {
+                document.getElementById("onlineSection").style.display = "none";
+                document.getElementById("f2fSection").style.display = "block";
+            } else {
+                document.getElementById("onlineSection").style.display = "none";
+                document.getElementById("f2fSection").style.display = "none";
+            }
+        }
     </script>
 
 </body>
