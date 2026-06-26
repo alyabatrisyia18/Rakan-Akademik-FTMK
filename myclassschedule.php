@@ -95,11 +95,7 @@ $result = mysqli_query($conn, $sql);
                     </a>
                 </li>
 
-                <li>
-                    <a href="logout.php">
-                        Logout
-                    </a>
-                </li>
+                
 
             </ul>
 
