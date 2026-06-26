@@ -1,3 +1,10 @@
+<?php
+include("db_connect.php");
+
+$sql = "SELECT userId, name, email, mobile_phone, role, status FROM user";
+
+$result = mysqli_query($conn, $sql);
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -180,35 +187,34 @@ tr:hover{
             <th>Action</th>
         </tr>
 
-        <tr>
-            <td>U001</td>
-            <td>Ali Ahmad</td>
-            <td>ali@gmail.com</td>
-            <td>0123456789</td>
-            <td>Student</td>
-            <td>Active</td>
-            <td><a href="#"><i class="fas fa-eye"></i></a></td>
-        </tr>
+       <?php
+while($row = mysqli_fetch_assoc($result))
+{
+?>
+<tr>
 
-        <tr>
-            <td>U002</td>
-            <td>Siti Aisyah</td>
-            <td>aisyah@gmail.com</td>
-            <td>0112345678</td>
-            <td>Tutor</td>
-            <td>Active</td>
-            <td><a href="#"><i class="fas fa-eye"></i></a></td>
-        </tr>
+    <td><?php echo $row['userId']; ?></td>
 
-        <tr>
-            <td>U003</td>
-            <td>Nur Amin</td>
-            <td>amin@gmail.com</td>
-            <td>0135678901</td>
-            <td>Student</td>
-            <td>Inactive</td>
-            <td><a href="#"><i class="fas fa-eye"></i></a></td>
-        </tr>
+    <td><?php echo $row['name']; ?></td>
+
+    <td><?php echo $row['email']; ?></td>
+
+    <td><?php echo $row['mobile_phone']; ?></td>
+
+    <td><?php echo $row['role']; ?></td>
+
+    <td><?php echo $row['status']; ?></td>
+
+    <td>
+        <a href="#" class="view-btn">
+            <i class="fas fa-eye"></i>
+        </a>
+    </td>
+
+</tr>
+<?php
+}
+?>
 
     </table>
 
