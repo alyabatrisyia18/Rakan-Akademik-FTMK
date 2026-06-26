@@ -10,6 +10,22 @@ if(!isset($_SESSION['matric']))
 
 $matric = $_SESSION['matric'];
 
+$sqlRole = mysqli_query($conn,
+"SELECT role
+FROM user
+WHERE userId='$matric'");
+
+$dataRole = mysqli_fetch_assoc($sqlRole);
+
+if(strtolower($dataRole['role']) == "tutor")
+{
+    echo "<script>
+    alert('You are already a Rakan Akademik.');
+    window.location='dashboard.php';
+    </script>";
+    exit();
+}
+
 if(isset($_POST["btnSubmit"]))
 {
     $cgpa = $_POST["cgpa"];
@@ -72,14 +88,32 @@ if(isset($_POST["btnSubmit"]))
     // CHECK DUPLICATE (ONLY PENDING)
     // =========================
     $check = mysqli_query($conn,
-    "SELECT * FROM tutor_application 
-     WHERE userId='$matric' AND status='Pending'");
+    " SELECT * FROM tutor_application
+    WHERE matricNoStudent='$matric'
+    AND(
+    status='Pending'
+    OR status='Approved'
+    )");
 
-    if(mysqli_num_rows($check) > 0)
+if(mysqli_num_rows($check) > 0)
+{
+    $application = mysqli_fetch_assoc($check);
+
+    if($application['status'] == "Pending")
     {
-        echo "<script>alert('You already have a pending application!');</script>";
-        exit();
+        echo "<script>
+        alert('You already have a pending application.');
+        </script>";
     }
+    else
+    {
+        echo "<script>
+        alert('You are already a Rakan Akademik.');
+        </script>";
+    }
+
+    exit();
+}
 
     // =========================
     // INSERT APPLICATION
@@ -87,30 +121,30 @@ if(isset($_POST["btnSubmit"]))
     $sql = "
     INSERT INTO tutor_application
     (
-        userId,
-        cgpa,
-        expertise,
-        availability,
-        reason,
-        transcript,
-        status
+matricNoStudent,
+cgpa,
+expertise,
+availability,
+reason,
+transcript,
+status
     )
     VALUES
     (
-        '$matric',
-        '$cgpa',
-        '$expertise',
-        '$availability',
-        '$reason',
-        '$fileName',
-        'Pending'
+'$matric',
+'$cgpa',
+'$expertise',
+'$availability',
+'$reason',
+'$fileName',
+'Pending'
     )";
 
     if(mysqli_query($conn, $sql))
     {
         echo "<script>
             alert('Application Submitted Successfully!');
-            window.location='dashboard.php';
+            window.location='student_dashboard.php';
         </script>";
     }
     else
