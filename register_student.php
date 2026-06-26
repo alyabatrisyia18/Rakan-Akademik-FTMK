@@ -76,13 +76,22 @@ if(isset($_POST["btnRegister"]))
                     '$matric',
                     '$course'
                 )";
-
-                mysqli_query($conn, $sqlStudent);
+                
+                if(mysqli_query($conn, $sqlStudent)){
 
                 echo "<script>
-                        alert('Registration Successful');
-                        window.location='login.php';
-                      </script>";
+                alert('Registration Successful');
+                window.location='login.php';
+                </script>";
+                }
+                else
+                {
+                mysqli_query($conn,"DELETE FROM user WHERE userId='$matric'");
+
+                echo "<script>
+                alert('Student registration failed.');
+                </script>";
+                }
             }
             else
             {
