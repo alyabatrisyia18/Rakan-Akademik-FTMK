@@ -39,6 +39,26 @@ $subject = isset($_GET['subject']) ? $_GET['subject'] : "Subject";
         color:#666;
     }
 
+    .summary-box{
+        width:350px;
+        background:#EEF3FA;
+        border-left:5px solid #2748A5;
+        border-radius:8px;
+        padding:20px;
+        margin:30px auto;
+        text-align:center;
+    }
+
+    .summary-box h3{
+        color:#2748A5;
+        margin-bottom:15px;
+    }
+
+    .summary-box p{
+        margin:10px 0;
+        color:#333;
+    }
+
     </style>
 
 </head>
@@ -65,15 +85,23 @@ $subject = isset($_GET['subject']) ? $_GET['subject'] : "Subject";
     <a href="student_progress.php" class="active-menu">Progress Tracker</a>
 </div>
 
-<div class="main-content">
+<<div class="progress-container">
 
-    <div class="progress-container">
+    <h2><?php echo htmlspecialchars($subject); ?> Progress</h2>
 
-        <h2><?php echo htmlspecialchars($subject); ?> Progress</h2>
+    <p>
+        View detailed progress for this subject.
+    </p>
 
-        <p>
-            View detailed progress for this subject.
-        </p>
+    <div class="summary-box">
+
+        <h3>Subject Summary</h3>
+
+        <p><strong>Quiz Attempt :</strong> 8</p>
+
+        <p><strong>Highest Score :</strong> 95%</p>
+
+        <p><strong>Average Score :</strong> 82%</p>
 
     </div>
 
