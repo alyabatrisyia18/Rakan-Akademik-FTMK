@@ -68,10 +68,30 @@
             color:white;
             text-align:center;
             padding:20px;
+            position:relative;
         }
-
+        
         .welcome h1{
             font-size:32px;
+        }
+
+        .apply-btn{ 
+            position:absolute;
+            right:30px;
+            bottom:15px;
+            background:whitw;
+            color:black;
+            padding:10px 20px;
+            border:none;
+            border-radius:30px;
+            font-size:15px;
+            cursor:pointer;
+            transition:0.3s;
+        }
+
+        .back-btn{
+            cursor:pointer;
+            font-size:28px;
         }
 
         .menu-container{
@@ -124,7 +144,14 @@
 
 <section class="welcome">
     <h1>WELCOME TO STUDENT</h1>
+
+    <button class="apply-btn"
+        onclick="window.location.href='register_rakan.php'"><i class="fas fa-user-plus"></i> Apply Tutor </button>
 </section>
+
+<div class="back-container">
+    <button class="back-btn" onclick="window.location.href='choose_role.php'"><i class="fas fa-arrow-left"></i></button>
+</div>
 
 <section class="menu-container">
 
