@@ -2,100 +2,99 @@
 session_start();
 include("db_connect.php");
 
+$username = "";
+$password = "";
+
 if(isset($_POST["btnLogin"]))
 {
     $username = $_POST["txtUser"];
     $password = $_POST["txtPassword"];
 
-    // 🔥 ADMIN LOGIN (boleh kekal simple OR upgrade later)
     if($username == "admin" && $password == "1234")
     {
-        $_SESSION['userId'] = "admin";
-        $_SESSION['role'] = "Admin";
-        $_SESSION['name'] = "Administrator";
-
         echo "
         <script>
             alert('Admin Login Successful');
             window.location.href='admin_dashboard.php';
         </script>
         ";
-        exit();
     }
-
-    // USER LOGIN (STUDENT / TUTOR)
-    $sql = "SELECT * FROM user WHERE userId='$username'";
-    $result = mysqli_query($conn, $sql);
-
-    if(mysqli_num_rows($result) > 0)
+    else
     {
-        $row = mysqli_fetch_assoc($result);
+        $sql = "SELECT * FROM user WHERE userId='$username'";
+        $result = mysqli_query($conn,$sql);
 
-        // check password
-        if(password_verify($password, $row['password']))
+        if(mysqli_num_rows($result) > 0)
         {
-            // OPTIONAL: check account status
-            if($row['status'] != "Active")
-            {
-                echo "
-                <script>
-                    alert('Account not active. Please contact admin.');
-                </script>
-                ";
-                exit();
-            }
+            $row = mysqli_fetch_assoc($result);
 
-            // SET SESSION (STANDARD FIX)
-            $_SESSION['userId'] = $row['userId'];
-            $_SESSION['name'] = $row['name'];
-            $_SESSION['role'] = $row['role'];
+            if(password_verify($password, $row['password']))
+            {
+                if($row["role"] == "Tutor")
+                {
+                    if($row["status"] == "Approved")
+                    {
+                        $_SESSION['matric'] = $row['userId'];
+                        $_SESSION['name'] = $row['name'];
+                        $_SESSION['role'] = $row['role'];
 
-            // 🔥 ROLE REDIRECT LOGIC (IMPORTANT FIX)
-            if($row['role'] == "Student")
-            {
-                echo "
-                <script>
-                    alert('Login Successful (Student)');
-                    window.location.href='student_dashboard.php';
-                </script>
-                ";
-            }
-            else if($row['role'] == "Tutor")
-            {
-                echo "
-                <script>
-                    alert('Login Successful (Tutor)');
-                    window.location.href='dashboard.php';
-                </script>
-                ";
+                        echo "
+                        <script>
+                            alert('Tutor Login Successful');
+                            window.location.href='dashboard.php';
+                        </script>
+                        ";
+                    }
+                    else if($row["status"] == "Pending")
+                    {
+                        echo "
+                        <script>
+                            alert('Your tutor account is still pending admin approval.');
+                            window.location.href='login.php';
+                        </script>
+                        ";
+                    }
+                    else if($row["status"] == "Rejected")
+                    {
+                        echo "
+                        <script>
+                            alert('Your tutor application has been rejected.');
+                            window.location.href='login.php';
+                        </script>
+                        ";
+                    }
+                }
+                else
+                {
+                    $_SESSION['matric'] = $row['userId'];
+                    $_SESSION['name'] = $row['name'];
+                    $_SESSION['role'] = $row['role'];
+
+                    echo "
+                    <script>
+                        alert('Login Successful');
+                        window.location.href='student_dashboard.php';
+                    </script>
+                    ";
+                }
             }
             else
             {
                 echo "
                 <script>
-                    alert('Unknown role');
+                    alert('Wrong Password');
                 </script>
                 ";
             }
-
-            exit();
         }
         else
         {
             echo "
             <script>
-                alert('Wrong Password');
+                alert('User Not Found');
             </script>
             ";
         }
-    }
-    else
-    {
-        echo "
-        <script>
-            alert('User Not Found');
-        </script>
-        ";
     }
 }
 ?>
