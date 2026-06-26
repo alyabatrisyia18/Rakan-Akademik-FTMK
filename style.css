@@ -193,18 +193,38 @@ td{
 
 /* BUTTON */
 
+/* BUTTON */
+
 .complete{
-    background:lightgreen;
+    background:#4CAF50;
+    color:white;
     border:none;
-    padding:10px 20px;
+    border-radius:6px;
+    padding:10px 22px;
+    font-weight:bold;
+    width:120px;
     cursor:pointer;
+    transition:0.3s;
+}
+
+.complete:hover{
+    background:#3d9442;
 }
 
 .upcoming{
-    background:rgb(255, 253, 161);
+    background:#FFD966;
+    color:black;
     border:none;
-    padding:10px 20px;
+    border-radius:6px;
+    padding:10px 22px;
+    font-weight:bold;
+    width:120px;
     cursor:pointer;
+    transition:0.3s;
+}
+
+.upcoming:hover{
+    background:#f4c842;
 }
 
 .missed{
@@ -296,7 +316,8 @@ td{
     border-radius:10px;
     padding:25px;
     box-shadow:0 2px 10px rgba(0,0,0,0.08);
-    max-width: 100%;
+    max-width:100%;
+    overflow:auto;
 }
 
 .session-form label{
@@ -334,7 +355,13 @@ td{
     border-radius:25px;
     font-weight:bold;
     cursor:pointer;
-    float:right;
+}
+
+.button-row{
+    width:100%;
+    display:flex;
+    justify-content:flex-end;
+    margin-top:25px;
 }
 
 .add-btn:hover{
@@ -359,22 +386,6 @@ small{
     font-size:13px;
     display:block;
     margin-top:5px;
-}
-
-.approved{
-    background:#4CAF50;
-    color:white;
-    padding:10px 20px;
-    border-radius:5px;
-    font-weight:bold;
-}
-
-.pending{
-    background:#E4EB76;
-    color:black;
-    padding:10px 20px;
-    border-radius:5px;
-    font-weight:bold;
 }
 
 .note{
@@ -432,5 +443,43 @@ small{
 
 .total-row{
     background:#f5f5f5;
+    font-weight:bold;
+}
+/* ni untuk record session */
+.preview-box{
+margin-top:25px;
+padding:20px;
+background:#f8f9ff;
+border:1px solid #ddd;
+border-radius:10px;
+text-align:center;
+}
+.preview-box h3{margin:0;color:#243c96;}
+.preview-box p{margin:10px 0;}
+.preview-box h2{color:#28a745;font-size:32px;}
+
+.button-row{
+display:flex;
+justify-content:flex-end;
+margin-top:25px;
+}
+
+/* SESSION RECORD STATUS */
+
+.approved{
+    background:#4CAF50;
+    color:white;
+    border:none;
+    padding:10px 20px;
+    border-radius:6px;
+    font-weight:bold;
+}
+
+.pending{
+    background:#FFD966;
+    color:black;
+    border:none;
+    padding:10px 20px;
+    border-radius:6px;
     font-weight:bold;
 }
