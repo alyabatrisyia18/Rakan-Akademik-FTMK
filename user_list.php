@@ -110,7 +110,25 @@ tr:hover{
     font-size:18px;
     text-decoration:none;
 }
-        
+   .back-btn{
+    text-align:center;
+    margin-top:30px;
+}
+
+.back-btn a{
+    display:inline-block;
+    background:#1f3f98;
+    color:white;
+    text-decoration:none;
+    padding:12px 25px;
+    border-radius:8px;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+.back-btn a:hover{
+    background:#16337d;
+}     
 
     </style>
 
@@ -193,6 +211,17 @@ tr:hover{
         </tr>
 
     </table>
+
+    <div class="back-btn">
+
+    <a href="admin_dashboard.php">
+
+        <i class="fas fa-arrow-left"></i>
+
+        Back
+
+    </a>
+    </div>
 
 </section>
 

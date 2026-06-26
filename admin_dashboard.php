@@ -147,12 +147,15 @@
 
 <section class="menu-container">
 
-    <div class="card">
-        <img src="images/manageuser.jpg" alt="">
-        <h2>User List</h2>
-    </div>
+   <div class="card" onclick="location.href='user_list.php'">
 
-    <div class="card">
+    <img src="images/manageuser.jpg" alt="">
+
+    <h2>User List</h2>
+
+</div>
+
+    <div class="card" onclick="location.href='approve_tutor.php'">
         <img src="images/application.jpg" alt="">
         <h2>Tutor Approvals</h2>
     </div>
