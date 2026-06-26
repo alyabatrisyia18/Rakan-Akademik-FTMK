@@ -113,6 +113,36 @@ $subject = isset($_GET['subject']) ? $_GET['subject'] : "Subject";
         background:#1d367f;
     }
 
+    .score{
+    display:inline-block;
+    min-width:55px;
+    padding:6px 12px;
+    border-radius:15px;
+    font-weight:bold;
+    font-size:14px;
+    text-align:center;
+    }
+
+    .high{
+        background:#d4edda;
+        color:#155724;
+    }
+
+    .medium{
+        background:#dbeafe;
+        color:#1d4ed8;
+    }
+
+    .low{
+        background:#fff3cd;
+        color:#856404;
+    }
+
+    .fail{
+        background:#f8d7da;
+        color:#721c24;
+    }
+
     </style>
 
 </head>
@@ -153,9 +183,13 @@ $subject = isset($_GET['subject']) ? $_GET['subject'] : "Subject";
 
             <p><strong>Quiz Attempt :</strong> 8</p>
 
-            <p><strong>Highest Score :</strong> 95%</p>
+            <p><strong>Highest Score :</strong>
+            <span class="score high">95%</span>
+            </p>
 
-            <p><strong>Average Score :</strong> 82%</p>
+            <p><strong>Average Score :</strong>
+            <span class="score medium">82%</span>
+            </p>
 
         </div>
 
@@ -171,19 +205,19 @@ $subject = isset($_GET['subject']) ? $_GET['subject'] : "Subject";
 
             <tr>
                 <td>Quiz 1</td>
-                <td>95%</td>
+                <td><span class="score high">95%</span></td>
                 <td>Completed</td>
             </tr>
 
             <tr>
                 <td>Quiz 2</td>
-                <td>82%</td>
+                <td><span class="score medium">82%</span></td>
                 <td>Completed</td>
             </tr>
 
             <tr>
                 <td>Quiz 3</td>
-                <td>75%</td>
+                <td><span class="score low">75%</span></td>
                 <td>Completed</td>
             </tr>
 
@@ -191,7 +225,7 @@ $subject = isset($_GET['subject']) ? $_GET['subject'] : "Subject";
 
         <div class="back-btn">
             <a href="student_progress.php">
-            <i class="fas fa-arrow-left"></i> Back to Progress Tracker
+            <i class="fas fa-arrow-left"></i> Back
             </a>
         </div>
 
