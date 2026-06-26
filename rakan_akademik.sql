@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Jun 26, 2026 at 12:31 PM
+-- Generation Time: Jun 26, 2026 at 07:28 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -191,6 +191,9 @@ CREATE TABLE `tutor_application` (
   `matricNoStudent` varchar(20) NOT NULL,
   `cgpa` decimal(3,2) NOT NULL,
   `expertise` varchar(255) NOT NULL,
+  `availability` varchar(100) NOT NULL,
+  `reason` text NOT NULL,
+  `transcript` varchar(255) NOT NULL,
   `applicationDate` datetime DEFAULT current_timestamp(),
   `status` enum('Pending','Approved','Rejected') DEFAULT 'Pending',
   `adminRemark` text DEFAULT NULL,
