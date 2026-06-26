@@ -1,19 +1,3 @@
-<?php
-session_start();
-
-if(!isset($_SESSION['matric']))
-{
-    header("Location: login.php");
-    exit();
-}
-
-if($_SESSION['role'] != "Tutor")
-{
-    header("Location: choose_role.php");
-    exit();
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -46,6 +30,26 @@ if($_SESSION['role'] != "Tutor")
             justify-content:space-between;
             align-items:center;
             padding:15px 30px;
+        }
+
+        .search-box{
+            width:40%;
+            position:relative;
+        }
+
+        .search-box input{
+            width:100%;
+            padding:10px 40px 10px 15px;
+            border:none;
+            border-radius:30px;
+        }
+
+        .search-box i{
+            position:absolute;
+            right:15px;
+            top:50%;
+            transform:translateY(-50%);
+            color:gray;
         }
 
         .icons i{
@@ -119,7 +123,7 @@ if($_SESSION['role'] != "Tutor")
 </header>
 
 <section class="welcome">
-    <h1>WELCOME TO RAKAN AKADEMIK</h1>
+    <h1>WELCOME TO STUDENT</h1>
 </section>
 
 <section class="menu-container">
@@ -150,20 +154,20 @@ if($_SESSION['role'] != "Tutor")
 function openPage(page){
 
     switch(page){
-        case "module":
-            window.location.href="module.php";
+        case "learning module":
+            window.location.href="";
             break;
 
         case "quiz":
-            window.location.href="quiz.php";
+            window.location.href="category.php";
             break;
 
         case "timetable":
-            window.location.href="booking.php";
+            window.location.href="";
             break;
 
         case "mentor":
-            window.location.href="rakan_form.php";
+            window.location.href="rakan_page.php";
             break;
 
         default:

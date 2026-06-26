@@ -1,19 +1,3 @@
-<?php
-session_start();
-
-if(!isset($_SESSION['matric']))
-{
-    header("Location: login.php");
-    exit();
-}
-
-if($_SESSION['role'] != "Tutor")
-{
-    header("Location: choose_role.php");
-    exit();
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,7 +7,10 @@ if($_SESSION['role'] != "Tutor")
     <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
+    <title>Admin Dashboard</title>
+
     <style>
+
         *{
             margin:0;
             padding:0;
@@ -32,11 +19,11 @@ if($_SESSION['role'] != "Tutor")
         }
 
         body{
-            background-image: url('images/edubackground.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
+            background-image:url('images/edubackground.jpg');
+            background-size:cover;
+            background-position:center;
+            background-repeat:no-repeat;
+            background-attachment:fixed;
         }
 
         header{
@@ -55,7 +42,7 @@ if($_SESSION['role'] != "Tutor")
         }
 
         .logo img{
-            height:60px;   /* ubah ikut saiz yang nak */
+            height:60px;
             width:auto;
         }
 
@@ -101,12 +88,17 @@ if($_SESSION['role'] != "Tutor")
 
         .card h2{
             margin-top:15px;
+            color:#1f3f98;
         }
+
     </style>
+
 </head>
+
 <body>
 
 <header>
+
     <div class="logo">
         <img src="images/logoRakan.png" alt="Rakan Akademik Logo">
         <img src="images/logoUtem.png" alt="UTeM Logo">
@@ -114,63 +106,38 @@ if($_SESSION['role'] != "Tutor")
     </div>
 
     <div class="icons">
-        <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
+        <i class="far fa-user-circle"></i>
     </div>
+
 </header>
 
 <section class="welcome">
-    <h1>WELCOME TO RAKAN AKADEMIK</h1>
+    <h1>WELCOME ADMIN</h1>
 </section>
 
 <section class="menu-container">
 
-    <div class="card" onclick="openPage('module')">
-        <img src="images/module.jpg" alt="">
-        <h2>Learning Module</h2>
+    <div class="card">
+        <img src="images/manageuser.jpg" alt="">
+        <h2>User List</h2>
     </div>
 
-    <div class="card" onclick="openPage('quiz')">
-        <img src="images/quiz.jpg" alt="">
-        <h2>Quiz</h2>
+    <div class="card">
+        <img src="images/application.jpg" alt="">
+        <h2>Tutor Approvals</h2>
     </div>
 
-    <div class="card" onclick="openPage('timetable')">
+    <div class="card">
+        <img src="images/managetutor.jpg" alt="">
+        <h2>Payment Approvals</h2>
+    </div>
+
+    <div class="card">
         <img src="images/timetable.jpg" alt="">
-        <h2>Timetable</h2>
-    </div>
-
-    <div class="card" onclick="openPage('mentor')">
-        <img src="images/tutor.jpg" alt="">
-        <h2>Rakan Akademik</h2>
+        <h2>View Bookings</h2>
     </div>
 
 </section>
-
-<script>
-function openPage(page){
-
-    switch(page){
-        case "module":
-            window.location.href="module.php";
-            break;
-
-        case "quiz":
-            window.location.href="quiz.php";
-            break;
-
-        case "timetable":
-            window.location.href="booking.php";
-            break;
-
-        case "mentor":
-            window.location.href="rakan_form.php";
-            break;
-
-        default:
-            alert("Page not found");
-    }
-}
-</script>
 
 </body>
 </html>

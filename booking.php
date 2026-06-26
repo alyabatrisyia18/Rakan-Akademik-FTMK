@@ -144,7 +144,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
             </li>
 
             <li>
-                <a href="#">
+                <a href="logout.php">
                     Logout
                 </a>
             </li>
@@ -386,7 +386,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
                 </td>
 
                 <td>
-                    <?php echo $pastRow['matricNoTutor']; ?>
+                    <?php echo $pastRow['name']; ?>
                 </td>
 
                 <td>

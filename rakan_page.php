@@ -22,8 +22,6 @@
 
         </div>
         <div class="icon-section">
-            <i class="fa-regular fa-bookmark"></i>
-            <i class="fa-regular fa-bell"></i>
             <div class="profile-icon">
                 <i class="fa-regular fa-user"></i>
             </div>

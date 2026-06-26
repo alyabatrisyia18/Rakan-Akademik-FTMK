@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 09, 2026 at 03:47 PM
+-- Generation Time: Jun 20, 2026 at 10:17 AM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -43,7 +43,11 @@ CREATE TABLE `booking` (
   `matricNoTutor` varchar(20) NOT NULL COMMENT 'Tutor assigned',
   `matricNoStudent` varchar(20) NOT NULL COMMENT 'Student making booking',
   `schedule` datetime NOT NULL COMMENT 'Booking schedule',
-  `bookingStatus` varchar(20) NOT NULL COMMENT 'Booking status'
+  `bookingStatus` varchar(20) NOT NULL COMMENT 'Booking status',
+  `subject` varchar(100) NOT NULL,
+  `startTime` time NOT NULL,
+  `endTime` time NOT NULL,
+  `recordID` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -69,8 +73,32 @@ CREATE TABLE `payment` (
 CREATE TABLE `quiz` (
   `quizID` varchar(20) NOT NULL COMMENT 'Quiz identifier',
   `matricNoTutor` varchar(20) NOT NULL COMMENT 'Tutor who created quiz',
-  `question` varchar(255) NOT NULL COMMENT 'Quiz creation',
-  `answer` varchar(255) NOT NULL COMMENT 'Correct answer'
+  `title` varchar(255) NOT NULL,
+  `description` varchar(100) NOT NULL,
+  `category` varchar(100) DEFAULT NULL,
+  `difficulty` varchar(50) DEFAULT NULL,
+  `cover` varchar(255) DEFAULT NULL,
+  `time_limit` int(11) DEFAULT NULL,
+  `attempts` int(11) DEFAULT NULL,
+  `visibility` varchar(20) NOT NULL,
+  `show_results` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `quiz_question`
+--
+
+CREATE TABLE `quiz_question` (
+  `questionID` int(11) NOT NULL,
+  `quizID` varchar(20) NOT NULL,
+  `question` text NOT NULL,
+  `optionA` varchar(255) NOT NULL,
+  `optionB` varchar(255) NOT NULL,
+  `optionC` varchar(255) NOT NULL,
+  `optionD` varchar(255) NOT NULL,
+  `correct_answer` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -98,6 +126,14 @@ CREATE TABLE `student` (
   `course` varchar(100) NOT NULL COMMENT 'Student course'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `student`
+--
+
+INSERT INTO `student` (`matricNoStudent`, `userID`, `course`) VALUES
+('B032410001', 'U001', 'BITP'),
+('d011', 'd011', 'sc');
+
 -- --------------------------------------------------------
 
 --
@@ -108,9 +144,21 @@ CREATE TABLE `teaching record` (
   `recordID` varchar(20) NOT NULL COMMENT 'Teaching record identifier',
   `matricNoTutor` varchar(20) NOT NULL COMMENT 'Reference to tutor',
   `subject` varchar(100) NOT NULL COMMENT 'Subject taught',
-  `date_time` datetime NOT NULL COMMENT 'Session date and time',
-  `teachingStatus` varchar(20) NOT NULL COMMENT 'Teaching session status'
+  `sessionDate` date NOT NULL COMMENT 'Session date and time',
+  `teachingStatus` varchar(20) NOT NULL COMMENT 'Teaching session status',
+  `startTime` time NOT NULL,
+  `endTime` time NOT NULL,
+  `sessionType` varchar(20) NOT NULL,
+  `meetingLink` varchar(20) NOT NULL,
+  `venue` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `teaching record`
+--
+
+INSERT INTO `teaching record` (`recordID`, `matricNoTutor`, `subject`, `sessionDate`, `teachingStatus`, `startTime`, `endTime`, `sessionType`, `meetingLink`, `venue`) VALUES
+('R526', 'd0112', 'Programming', '2026-03-12', 'Available', '17:22:00', '18:22:00', 'Online', 'https://teams.live.c', '');
 
 -- --------------------------------------------------------
 
@@ -124,6 +172,14 @@ CREATE TABLE `tutor` (
   `expertise` varchar(100) NOT NULL COMMENT 'Tutor expertise',
   `availability` varchar(100) NOT NULL COMMENT 'Tutor availability'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tutor`
+--
+
+INSERT INTO `tutor` (`matricNoTutor`, `userID`, `expertise`, `availability`) VALUES
+('d0112', 'd0112', 'Programming, Data Structure & Algorithm', 'Available'),
+('T001', 'U002', 'Programming', 'Available');
 
 -- --------------------------------------------------------
 
@@ -143,6 +199,16 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
+-- Dumping data for table `user`
+--
+
+INSERT INTO `user` (`userId`, `name`, `email`, `mobile_phone`, `gender`, `password`, `status`, `role`) VALUES
+('d011', 'sofea', 'aisya@gmail.com', '011', 'Female', '$2y$10$J02DKpbisCXpFJ4tdi8DrudUJmJBBz6O4ExpKuAfyOfhldoOAyeLu', 'Active', 'Student'),
+('d0112', 'sofea', 'sofea@gmail.com', '011', 'Female', '$2y$10$88BQsIt8Q3ugxVe./il2..JBSD8MZme2A1/OHWG4J2ycfGJRifqGC', 'Active', 'Tutor'),
+('U001', 'Aisya', 'aisya@gmail.com', '0123456789', 'Female', '123456', 'Active', 'Student'),
+('U002', 'Ahmad ', 'ahmad@gmail.com', '01111111111', 'Male', '123456', 'Active', 'Tutor');
+
+--
 -- Indexes for dumped tables
 --
 
@@ -159,7 +225,8 @@ ALTER TABLE `admin`
 ALTER TABLE `booking`
   ADD PRIMARY KEY (`bookingID`),
   ADD KEY `matricNoTutor` (`matricNoTutor`,`matricNoStudent`),
-  ADD KEY `matricNoStudent` (`matricNoStudent`);
+  ADD KEY `matricNoStudent` (`matricNoStudent`),
+  ADD KEY `recordID` (`recordID`);
 
 --
 -- Indexes for table `payment`
@@ -174,6 +241,13 @@ ALTER TABLE `payment`
 ALTER TABLE `quiz`
   ADD PRIMARY KEY (`quizID`),
   ADD KEY `matricNoTutor` (`matricNoTutor`);
+
+--
+-- Indexes for table `quiz_question`
+--
+ALTER TABLE `quiz_question`
+  ADD PRIMARY KEY (`questionID`),
+  ADD KEY `quizID` (`quizID`);
 
 --
 -- Indexes for table `quiz_result`
@@ -211,6 +285,16 @@ ALTER TABLE `user`
   ADD PRIMARY KEY (`userId`);
 
 --
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `quiz_question`
+--
+ALTER TABLE `quiz_question`
+  MODIFY `questionID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- Constraints for dumped tables
 --
 
@@ -240,16 +324,16 @@ ALTER TABLE `quiz`
   ADD CONSTRAINT `quiz_ibfk_1` FOREIGN KEY (`matricNoTutor`) REFERENCES `tutor` (`matricNoTutor`);
 
 --
+-- Constraints for table `quiz_question`
+--
+ALTER TABLE `quiz_question`
+  ADD CONSTRAINT `quiz_question_ibfk_1` FOREIGN KEY (`quizID`) REFERENCES `quiz` (`quizID`);
+
+--
 -- Constraints for table `quiz_result`
 --
 ALTER TABLE `quiz_result`
   ADD CONSTRAINT `quiz_result_ibfk_2` FOREIGN KEY (`matricNoStudent`) REFERENCES `student` (`matricNoStudent`);
-
---
--- Constraints for table `student`
---
-ALTER TABLE `student`
-  ADD CONSTRAINT `student_ibfk_1` FOREIGN KEY (`matricNoStudent`) REFERENCES `user` (`userId`);
 
 --
 -- Constraints for table `teaching record`

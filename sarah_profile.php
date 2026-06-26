@@ -16,11 +16,6 @@
             <img src="images/logoFtmk.png">
         </div>
 
-        <div class="search-box">
-            <input type="text" placeholder="Search">
-            <i class="fa-solid fa-magnifying-glass"></i>
-        </div>
-
         <div class="icon-section">
             <i class="fa-regular fa-bookmark"></i>
             <i class="fa-regular fa-bell"></i>

@@ -10,13 +10,12 @@ if(isset($_POST["btnLogin"]))
     $username = $_POST["txtUser"];
     $password = $_POST["txtPassword"];
 
-    // Admin Login
     if($username == "admin" && $password == "1234")
     {
         echo "
         <script>
             alert('Admin Login Successful');
-            window.location.href='dashboard.php';
+            window.location.href='admin_dashboard.php';
         </script>
         ";
     }
@@ -30,19 +29,63 @@ if(isset($_POST["btnLogin"]))
             $row = mysqli_fetch_assoc($result);
 
             if(password_verify($password, $row['password']))
-{
-    $_SESSION['matric'] = $row['userId'];
-    $_SESSION['name'] = $row['name'];
-    $_SESSION['role'] = $row['role'];
+            {
+                if($row["role"] == "Tutor")
+                {
+                    if($row["status"] == "Approved")
+                    {
+                        $_SESSION['matric'] = $row['userId'];
+                        $_SESSION['name'] = $row['name'];
+                        $_SESSION['role'] = $row['role'];
 
-    echo "
-    <script>
-        alert('Login Successful');
-        window.location.href='dashboard.php';
-    </script>
-    ";
-}
+                        echo "
+                        <script>
+                            alert('Tutor Login Successful');
+                            window.location.href='dashboard.php';
+                        </script>
+                        ";
+                    }
+                    else if($row["status"] == "Pending")
+                    {
+                        echo "
+                        <script>
+                            alert('Your tutor account is still pending admin approval.');
+                            window.location.href='login.php';
+                        </script>
+                        ";
+                    }
+                    else if($row["status"] == "Rejected")
+                    {
+                        echo "
+                        <script>
+                            alert('Your tutor application has been rejected.');
+                            window.location.href='login.php';
+                        </script>
+                        ";
+                    }
+                }
+                else
+                {
+                    $_SESSION['matric'] = $row['userId'];
+                    $_SESSION['name'] = $row['name'];
+                    $_SESSION['role'] = $row['role'];
 
+                    echo "
+                    <script>
+                        alert('Login Successful');
+                        window.location.href='dashboard.php';
+                    </script>
+                    ";
+                }
+            }
+            else
+            {
+                echo "
+                <script>
+                    alert('Wrong Password');
+                </script>
+                ";
+            }
         }
         else
         {
@@ -52,10 +95,8 @@ if(isset($_POST["btnLogin"]))
             </script>
             ";
         }
-        
     }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -80,8 +121,6 @@ body{
     background:white;
     overflow:hidden;
 }
-
-/* Header */
 
 .header{
     height:95px;
@@ -140,8 +179,6 @@ body{
     position:relative;
 }
 
-/* Background Shapes */
-
 .circleTop{
     width:500px;
     height:350px;
@@ -182,8 +219,6 @@ body{
     font-size:13px;
     color:#666;
 }
-
-/* Login Section */
 
 .loginBox{
     width:430px;
@@ -269,8 +304,6 @@ body{
     background:#54A8E2;
 }
 
-/* Modal */
-
 .modal{
     display:none;
     position:fixed;
@@ -319,7 +352,6 @@ body{
     background:#f5f5f5;
 }
 
-/* Responsive */
 
 @media screen and (max-width:768px){
 
