@@ -55,7 +55,7 @@ if(isset($_POST["btnLogin"]))
             {
                 echo "
                 <script>
-                    alert('Login Successful (Student)');
+                    alert('Login Successful');
                     window.location.href='student_dashboard.php';
                 </script>
                 ";
@@ -64,10 +64,8 @@ if(isset($_POST["btnLogin"]))
             {
                 echo "
                 <script>
-                    alert('Login Successful (Tutor)');
-                    window.location.href='dashboard.php';
-                </script>
-                ";
+                alert('Login Successful');
+                window.location.href='choose_role.php';</script>";
             }
             else
             {
