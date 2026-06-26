@@ -1,26 +1,30 @@
 <?php
 include("db_connect.php");
 
-$search = "";
+$search = isset($_GET['search']) ? mysqli_real_escape_string($conn, $_GET['search']) : "";
 
-if(isset($_GET['search']))
-{
-    $search = mysqli_real_escape_string($conn, $_GET['search']);
+$role = isset($_GET['role']) ? mysqli_real_escape_string($conn, $_GET['role']) : "";
 
-    $sql = "SELECT userId, name, email, mobile_phone, role, status
-            FROM user
-            WHERE userId LIKE '%$search%'
-            OR name LIKE '%$search%'
-            OR email LIKE '%$search%'
-            OR mobile_phone LIKE '%$search%'
-            ORDER BY userId";
-}
-else
+$sql = "SELECT userId, name, email, mobile_phone, role, status
+        FROM user
+        WHERE 1=1";
+
+if($search != "")
 {
-    $sql = "SELECT userId, name, email, mobile_phone, role, status
-            FROM user
-            ORDER BY userId";
+    $sql .= " AND (
+                userId LIKE '%$search%'
+                OR name LIKE '%$search%'
+                OR email LIKE '%$search%'
+                OR mobile_phone LIKE '%$search%'
+              )";
 }
+
+if($role != "")
+{
+    $sql .= " AND role='$role'";
+}
+
+$sql .= " ORDER BY userId";
 
 $result = mysqli_query($conn, $sql);
 ?>
@@ -178,33 +182,39 @@ tr:hover{
 
 <section class="container">
 
-    <div class="top-bar">
+   <div class="top-bar">
+
+    <form method="GET">
 
         <div class="search-box">
-        <form method="GET">
 
-        <input
-        type="text"
-        name="search"
-        placeholder="Search user..."
-        value="<?php echo htmlspecialchars($search); ?>">
+            <input
+                type="text"
+                name="search"
+                placeholder="Search user..."
+                value="<?php echo htmlspecialchars($search); ?>">
 
-        <button type="submit">
-        <i class="fas fa-search"></i>
-    </button>
+            <button type="submit">
+                <i class="fas fa-search"></i>
+            </button>
 
-</form>
         </div>
 
         <div class="filter">
-            <select>
-                <option>All Users</option>
-                <option>Student</option>
-                <option>Tutor</option>
+
+            <select name="role" onchange="this.form.submit()">
+
+                <option value="" <?php if($role=="") echo "selected"; ?>>All Users</option>
+                <option value="Student" <?php if($role=="Student") echo "selected"; ?>>Student</option>
+                <option value="Tutor" <?php if($role=="Tutor") echo "selected"; ?>>Tutor</option>
+
             </select>
+
         </div>
 
-    </div>
+    </form>
+
+</div>
 
     <table>
 
