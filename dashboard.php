@@ -1,5 +1,6 @@
 <?php
 session_start();
+include("db_connect.php");
 
 if(!isset($_SESSION['matric']))
 {
@@ -7,9 +8,24 @@ if(!isset($_SESSION['matric']))
     exit();
 }
 
-if($_SESSION['role'] != "Tutor")
+$matric = $_SESSION['matric'];
+
+$checkTutor = mysqli_query($conn, "
+    SELECT * FROM tutor_application
+    WHERE matricNoStudent='$matric'
+    AND status='Approved'
+");
+
+if(mysqli_num_rows($checkTutor) == 0)
 {
+<<<<<<< Updated upstream
     header("Location: choose_role.php");
+=======
+    echo "<script>
+        alert('You are not approved as Rakan Akademik yet!');
+        window.location='choose_role.php';
+    </script>";
+>>>>>>> Stashed changes
     exit();
 }
 ?>
