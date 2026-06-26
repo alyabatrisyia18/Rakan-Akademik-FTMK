@@ -76,7 +76,7 @@ $result = mysqli_query($conn, $sql);
             ☰
         </div>
 
-        <h2>Student/Tutor</h2>
+        <h2>Student</h2>
 
         <nav>
 
