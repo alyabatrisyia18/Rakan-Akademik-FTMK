@@ -67,7 +67,7 @@ if(mysqli_num_rows($checkTutor) == 0)
         }
 
         .logo img{
-            height:60px;   /* ubah ikut saiz yang nak */
+            height:60px;
             width:auto;
         }
 
@@ -81,10 +81,27 @@ if(mysqli_num_rows($checkTutor) == 0)
         .welcome h1{
             font-size:32px;
         }
+        
+        .back-container{
+            width:85%;
+            margin:20px auto 0;
+        }
+
+        .back-btn{
+            cursor:pointer;
+            font-size:28px;
+            background:none;
+            border:none;
+            color:#1f3f98;
+        }
+
+        .back-btn:hover{
+            color:#284db6;
+        }
 
         .menu-container{
             width:85%;
-            margin:30px auto;
+            margin:20px auto 30px;
             display:grid;
             grid-template-columns:repeat(2,1fr);
             gap:25px;
@@ -133,6 +150,10 @@ if(mysqli_num_rows($checkTutor) == 0)
 <section class="welcome">
     <h1>WELCOME TO RAKAN AKADEMIK</h1>
 </section>
+
+<div class="back-container">
+    <button class="back-btn" onclick="window.location.href='choose_role.php'"><i class="fas fa-arrow-left"></i></button>
+</div>
 
 <section class="menu-container">
 
