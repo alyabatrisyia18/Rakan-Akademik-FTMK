@@ -82,24 +82,42 @@
     }
 
     .score{
-    font-weight:bold;
-    font-size:18px;
+        display:inline-block;
+        min-width:55px;
+        padding:6px 12px;
+        border-radius:20px;
+        font-weight:bold;
+        font-size:15px;
+        color:white;
+        text-align:center;
     }
 
     .high{
-        color:#28a745;
+        background:#28a745;
     }
 
     .medium{
-        color:#0d47a1;
+        background:#0d47a1;
     }
 
     .low{
-        color:#ffc107;
+        background:#ffc107;
+        color:#333;
     }
 
     .fail{
-        color:#dc3545;
+        background:#dc3545;
+    }
+
+    .subject-link{
+    color:#2748A5;
+    text-decoration:underline;
+    font-weight:bold;
+    transition:0.3s;
+    }
+
+    .subject-link:hover{
+    color:#1a2f75;
     }
 
     </style>
@@ -125,7 +143,7 @@
 </header>
 
 <div class="menu-bar">
-    <a href="progress.php" class="active-menu">Progress Tracker</a>
+    <a href="student_progress.php" class="active-menu">Progress Tracker</a>
 </div>
 
 <div class="main-content">
@@ -146,17 +164,25 @@
             </tr>
 
             <tr>
-                <td>Programming</td>
-                <td>8</td>
-                <td>95%</td>
-                <td>82%</td>
+            <td>
+                <a href="subject_progress.php?subject=Programming" class="subject-link">
+                Programming
+                </a>
+            </td>
+            <td>8</td>
+            <td><span class="score high">95%</span></td>
+            <td><span class="score medium">82%</span></td>
             </tr>
 
             <tr>
-                <td>Data Structure & Algorithm</td>
-                <td>6</td>
-                <td>88%</td>
-                <td>75%</td>
+            <td>
+                <a href="subject_progress.php?subject=Data%20Structure%20%26%20Algorithm" class="subject-link">
+                Data Structure &amp; Algorithm
+                </a>
+            </td>
+            <td>6</td>
+            <td><span class="score high">88%</span></td>
+            <td><span class="score low">75%</span></td>
             </tr>
 
         </table>
