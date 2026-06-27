@@ -1,5 +1,45 @@
 <?php
+include("db_connect.php");
+
 $subject = isset($_GET['subject']) ? $_GET['subject'] : "Subject";
+$summary_sql = "SELECT
+
+COUNT(qa.attemptID) AS total_attempt,
+
+ROUND(MAX((qa.score/qa.total_question)*100),0) AS highest_score,
+
+ROUND(AVG((qa.score/qa.total_question)*100),0) AS average_score
+
+FROM quiz_attempts qa
+
+JOIN quiz q
+ON qa.quizID=q.quizID
+
+WHERE q.category='$subject'";
+
+$summary_result = mysqli_query($conn,$summary_sql);
+
+$summary = mysqli_fetch_assoc($summary_result);
+$history_sql = "SELECT
+
+q.title,
+
+qa.score,
+
+qa.total_question,
+
+qa.attempt_date
+
+FROM quiz_attempts qa
+
+JOIN quiz q
+ON qa.quizID = q.quizID
+
+WHERE q.category='$subject'
+
+ORDER BY qa.attempt_date DESC";
+
+$history_result = mysqli_query($conn,$history_sql);
 ?>
 
 <!DOCTYPE html>
@@ -181,45 +221,76 @@ $subject = isset($_GET['subject']) ? $_GET['subject'] : "Subject";
 
             <h3>Subject Summary</h3>
 
-            <p><strong>Quiz Attempt :</strong> 8</p>
+           <p>
+    <strong>Quiz Attempt :</strong>
+    <?php echo $summary['total_attempt']; ?>
+</p>
 
-            <p><strong>Highest Score :</strong>
-            <span class="score high">95%</span>
-            </p>
+<p>
+    <strong>Highest Score :</strong>
+    <span class="score high">
+        <?php echo $summary['highest_score']; ?>%
+    </span>
+</p>
 
-            <p><strong>Average Score :</strong>
-            <span class="score medium">82%</span>
-            </p>
-
+<p>
+    <strong>Average Score :</strong>
+    <span class="score medium">
+        <?php echo $summary['average_score']; ?>%
+    </span>
+</p>
         </div>
 
         <h3>Quiz History</h3>
 
-        <table>
+<table>
 
-            <tr>
-                <th>Quiz</th>
-                <th>Score</th>
-                <th>Status</th>
-            </tr>
+<tr>
+    <th>Quiz</th>
+    <th>Score</th>
+    <th>Status</th>
+</tr>
 
-            <tr>
-                <td>Quiz 1</td>
-                <td><span class="score high">95%</span></td>
-                <td>Completed</td>
-            </tr>
+<?php
+while($history = mysqli_fetch_assoc($history_result))
+{
 
-            <tr>
-                <td>Quiz 2</td>
-                <td><span class="score medium">82%</span></td>
-                <td>Completed</td>
-            </tr>
+$percent = round(($history['score']/$history['total_question'])*100);
 
-            <tr>
-                <td>Quiz 3</td>
-                <td><span class="score low">75%</span></td>
-                <td>Completed</td>
-            </tr>
+if($percent>=80)
+{
+    $class="high";
+}
+elseif($percent>=60)
+{
+    $class="medium";
+}
+elseif($percent>=40)
+{
+    $class="low";
+}
+else
+{
+    $class="fail";
+}
+?>
+
+<tr>
+
+<td><?php echo $history['title']; ?></td>
+
+<td>
+<span class="score <?php echo $class; ?>">
+<?php echo $history['score']; ?>/<?php echo $history['total_question']; ?>
+</span>
+</td>
+<td>Completed</td>
+
+</tr>
+
+<?php
+}
+?>
 
         </table>
 
