@@ -9,13 +9,13 @@ if (!isset($_SESSION['userId'])) {
 
 $userId = $_SESSION['userId'];
 
-$sqlUser = mysqli_query($conn,"
-SELECT *
-FROM user
-WHERE userId='$userId'
+$sqlUser = mysqli_query($conn, "
+    SELECT *
+    FROM user
+    WHERE userId='$userId'
 ");
 
-if(!$sqlUser || mysqli_num_rows($sqlUser)==0){
+if (!$sqlUser || mysqli_num_rows($sqlUser) == 0) {
     die("User not found.");
 }
 
@@ -28,14 +28,13 @@ $role  = $user['role'];
 
 $role_clean = strtolower(trim($role));
 
-if($role_clean!="student" && $role_clean!="tutor"){
-    header("Location:login.php");
+if ($role_clean != "student" && $role_clean != "tutor") {
+    header("Location: login.php");
     exit();
 }
-
-$dashboard = ($role_clean=="student")
-? "student_dashboard.php"
-: "dashboard.php";
+$dashboard = ($role_clean == "student")
+    ? "student_dashboard.php"
+    : "dashboard.php";
 
 $photo = "images/profile.jpg";
 
@@ -47,17 +46,17 @@ $academicStrengths  = "";
 $cgpa               = "";
 $availability       = "";
 
-if($role_clean=="tutor"){
+if ($role_clean == "tutor") {
 
-    $sqlTutor=mysqli_query($conn,"
-    SELECT *
-    FROM rakan_profile
-    WHERE matricNoTutor='$userId'
+    $sqlTutor = mysqli_query($conn,"
+        SELECT *
+        FROM rakan_profile
+        WHERE matricNoTutor='$userId'
     ");
 
-    if(mysqli_num_rows($sqlTutor)>0){
+    if ($sqlTutor && mysqli_num_rows($sqlTutor) > 0) {
 
-        $tutor=mysqli_fetch_assoc($sqlTutor);
+        $tutor = mysqli_fetch_assoc($sqlTutor);
 
         $programme          = $tutor['programme'];
         $institution        = $tutor['institution'];
@@ -67,136 +66,154 @@ if($role_clean=="tutor"){
         $cgpa              = $tutor['cgpa'];
         $availability      = $tutor['availability'];
 
-        if(!empty($tutor['photo']) &&
-           file_exists("uploads/".$tutor['photo']))
-        {
-            $photo="uploads/".$tutor['photo'];
+        if (
+            !empty($tutor['photo']) &&
+            file_exists("uploads/".$tutor['photo'])
+        ) {
+            $photo = "uploads/".$tutor['photo'];
         }
     }
 }
 
-if(isset($_POST['btnUpdate'])){
+if (isset($_POST['btnUpdate'])) {
 
-    $name  = mysqli_real_escape_string($conn,$_POST['name']);
-    $email = mysqli_real_escape_string($conn,$_POST['email']);
-    $phone = mysqli_real_escape_string($conn,$_POST['phone']);
+    $name  = mysqli_real_escape_string($conn, trim($_POST['name']));
+    $email = mysqli_real_escape_string($conn, trim($_POST['email']));
+    $phone = mysqli_real_escape_string($conn, trim($_POST['phone']));
 
     mysqli_query($conn,"
-    UPDATE user SET
-
-    name='$name',
-    email='$email',
-    mobile_phone='$phone'
-
-    WHERE userId='$userId'
+        UPDATE user SET
+            name='$name',
+            email='$email',
+            mobile_phone='$phone'
+        WHERE userId='$userId'
     ");
 
-    if($role_clean=="tutor"){
+    if ($role_clean == "tutor") {
 
-        $programme          = mysqli_real_escape_string($conn,$_POST['programme']);
-        $institution        = mysqli_real_escape_string($conn,$_POST['institution']);
-        $currentStatus      = mysqli_real_escape_string($conn,$_POST['currentStatus']);
-        $academicBackground = mysqli_real_escape_string($conn,$_POST['academicBackground']);
-        $academicStrengths  = mysqli_real_escape_string($conn,$_POST['academicStrengths']);
-        $cgpa              = mysqli_real_escape_string($conn,$_POST['cgpa']);
-        $availability      = mysqli_real_escape_string($conn,$_POST['availability']);
+        $programme          = mysqli_real_escape_string($conn, trim($_POST['programme']));
+        $institution        = mysqli_real_escape_string($conn, trim($_POST['institution']));
+        $currentStatus      = mysqli_real_escape_string($conn, trim($_POST['currentStatus']));
+        $academicBackground = mysqli_real_escape_string($conn, trim($_POST['academicBackground']));
+        $academicStrengths  = mysqli_real_escape_string($conn, trim($_POST['academicStrengths']));
+        $cgpa              = mysqli_real_escape_string($conn, trim($_POST['cgpa']));
+        $availability      = mysqli_real_escape_string($conn, trim($_POST['availability']));
 
-        $photoName="";
+        $photoName = "";
+        
+        if(isset($_FILES['photo']) && $_FILES['photo']['error'] == 0){
+            if($_FILES['photo']['size'] > 2 * 1024 * 1024){
+                die("Image size must not exceed 2MB.");
+                }
+            
+                $extension = strtolower(
+                    pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION)
+                    );
+                    
+                    $allowed = ['jpg','jpeg','png','webp'];
+                    
+            if(!in_array($extension, $allowed)){
+                die("Only JPG, JPEG, PNG and WEBP are allowed.");
+                }
+                
+            $photoName = time()."_".basename($_FILES['photo']['name']);
 
-        if(isset($_FILES['photo']) && $_FILES['photo']['error']==0){
-
-            $photoName=time()."_".$_FILES['photo']['name'];
-
-            move_uploaded_file(
-                $_FILES['photo']['tmp_name'],
-                "uploads/".$photoName
-            );
-
-        }else{
-
-            $photoQuery=mysqli_query($conn,"
-            SELECT photo
-            FROM rakan_profile
-            WHERE matricNoTutor='$userId'
-            ");
-
-            if(mysqli_num_rows($photoQuery)>0){
-
-                $old=mysqli_fetch_assoc($photoQuery);
-
-                $photoName=$old['photo'];
-
+            if(!move_uploaded_file( $_FILES['photo']['tmp_name'], "uploads/".$photoName
+            )){
+                die("Failed to upload photo.");
             }
-
         }
 
-        $check=mysqli_query($conn,"
-        SELECT *
-        FROM rakan_profile
-        WHERE matricNoTutor='$userId'
+        if (empty($photoName)) {
+
+            $photoQuery = mysqli_query($conn,"
+                SELECT photo
+                FROM rakan_profile
+                WHERE matricNoTutor='$userId'
+            ");
+
+            if ($photoQuery && mysqli_num_rows($photoQuery) > 0) {
+
+                $old = mysqli_fetch_assoc($photoQuery);
+                $photoName = $old['photo'];
+
+            }
+        }
+
+        $check = mysqli_query($conn,"
+            SELECT profileID
+            FROM rakan_profile
+            WHERE matricNoTutor='$userId'
         ");
 
-        if(mysqli_num_rows($check)>0){
+        if (mysqli_num_rows($check) > 0) {
 
             mysqli_query($conn,"
-            UPDATE rakan_profile SET
+                UPDATE rakan_profile SET
 
-            photo='$photoName',
-            programme='$programme',
-            institution='$institution',
-            currentStatus='$currentStatus',
-            academicBackground='$academicBackground',
-            academicStrengths='$academicStrengths',
-            cgpa='$cgpa',
-            availability='$availability',
-            contactNumber='$phone',
-            email='$email'
-            WHERE matricNoTutor='$userId'
+                photo='$photoName',
+                name='$name',
+                programme='$programme',
+                institution='$institution',
+                currentStatus='$currentStatus',
+                academicBackground='$academicBackground',
+                academicStrengths='$academicStrengths',
+                cgpa='$cgpa',
+                availability='$availability',
+                contactNumber='$phone',
+                email='$email'
+
+                WHERE matricNoTutor='$userId'
             ");
-        }else{
+
+        } else {
+
             mysqli_query($conn,"
-            INSERT INTO rakan_profile(
-            matricNoTutor,
-            photo,
-            name,
-            programme,
-            institution,
-            currentStatus,
-            academicBackground,
-            academicStrengths,
-            cgpa,
-            availability,
-            contactNumber,
-            email
-            )
-            VALUES(
-            '$userId',
-            '$photoName',
-            '$name',
-            '$programme',
-            '$institution',
-            '$currentStatus',
-            '$academicBackground',
-            '$academicStrengths',
-            '$cgpa',
-            '$availability',
-            '$phone',
-            '$email'
-            )
+                INSERT INTO rakan_profile(
+
+                    matricNoTutor,
+                    photo,
+                    name,
+                    programme,
+                    institution,
+                    currentStatus,
+                    academicBackground,
+                    academicStrengths,
+                    cgpa,
+                    availability,
+                    contactNumber,
+                    email
+
+                )
+
+                VALUES(
+
+                    '$userId',
+                    '$photoName',
+                    '$name',
+                    '$programme',
+                    '$institution',
+                    '$currentStatus',
+                    '$academicBackground',
+                    '$academicStrengths',
+                    '$cgpa',
+                    '$availability',
+                    '$phone',
+                    '$email'
+
+                )
             ");
         }
     }
 
     echo "
     <script>
-    alert('Profile updated successfully.');
-    window.location='profile.php';
+        alert('Profile updated successfully.');
+        window.location='profile.php';
     </script>
-
     ";
 
     exit();
-
 }
 ?>
 
@@ -371,23 +388,24 @@ select:focus{
 <body>
 
 <header>
+
     <div class="logo">
-        <img src="images/logoRakan.png">
-        <img src="images/logoUtem.png">
-        <img src="images/logoFtmk.png">
+        <img src="images/logoRakan.png" alt="Rakan Akademik">
+        <img src="images/logoUtem.png" alt="UTeM">
+        <img src="images/logoFtmk.png" alt="FTMK">
     </div>
 
     <div class="icons">
 
-        <a href="<?php echo $dashboard; ?>" class="icon-btn">
+        <a href="<?php echo $dashboard; ?>" class="icon-btn" title="Back">
             <i class="fas fa-arrow-left"></i>
         </a>
 
-        <a href="<?php echo $dashboard; ?>" class="icon-btn">
+        <a href="<?php echo $dashboard; ?>" class="icon-btn" title="Home">
             <i class="fas fa-home"></i>
         </a>
 
-        <a href="profile.php" class="icon-btn">
+        <a href="profile.php" class="icon-btn" title="Profile">
             <i class="far fa-user"></i>
         </a>
 
@@ -403,80 +421,101 @@ select:focus{
 
     <h3>Basic Information</h3>
 
-    <label>Name</label>
+    <label>Full Name</label>
     <input
         type="text"
         name="name"
         value="<?php echo htmlspecialchars($name); ?>"
         required>
 
-    <label>Email</label>
+    <label>Email Address</label>
     <input
         type="email"
         name="email"
         value="<?php echo htmlspecialchars($email); ?>"
         required>
 
-    <label>Phone Number</label>
+    <label>Mobile Phone</label>
     <input
-        type="text"
+        type="tel"
         name="phone"
+        pattern="[0-9]{10,11}"
+        maxlength="11"
         value="<?php echo htmlspecialchars($phone); ?>"
         required>
 
-    <?php if($role_clean=="tutor"){ ?>
+<?php if($role_clean=="tutor"){ ?>
 
     <h3>Tutor Information</h3>
 
-    <label>Profile Picture</label>
+    <label>Current Profile Picture</label>
 
-    <img
-        src="<?php echo $photo; ?>"
-        style="width:120px;height:120px;border-radius:50%;object-fit:cover;margin:10px 0;display:block;">
+    <div style="text-align:center;margin:15px 0;">
+        <img
+            src="<?php echo $photo; ?>"
+            style="width:140px;
+                   height:140px;
+                   border-radius:50%;
+                   object-fit:cover;
+                   border:4px solid #1f3f98;">
+    </div>
 
+    <label>Upload New Picture</label>
+    <small style="display:block; color:#777; margin:5px 0 10px;">
+    Accepted formats: JPG, JPEG, PNG, WEBP (Maximum 2MB)
+    </small>
     <input
         type="file"
         name="photo"
-        accept="image/*">
+        accept=".jpg,.jpeg,.png">
 
     <label>Programme</label>
+
     <input
         type="text"
         name="programme"
         value="<?php echo htmlspecialchars($programme); ?>">
 
     <label>Institution</label>
+
     <input
         type="text"
         name="institution"
         value="<?php echo htmlspecialchars($institution); ?>">
 
     <label>Current Status</label>
+
     <input
         type="text"
         name="currentStatus"
         value="<?php echo htmlspecialchars($currentStatus); ?>">
 
     <label>Academic Background</label>
+
     <textarea
         name="academicBackground"><?php echo htmlspecialchars($academicBackground); ?></textarea>
 
     <label>Academic Strengths</label>
+
     <textarea
         name="academicStrengths"><?php echo htmlspecialchars($academicStrengths); ?></textarea>
 
     <label>CGPA</label>
+
     <input
         type="number"
+        name="cgpa"
         step="0.01"
         min="0"
         max="4.00"
-        name="cgpa"
+        required
         value="<?php echo htmlspecialchars($cgpa); ?>">
 
     <label>Availability</label>
 
     <select name="availability">
+
+        <option value="">-- Select Availability --</option>
 
         <option value="Available"
         <?php if($availability=="Available") echo "selected"; ?>>
@@ -495,21 +534,25 @@ select:focus{
 
     </select>
 
-    <?php } ?>
+<?php } ?>
 
-    <div style="display:flex;gap:15px;margin-top:30px;">
+    <div style="display:flex;gap:15px;margin-top:35px;">
 
         <button
             type="button"
             onclick="window.location='profile.php';"
             style="background:#6c757d;">
+            <i class="fas fa-times"></i>
             Cancel
         </button>
 
         <button
             type="submit"
             name="btnUpdate">
-            Update Profile
+
+            <i class="fas fa-save"></i>
+            Save Changes
+
         </button>
 
     </div>
@@ -517,5 +560,4 @@ select:focus{
 </form>
 
 </body>
-</html>
 </html>
