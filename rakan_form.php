@@ -9,8 +9,9 @@ if (!isset($_SESSION['userId'])) {
 include("db_connect.php");
 
 $userId = $_SESSION['userId'];
+$role_clean = strtolower(trim($_SESSION['role']));
 
-if (strtolower($_SESSION['role']) != "tutor") {
+if (!in_array($role_clean, ['tutor','rakan'])) {
     header("Location: dashboard.php");
     exit();
 }
@@ -175,7 +176,7 @@ if(isset($_POST['btnSubmit']))
 <html>
 
 <head>
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <title>Rakan Akademik Form</title>
 
 <style>
