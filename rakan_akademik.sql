@@ -2,8 +2,8 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1:3306
--- Generation Time: Jun 26, 2026 at 07:28 PM
+-- Host: 127.0.0.1
+-- Generation Time: Jun 27, 2026 at 05:14 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -73,9 +73,69 @@ CREATE TABLE `payment` (
 CREATE TABLE `quiz` (
   `quizID` varchar(20) NOT NULL COMMENT 'Quiz identifier',
   `matricNoTutor` varchar(20) NOT NULL COMMENT 'Tutor who created quiz',
-  `question` varchar(255) NOT NULL COMMENT 'Quiz creation',
-  `answer` varchar(255) NOT NULL COMMENT 'Correct answer'
+  `title` varchar(255) NOT NULL,
+  `description` varchar(100) NOT NULL,
+  `category` varchar(100) DEFAULT NULL,
+  `difficulty` varchar(50) DEFAULT NULL,
+  `cover` varchar(255) DEFAULT NULL,
+  `time_limit` int(11) DEFAULT NULL,
+  `attempts` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `quiz`
+--
+
+INSERT INTO `quiz` (`quizID`, `matricNoTutor`, `title`, `description`, `category`, `difficulty`, `cover`, `time_limit`, `attempts`) VALUES
+('Q1782223233', 'd0112', '1234567', '', 'Programming', 'Easy', '', 10, 3);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `quiz_attempts`
+--
+
+CREATE TABLE `quiz_attempts` (
+  `attemptID` int(11) NOT NULL,
+  `quizID` varchar(20) NOT NULL,
+  `userID` varchar(20) NOT NULL,
+  `score` int(11) NOT NULL,
+  `total_question` int(11) NOT NULL,
+  `user_answer` text NOT NULL,
+  `attempt_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `quiz_attempts`
+--
+
+INSERT INTO `quiz_attempts` (`attemptID`, `quizID`, `userID`, `score`, `total_question`, `user_answer`, `attempt_date`) VALUES
+(6, 'Q1782223233', 'd0112', 1, 2, '{\"22\":\"A\",\"23\":\"A\"}', '2026-06-23 14:00:59');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `quiz_question`
+--
+
+CREATE TABLE `quiz_question` (
+  `questionID` int(11) NOT NULL,
+  `quizID` varchar(20) NOT NULL,
+  `question` text NOT NULL,
+  `optionA` varchar(255) NOT NULL,
+  `optionB` varchar(255) NOT NULL,
+  `optionC` varchar(255) NOT NULL,
+  `optionD` varchar(255) NOT NULL,
+  `correct_answer` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `quiz_question`
+--
+
+INSERT INTO `quiz_question` (`questionID`, `quizID`, `question`, `optionA`, `optionB`, `optionC`, `optionD`, `correct_answer`) VALUES
+(22, 'Q1782223233', '1', 'where', 'set', 'Child Node', '8', 'A'),
+(23, 'Q1782223233', '345tyu', 'where', 'Root Node', 'insert', '8', 'D');
 
 -- --------------------------------------------------------
 
@@ -131,7 +191,8 @@ CREATE TABLE `student` (
 INSERT INTO `student` (`matricNoStudent`, `userID`, `course`) VALUES
 ('B032410001', 'U001', 'BITP'),
 ('d011', 'd011', 'sc'),
-('D025789463', 'D025789463', 'Diploma In Science Computer');
+('D032410021', 'D032410021', 'Diploma in Science Computer'),
+('D123', 'D123', 'Diploma in Science Computer');
 
 -- --------------------------------------------------------
 
@@ -178,6 +239,7 @@ CREATE TABLE `tutor` (
 
 INSERT INTO `tutor` (`matricNoTutor`, `userID`, `expertise`, `availability`) VALUES
 ('d0112', 'd0112', 'Programming, Data Structure & Algorithm', 'Available'),
+('D032410021', 'D032410021', 'Data Structure & Algorithm', 'Available'),
 ('T001', 'U002', 'Programming', 'Available');
 
 -- --------------------------------------------------------
@@ -199,6 +261,13 @@ CREATE TABLE `tutor_application` (
   `adminRemark` text DEFAULT NULL,
   `popupStatus` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tutor_application`
+--
+
+INSERT INTO `tutor_application` (`applicationID`, `matricNoStudent`, `cgpa`, `expertise`, `availability`, `reason`, `transcript`, `applicationDate`, `status`, `adminRemark`, `popupStatus`) VALUES
+(0, 'D123', 3.50, 'Data Structure', '-', '-', '1782501502_ANALYSIS DOCUMENT.pdf', '2026-06-27 03:18:22', 'Approved', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -222,9 +291,10 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`userId`, `name`, `email`, `mobile_phone`, `gender`, `password`, `status`, `role`) VALUES
-('d011', 'sofea', 'aisya@gmail.com', '011', 'Female', '$2y$10$J02DKpbisCXpFJ4tdi8DrudUJmJBBz6O4ExpKuAfyOfhldoOAyeLu', 'Active', 'Student'),
+('d011', 'sofea', 'aisya@gmail.com', '011', 'Female', '111', 'Active', 'Student'),
 ('d0112', 'sofea', 'sofea@gmail.com', '011', 'Female', '$2y$10$88BQsIt8Q3ugxVe./il2..JBSD8MZme2A1/OHWG4J2ycfGJRifqGC', 'Active', 'Tutor'),
-('D025789463', 'Nur Ayuni Zahirah Binti Amirul Nazraf', 'n.ayzhrh@gmail.com', '0177552070', 'Female', '$2y$10$kHT8LIifnyljfb0QlcRTYuyuUHd03yfFnJGy0Zb0xs2AGnXumEXBK', 'Active', 'Student'),
+('D032410021', 'alya', 'batrisyiaalya13@gmail.com', '01153110996', 'Female', '$2y$10$G8lAx6nQNtQw44qzr4rXV.i2vdoKnHYf6rhuLNEMlsS7yS3aXxZZe', 'Approved', 'Tutor'),
+('D123', 'bat', 'batrisyia@gmail.com', '0123456789', 'Female', '$2y$10$/NivSmmQYPiNIDgCW50BeeHnMxdsOjRfQDLjVq815hyc8vtIzzM6C', 'Active', 'Student'),
 ('U001', 'Aisya', 'aisya@gmail.com', '0123456789', 'Female', '123456', 'Active', 'Student'),
 ('U002', 'Ahmad ', 'ahmad@gmail.com', '01111111111', 'Male', '123456', 'Active', 'Tutor');
 
@@ -263,19 +333,27 @@ ALTER TABLE `quiz`
   ADD KEY `matricNoTutor` (`matricNoTutor`);
 
 --
+-- Indexes for table `quiz_attempts`
+--
+ALTER TABLE `quiz_attempts`
+  ADD PRIMARY KEY (`attemptID`),
+  ADD KEY `quizID` (`quizID`),
+  ADD KEY `userID` (`userID`);
+
+--
+-- Indexes for table `quiz_question`
+--
+ALTER TABLE `quiz_question`
+  ADD PRIMARY KEY (`questionID`),
+  ADD KEY `quizID` (`quizID`);
+
+--
 -- Indexes for table `quiz_result`
 --
 ALTER TABLE `quiz_result`
   ADD PRIMARY KEY (`resultID`),
   ADD KEY `matricNoStudent` (`matricNoStudent`,`quizID`),
   ADD KEY `quizID` (`quizID`);
-
---
--- Indexes for table `rakan_profile`
---
-ALTER TABLE `rakan_profile`
-  ADD PRIMARY KEY (`profileID`),
-  ADD KEY `matricNoTutor` (`matricNoTutor`);
 
 --
 -- Indexes for table `student`
@@ -299,13 +377,6 @@ ALTER TABLE `tutor`
   ADD KEY `userID` (`userID`);
 
 --
--- Indexes for table `tutor_application`
---
-ALTER TABLE `tutor_application`
-  ADD PRIMARY KEY (`applicationID`),
-  ADD KEY `fk_application_student` (`matricNoStudent`);
-
---
 -- Indexes for table `user`
 --
 ALTER TABLE `user`
@@ -316,16 +387,16 @@ ALTER TABLE `user`
 --
 
 --
--- AUTO_INCREMENT for table `rakan_profile`
+-- AUTO_INCREMENT for table `quiz_attempts`
 --
-ALTER TABLE `rakan_profile`
-  MODIFY `profileID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+ALTER TABLE `quiz_attempts`
+  MODIFY `attemptID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT for table `tutor_application`
+-- AUTO_INCREMENT for table `quiz_question`
 --
-ALTER TABLE `tutor_application`
-  MODIFY `applicationID` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `quiz_question`
+  MODIFY `questionID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- Constraints for dumped tables
@@ -357,16 +428,23 @@ ALTER TABLE `quiz`
   ADD CONSTRAINT `quiz_ibfk_1` FOREIGN KEY (`matricNoTutor`) REFERENCES `tutor` (`matricNoTutor`);
 
 --
+-- Constraints for table `quiz_attempts`
+--
+ALTER TABLE `quiz_attempts`
+  ADD CONSTRAINT `quiz_attempts_ibfk_1` FOREIGN KEY (`quizID`) REFERENCES `quiz` (`quizID`),
+  ADD CONSTRAINT `quiz_attempts_ibfk_2` FOREIGN KEY (`userID`) REFERENCES `user` (`userId`);
+
+--
+-- Constraints for table `quiz_question`
+--
+ALTER TABLE `quiz_question`
+  ADD CONSTRAINT `quiz_question_ibfk_1` FOREIGN KEY (`quizID`) REFERENCES `quiz` (`quizID`);
+
+--
 -- Constraints for table `quiz_result`
 --
 ALTER TABLE `quiz_result`
   ADD CONSTRAINT `quiz_result_ibfk_2` FOREIGN KEY (`matricNoStudent`) REFERENCES `student` (`matricNoStudent`);
-
---
--- Constraints for table `rakan_profile`
---
-ALTER TABLE `rakan_profile`
-  ADD CONSTRAINT `rakan_profile_ibfk_1` FOREIGN KEY (`matricNoTutor`) REFERENCES `tutor` (`matricNoTutor`);
 
 --
 -- Constraints for table `teaching record`
@@ -379,12 +457,6 @@ ALTER TABLE `teaching record`
 --
 ALTER TABLE `tutor`
   ADD CONSTRAINT `tutor_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `user` (`userId`);
-
---
--- Constraints for table `tutor_application`
---
-ALTER TABLE `tutor_application`
-  ADD CONSTRAINT `fk_application_student` FOREIGN KEY (`matricNoStudent`) REFERENCES `student` (`matricNoStudent`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
