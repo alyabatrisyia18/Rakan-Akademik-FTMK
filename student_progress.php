@@ -1,3 +1,23 @@
+<?php
+include("db_connect.php");
+
+$sql = "SELECT
+            q.category,
+            COUNT(qa.attemptID) AS total_attempt,
+            MAX(qa.score) AS highest_score,
+            ROUND(AVG(qa.score),0) AS average_score
+
+        FROM quiz_attempts qa
+
+        JOIN quiz q
+        ON qa.quizID = q.quizID
+
+        GROUP BY q.category
+
+        ORDER BY q.category";
+
+$result = mysqli_query($conn, $sql);
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -163,28 +183,36 @@
                 <th>Average Score</th>
             </tr>
 
-            <tr>
-            <td>
-                <a href="subject_progress.php?subject=Programming" class="subject-link">
-                Programming
-                </a>
-            </td>
-            <td>8</td>
-            <td><span class="score high">95%</span></td>
-            <td><span class="score medium">82%</span></td>
-            </tr>
+          <?php
+while($row = mysqli_fetch_assoc($result))
+{
+?>
+<tr>
 
-            <tr>
-            <td>
-                <a href="subject_progress.php?subject=Data%20Structure%20%26%20Algorithm" class="subject-link">
-                Data Structure &amp; Algorithm
-                </a>
-            </td>
-            <td>6</td>
-            <td><span class="score high">88%</span></td>
-            <td><span class="score low">75%</span></td>
-            </tr>
+    <td>
+        <a href="subject_progress.php?subject=<?php echo urlencode($row['category']); ?>" class="subject-link">
+            <?php echo $row['category']; ?>
+        </a>
+    </td>
 
+    <td><?php echo $row['total_attempt']; ?></td>
+
+    <td>
+        <span class="score high">
+            <?php echo $row['highest_score']; ?>%
+        </span>
+    </td>
+
+    <td>
+        <span class="score medium">
+            <?php echo $row['average_score']; ?>%
+        </span>
+    </td>
+
+</tr>
+<?php
+}
+?>
         </table>
 
         <div class="overall-box">
