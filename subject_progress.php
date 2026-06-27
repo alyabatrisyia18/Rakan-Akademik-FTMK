@@ -1,5 +1,25 @@
 <?php
+include("db_connect.php");
+
 $subject = isset($_GET['subject']) ? $_GET['subject'] : "Subject";
+$summary_sql = "SELECT
+
+COUNT(qa.attemptID) AS total_attempt,
+
+ROUND(MAX((qa.score/qa.total_question)*100),0) AS highest_score,
+
+ROUND(AVG((qa.score/qa.total_question)*100),0) AS average_score
+
+FROM quiz_attempts qa
+
+JOIN quiz q
+ON qa.quizID=q.quizID
+
+WHERE q.category='$subject'";
+
+$summary_result = mysqli_query($conn,$summary_sql);
+
+$summary = mysqli_fetch_assoc($summary_result);
 ?>
 
 <!DOCTYPE html>
@@ -181,16 +201,24 @@ $subject = isset($_GET['subject']) ? $_GET['subject'] : "Subject";
 
             <h3>Subject Summary</h3>
 
-            <p><strong>Quiz Attempt :</strong> 8</p>
+           <p>
+    <strong>Quiz Attempt :</strong>
+    <?php echo $summary['total_attempt']; ?>
+</p>
 
-            <p><strong>Highest Score :</strong>
-            <span class="score high">95%</span>
-            </p>
+<p>
+    <strong>Highest Score :</strong>
+    <span class="score high">
+        <?php echo $summary['highest_score']; ?>%
+    </span>
+</p>
 
-            <p><strong>Average Score :</strong>
-            <span class="score medium">82%</span>
-            </p>
-
+<p>
+    <strong>Average Score :</strong>
+    <span class="score medium">
+        <?php echo $summary['average_score']; ?>%
+    </span>
+</p>
         </div>
 
         <h3>Quiz History</h3>
