@@ -4,27 +4,31 @@ include("db_connect.php");
 
 $sql = "
 SELECT
-tr.recordID,
-u.name,
+p.paymentID,
+p.payment_date,
+p.paymentStatus,
+
 tr.subject,
 tr.sessionDate,
 tr.hours,
-tr.estimatedEarning,
 tr.proofFile,
-tr.approvalStatus
 
-FROM `teaching record` tr
+u.name,
+
+p.amount
+
+FROM payment p
+
+JOIN `teaching record` tr
+ON p.recordID = tr.recordID
 
 JOIN tutor t
-ON tr.matricNoTutor=t.matricNoTutor
+ON tr.matricNoTutor = t.matricNoTutor
 
 JOIN user u
-ON t.userID=u.userID
+ON t.userID = u.userID
 
-WHERE tr.approvalStatus='Approved'
-OR tr.approvalStatus='Rejected'
-
-ORDER BY tr.submitDate DESC
+ORDER BY p.payment_date DESC
 ";
 
 $result = mysqli_query($conn, $sql);
@@ -117,17 +121,12 @@ $result = mysqli_query($conn, $sql);
             <tr>
 
                 <th>Tutor</th>
-
                 <th>Subject</th>
-
                 <th>Date</th>
-
                 <th>Hours</th>
-
                 <th>Amount</th>
-
+                <th>Payment Date</th>
                 <th>Proof</th>
-
                 <th>Status</th>
 
             </tr>
@@ -147,7 +146,10 @@ $result = mysqli_query($conn, $sql);
                     <td><?php echo $row['hours']; ?></td>
 
                     <td>
-                        RM <?php echo number_format($row['estimatedEarning'], 2); ?>
+                        RM <?php echo number_format($row['amount'], 2); ?>
+                    </td>
+                    <td>
+                        <?php echo date("d/m/Y", strtotime($row['payment_date'])); ?>
                     </td>
 
                     <td>
@@ -159,18 +161,20 @@ $result = mysqli_query($conn, $sql);
                     </td>
 
                     <td>
-
                         <?php
 
-                        if ($row['approvalStatus'] == "Approved") {
+                        if ($row['paymentStatus'] == "Paid") {
+
                         ?>
 
                             <span class="approved">
-                                APPROVED
+                                PAID
                             </span>
 
                         <?php
+
                         } else {
+
                         ?>
 
                             <span class="reject">
@@ -178,7 +182,9 @@ $result = mysqli_query($conn, $sql);
                             </span>
 
                         <?php
+
                         }
+
                         ?>
 
                     </td>
