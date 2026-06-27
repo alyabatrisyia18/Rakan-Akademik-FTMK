@@ -19,6 +19,35 @@ $sql = "SELECT
         ORDER BY q.category";
 
 $result = mysqli_query($conn, $sql);
+$summary_sql = "SELECT
+
+COUNT(attemptID) AS total_quiz,
+
+ROUND(AVG((score / total_question) * 100),0) AS overall_average
+
+FROM quiz_attempts";
+
+$summary_result = mysqli_query($conn, $summary_sql);
+
+$summary = mysqli_fetch_assoc($summary_result);
+$best_sql = "SELECT
+                q.category,
+                ROUND(AVG((qa.score / qa.total_question) * 100),0) AS avg_score
+
+            FROM quiz_attempts qa
+
+            JOIN quiz q
+            ON qa.quizID = q.quizID
+
+            GROUP BY q.category
+
+            ORDER BY avg_score DESC
+
+            LIMIT 1";
+
+$best_result = mysqli_query($conn, $best_sql);
+
+$best = mysqli_fetch_assoc($best_result);
 ?>
 <!DOCTYPE html>
 <html>
@@ -221,11 +250,11 @@ while($row = mysqli_fetch_assoc($result))
 
             <h3>Overall Summary</h3>
 
-            <p><strong>Total Quiz :</strong> 14</p>
+            <p><strong>Total Quiz :</strong> <?php echo $summary['total_quiz']; ?></p>
 
-            <p><strong>Overall Average :</strong> 79%</p>
+            <p><strong>Overall Average :</strong> <?php echo $summary['overall_average']; ?>%</p>
 
-            <p><strong>Best Subject :</strong> Programming</p>
+            <p><strong>Best Subject :</strong> <?php echo $best['category']; ?></p>
 
         </div>
 
