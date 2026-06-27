@@ -18,14 +18,10 @@ $checkTutor = mysqli_query($conn, "
 
 if(mysqli_num_rows($checkTutor) == 0)
 {
-<<<<<<< Updated upstream
-    header("Location: choose_role.php");
-=======
     echo "<script>
         alert('You are not approved as Rakan Akademik yet!');
         window.location='choose_role.php';
     </script>";
->>>>>>> Stashed changes
     exit();
 }
 ?>
