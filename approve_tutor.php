@@ -3,33 +3,38 @@ include("db_connect.php");
 
 $sql = "
 SELECT 
-    user.userId,
+    tutor_application.applicationID,
+    tutor_application.matricNoStudent,
+    tutor_application.cgpa,
+    tutor_application.expertise,
+    tutor_application.availability,
+    tutor_application.reason,
+    tutor_application.transcript,
+    tutor_application.status,
     user.name,
-    user.email,
-    tutor.expertise
-FROM user
-INNER JOIN tutor 
-ON user.userId = tutor.userID
-WHERE user.role = 'Tutor'
-AND user.status = 'Pending'
-";
+    user.email
+    
+    FROM tutor_application
+    INNER JOIN user
+    ON tutor_application.matricNoStudent = user.userId
+    WHERE tutor_application.status = 'Pending'
+    ";
 
 $result = mysqli_query($conn, $sql);
 ?>
 
 <!DOCTYPE html>
 <html>
-    
 <head>
-    <title>Approve Tutor</title>
-
-    <link rel="stylesheet" href="style.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <title>Approve Tutor</title>
 
 <style>
-
 body{
     font-family: Segoe UI, sans-serif;
     background:#f4f6fb;
@@ -60,8 +65,9 @@ body{
     background:white;
     padding:30px;
     border-radius:10px;
-    width:90%;
+    width:95%;
     margin:auto;
+    overflow-x:auto;
 }
 
 h2{
@@ -79,6 +85,7 @@ th,td {
     border:1px solid #ddd;
     padding:12px;
     text-align:left;
+    vertical-align:top;
 }
 
 th{
@@ -92,6 +99,7 @@ th{
     border-radius:5px;
     color:white;
     cursor:pointer;
+    margin-bottom:5px;
 }
 
 .approve{
@@ -101,12 +109,18 @@ th{
 .reject{
     background:red;
 }
+
+.view-link{
+    color:#2748A5;
+    font-weight:bold;
+    text-decoration:none;
+}
 </style>
 </head>
 
 <body>
-<div class="header">
 
+<div class="header">
     <div class="logo">
         <img src="images/logoRakan.png" alt="Rakan Akademik Logo">
         <img src="images/logoUtem.png" alt="UTeM Logo">
@@ -115,18 +129,24 @@ th{
 
     <div class="icons">
         <i class="fas fa-home" onclick="location.href='admin_dashboard.php'"></i>
+        <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
     </div>
 </div>
 
 <div class="container">
     <h2>Tutor Applications</h2>
+
     <table>
         <tr>
             <th>Matric No</th>
             <th>Name</th>
             <th>Email</th>
+            <th>CGPA</th>
             <th>Expertise</th>
-            <th>Approve/Reject</th>
+            <th>Availability</th>
+            <th>Reason</th>
+            <th>Transcript</th>
+            <th>Action</th>
         </tr>
 
         <?php
@@ -135,45 +155,43 @@ th{
             while($row = mysqli_fetch_assoc($result))
             {
         ?>
-
         <tr>
-            <td><?php echo $row["userId"]; ?></td>
-            <td><?php echo $row["name"]; ?></td>
-            <td><?php echo $row["email"]; ?></td>
-            <td><?php echo $row["expertise"]; ?></td>
+            <td><?php echo htmlspecialchars($row["matricNoStudent"]); ?></td>
+            <td><?php echo htmlspecialchars($row["name"]); ?></td>
+            <td><?php echo htmlspecialchars($row["email"]); ?></td>
+            <td><?php echo htmlspecialchars($row["cgpa"]); ?></td>
+            <td><?php echo htmlspecialchars($row["expertise"]); ?></td>
+            <td><?php echo htmlspecialchars($row["availability"]); ?></td>
+            <td><?php echo htmlspecialchars($row["reason"]); ?></td>
+
             <td>
+                <?php
+                if(!empty($row["transcript"]))
+                {
+                ?>
+                    <a class="view-link"
+                       href="uploads/<?php echo htmlspecialchars($row["transcript"]); ?>"
+                       target="_blank">
+                       View
+                    </a>
+                <?php
+                }
+                else
+                {
+                    echo "-";
+                }
+                ?>
+            </td>
 
-                <form method="POST"
-                      action="approve_reject.php"
-                      style="display:inline;">
-
-                    <input
-                        type="hidden"
-                        name="matric"
-                        value="<?php echo $row["userId"]; ?>">
-
-                    <input
-                        type="submit"
-                        name="approve"
-                        value="Approve"
-                        class="btn approve">
+            <td>
+                <form method="POST" action="approve_reject.php" style="display:inline;">
+                    <input type="hidden" name="applicationID" value="<?php echo $row["applicationID"]; ?>">
+                    <input type="submit" name="approve" value="Approve" class="btn approve">
                 </form>
 
-                <form method="POST"
-                      action="approve_reject.php"
-                      style="display:inline;">
-
-                    <input
-                        type="hidden"
-                        name="matric"
-                        value="<?php echo $row["userId"]; ?>">
-
-                    <input
-                        type="submit"
-                        name="reject"
-                        value="Reject"
-                        class="btn reject">
-
+                <form method="POST" action="approve_reject.php" style="display:inline;">
+                    <input type="hidden" name="applicationID" value="<?php echo $row["applicationID"]; ?>">
+                    <input type="submit" name="reject" value="Reject" class="btn reject">
                 </form>
             </td>
         </tr>
@@ -183,9 +201,8 @@ th{
         else
         {
         ?>
-
         <tr>
-            <td colspan="5" style="text-align:center;"> No pending tutor applications</td>
+            <td colspan="9" style="text-align:center;"> No Tutor Awaiting Approval</td>
         </tr>
         <?php
         }

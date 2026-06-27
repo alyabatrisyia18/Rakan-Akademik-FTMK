@@ -1,41 +1,45 @@
 <?php
 include("db_connect.php");
-
-if(isset($_POST["approve"]))
+if(isset($_POST["applicationID"]))
 {
-    $matric = $_POST["matric"];
+    $applicationID = $_POST["applicationID"];
 
-    $sql = "
-    UPDATE user 
-    SET status = 'Approved'
-    WHERE userId = '$matric'
-    AND role = 'Tutor'
-    ";
+    if(isset($_POST["approve"]))
+    {
+        $status = "Approved";
+    }
 
-    mysqli_query($conn, $sql);
+    else if(isset($_POST["reject"]))
+    {
+        $status = "Rejected";
+    }
 
-    echo "<script>
-            alert('Tutor approved successfully!');
-            window.location='approve_tutor.php';
-          </script>";
+    else
+    {
+        header("Location: approve_tutor.php");
+        exit();
+    }
+
+    $sql = "UPDATE tutor_application 
+            SET status = '$status'
+            WHERE applicationID = '$applicationID'";
+
+    if(mysqli_query($conn, $sql))
+    {
+        echo "<script>
+                alert('Tutor application has been $status');
+                window.location.href='approve_tutor.php';
+              </script>";
+    }
+
+    else
+    {
+        echo "Error: " . mysqli_error($conn);
+    }
 }
-
-else if(isset($_POST["reject"]))
-{
-    $matric = $_POST["matric"];
-
-    $sql = "
-    UPDATE user 
-    SET status = 'Rejected'
-    WHERE userId = '$matric'
-    AND role = 'Tutor'
-    ";
-
-    mysqli_query($conn, $sql);
-
-    echo "<script>
-            alert('Tutor rejected!');
-            window.location='approve_tutor.php';
-          </script>";
-}
+  else
+    {
+      header("Location: approve_tutor.php");
+      exit();
+    }
 ?>

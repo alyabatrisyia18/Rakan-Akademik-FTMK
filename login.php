@@ -4,15 +4,17 @@ include("db_connect.php");
 
 if(isset($_POST["btnLogin"]))
 {
-    $username = $_POST["txtUser"];
+    $username = trim($_POST["txtUser"]);
     $password = $_POST["txtPassword"];
 
-    // 🔥 ADMIN LOGIN (boleh kekal simple OR upgrade later)
+    // ===========================
+    // ADMIN LOGIN
+    // ===========================
     if($username == "admin" && $password == "1234")
     {
         $_SESSION['userId'] = "admin";
-        $_SESSION['role'] = "Admin";
         $_SESSION['name'] = "Administrator";
+        $_SESSION['role'] = "Admin";
 
         echo "
         <script>
@@ -23,7 +25,9 @@ if(isset($_POST["btnLogin"]))
         exit();
     }
 
-    // USER LOGIN (STUDENT / TUTOR)
+    // ===========================
+    // USER LOGIN
+    // ===========================
     $sql = "SELECT * FROM user WHERE userId='$username'";
     $result = mysqli_query($conn, $sql);
 
@@ -31,27 +35,28 @@ if(isset($_POST["btnLogin"]))
     {
         $row = mysqli_fetch_assoc($result);
 
-        // check password
+        // Check Password
         if(password_verify($password, $row['password']))
         {
-            // OPTIONAL: check account status
-            if($row['status'] != "Active")
+            // Check Account Status
+            if(strtolower($row['status']) != "active")
             {
                 echo "
                 <script>
-                    alert('Account not active. Please contact admin.');
+                    alert('Your account is inactive.');
+                    window.location.href='login.php';
                 </script>
                 ";
                 exit();
             }
 
-            // SET SESSION (STANDARD FIX)
+            // Create Session
             $_SESSION['userId'] = $row['userId'];
             $_SESSION['name'] = $row['name'];
             $_SESSION['role'] = $row['role'];
 
-            // 🔥 ROLE REDIRECT LOGIC (IMPORTANT FIX)
-            if($row['role'] == "Student")
+            // Redirect Based On Role
+            if(strtolower($row['role']) == "student")
             {
                 echo "
                 <script>
@@ -60,18 +65,21 @@ if(isset($_POST["btnLogin"]))
                 </script>
                 ";
             }
-            else if($row['role'] == "Tutor")
+            else if(strtolower($row['role']) == "tutor")
             {
                 echo "
                 <script>
-                alert('Login Successful');
-                window.location.href='choose_role.php';</script>";
+                    alert('Login Successful');
+                    window.location.href='choose_role.php';
+                </script>
+                ";
             }
             else
             {
                 echo "
                 <script>
-                    alert('Unknown role');
+                    alert('Invalid user role.');
+                    window.location.href='login.php';
                 </script>
                 ";
             }
@@ -448,7 +456,7 @@ body{
                     type="text"
                     name="txtUser"
                     class="textBox"
-                    placeholder="Student ID / Admin">
+                    placeholder="Matric Number / Admin">
 
                 <div class="passwordBox">
 
