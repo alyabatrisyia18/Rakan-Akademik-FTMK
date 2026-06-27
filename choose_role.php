@@ -1,9 +1,15 @@
 <?php
 session_start();
 
-if(!isset($_SESSION['matric']))
+if(!isset($_SESSION['userId']))
 {
     header("Location: login.php");
+    exit();
+}
+
+if($_SESSION['role'] != "Tutor" && $_SESSION['role'] != "tutor")
+{
+    header("Location: student_dashboard.php");
     exit();
 }
 ?>
@@ -93,6 +99,7 @@ h3{
         </p>
 
         <h3>Choose Dashboard</h3>
+        
 
         <a href="student_dashboard.php" class="btn">
             Student Dashboard
