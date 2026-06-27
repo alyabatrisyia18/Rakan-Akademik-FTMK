@@ -1,27 +1,32 @@
 <?php
 session_start();
 
-if(!isset($_SESSION['matric']))
-{
+if (!isset($_SESSION['userId'])) {
     header("Location: login.php");
-    exit();
-}
-
-if($_SESSION['role'] != "Tutor")
-{
-    header("Location: dashboard.php");
     exit();
 }
 
 include("db_connect.php");
 
-$matric = $_SESSION['matric'];
+$userId = $_SESSION['userId'];
 
-$sqlCheck = mysqli_query($conn,
-"SELECT * FROM rakan_profile
-WHERE matricNoTutor='$matric'");
+if (strtolower($_SESSION['role']) != "tutor") {
+    header("Location: dashboard.php");
+    exit();
+}
 
-$data = mysqli_fetch_assoc($sqlCheck);
+$sqlCheck = mysqli_query($conn,"
+SELECT *
+FROM rakan_profile
+WHERE matricNoTutor='$userId'
+");
+
+$data = [];
+
+if($sqlCheck && mysqli_num_rows($sqlCheck)>0)
+{
+    $data=mysqli_fetch_assoc($sqlCheck);
+}
 
 if(isset($_POST['btnSubmit']))
 {
@@ -49,21 +54,34 @@ if(isset($_POST['btnSubmit']))
 
     $photoName = "";
 
-    if(!empty($_FILES['photo']['name']))
-    {
-        $photoName =
-        time()."_".$_FILES['photo']['name'];
-
-        move_uploaded_file(
-            $_FILES['photo']['tmp_name'],
-            "images/profile/".$photoName
+    if(isset($_FILES['photo']) && $_FILES['photo']['error']==0){
+        if($_FILES['photo']['size'] > 2 * 1024 * 1024){
+        die("Image size must not exceed 2MB.");
+        }
+        $extension = strtolower(
+        pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION)
         );
+        $allowed = ['jpg','jpeg','png','webp'];
+
+        if(!in_array($extension,$allowed)){
+        die("Only JPG, JPEG, PNG and WEBP are allowed.");
+        }
+        
+        $photoName=time()."_".basename($_FILES['photo']['name']);
+        
+        if(!move_uploaded_file(
+        $_FILES['photo']['tmp_name'],
+        "uploads/".$photoName
+        ))
+        {
+        die("Failed to upload image.");
+        }
     }
 
     $check =
     mysqli_query($conn,
     "SELECT * FROM rakan_profile
-    WHERE matricNoTutor='$matric'");
+    WHERE matricNoTutor='$userId'");
 
     if(mysqli_num_rows($check) > 0)
     {
@@ -75,15 +93,15 @@ if(isset($_POST['btnSubmit']))
             name='$name',
             programme='$programme',
             institution='$institution',
-            current_status='$current_status',
-            academic_background='$academic_background',
-            academic_strengths='$academic_strengths',
+            currentStatus='$current_status',
+            academicBackground='$academic_background',
+            academicStrengths='$academic_strengths',
             cgpa='$cgpa',
             availability='$availability',
-            contact_number='$contact_number',
+            contactNumber='$contact_number',
             email='$email'
 
-            WHERE matricNoTutor='$matric'";
+            WHERE matricNoTutor='$userId'";
         }
         else
         {
@@ -100,7 +118,7 @@ if(isset($_POST['btnSubmit']))
             availability='$availability',
             email='$email'
 
-            WHERE matricNoTutor='$matric'";
+            WHERE matricNoTutor='$userId'";
         }
 
         mysqli_query($conn,$sql);
@@ -126,7 +144,7 @@ if(isset($_POST['btnSubmit']))
 
         VALUES(
 
-        '$matric',
+        '$userId',
         '$photoName',
         '$name',
         '$programme',
@@ -373,12 +391,12 @@ enctype="multipart/form-data">
 
 <?php
 
-$image = "images/puterisarah.jpg";
+$image = "uploads/profile.jpg";
 
-if(!empty($data['photo']))
+if(!empty($data['photo']) &&
+file_exists("uploads/".$data['photo']))
 {
-    $image =
-    "images/profile/".$data['photo'];
+$image="uploads/".$data['photo'];
 }
 
 ?>
@@ -421,21 +439,21 @@ value="<?php echo $data['institution'] ?? ''; ?>">
 <input type="text"
 name="current_status"
 required
-value="<?php echo $data['current_status'] ?? ''; ?>">
+value="<?php echo $data['currentStatus'] ?? ''; ?>">
 
 <label>Academic Background</label>
 
 <textarea
 name="academic_background"
 rows="5"
-required><?php echo $data['academic_background'] ?? ''; ?></textarea>
+required><?php echo $data['academicBackground'] ?? ''; ?></textarea>
 
 <label>Academic Strengths</label>
 
 <textarea
 name="academic_strengths"
 rows="5"
-required><?php echo $data['academic_strengths'] ?? ''; ?></textarea>
+required><?php echo $data['academicStrengths'] ?? ''; ?></textarea>
 
 </div>
 
@@ -464,7 +482,7 @@ value="<?php echo $data['availability'] ?? ''; ?>">
 maxlength="11"
 name="contact_number"
 required
-value="<?php echo $data['contact_number'] ?? ''; ?>">
+value="<?php echo $data['contactNumber'] ?? ''; ?>">
 
 <label>Email</label>
 
