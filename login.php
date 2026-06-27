@@ -7,9 +7,8 @@ if(isset($_POST["btnLogin"]))
     $username = trim($_POST["txtUser"]);
     $password = $_POST["txtPassword"];
 
-    // ===========================
     // ADMIN LOGIN
-    // ===========================
+    
     if($username == "admin" && $password == "1234")
     {
         $_SESSION['userId'] = "admin";
@@ -24,10 +23,7 @@ if(isset($_POST["btnLogin"]))
         ";
         exit();
     }
-
-    // ===========================
     // USER LOGIN
-    // ===========================
     $sql = "SELECT * FROM user WHERE userId='$username'";
     $result = mysqli_query($conn, $sql);
 
@@ -49,7 +45,6 @@ if(isset($_POST["btnLogin"]))
                 ";
                 exit();
             }
-
             // Create Session
             $_SESSION['userId'] = $row['userId'];
             $_SESSION['name'] = $row['name'];
@@ -165,8 +160,6 @@ body{
     margin-left:12px;
 }
 
-/* Content */
-
 .mainContent{
     height:calc(100vh - 95px);
 }
@@ -206,8 +199,6 @@ body{
     left:-120px;
     bottom:-120px;
 }
-
-/* Main Image */
 
 .mainImage{
     width:55%;
