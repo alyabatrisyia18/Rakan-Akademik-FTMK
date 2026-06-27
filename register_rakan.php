@@ -1,19 +1,53 @@
+```php
 <?php
 session_start();
 include("db_connect.php");
 
-if(!isset($_SESSION['matric']))
+if(!isset($_SESSION['userId']))
 {
     header("Location: login.php");
     exit();
 }
+// GET USER ID
+$userId = mysqli_real_escape_string($conn, $_SESSION['userId']);
+// CHECK STUDENT RECORD
+$checkStudent = mysqli_query(
+    $conn,
+    "SELECT matricNoStudent
+     FROM student
+     WHERE userID='$userId'"
+);
 
-$matric = $_SESSION['matric'];
+if(mysqli_num_rows($checkStudent) == 0)
+{
+    echo "<script>
+    alert('Student record not found.');
+    window.location='login.php';
+    </script>";
+    exit();
+}
 
-$sqlRole = mysqli_query($conn,
-"SELECT role
-FROM user
-WHERE userId='$matric'");
+$student = mysqli_fetch_assoc($checkStudent);
+$matricNoStudent = $student['matricNoStudent'];
+// CHECK ROLE
+$sqlRole = mysqli_query(
+    $conn,
+    "SELECT role
+     FROM user
+     WHERE userId='$userId'"
+);
+
+if(!$sqlRole)
+{
+    die(mysqli_error($conn));
+}
+
+if(mysqli_num_rows($sqlRole) == 0)
+{
+    session_destroy();
+    header("Location: login.php");
+    exit();
+}
 
 $dataRole = mysqli_fetch_assoc($sqlRole);
 
@@ -26,130 +60,169 @@ if(strtolower($dataRole['role']) == "tutor")
     exit();
 }
 
-if(isset($_POST["btnSubmit"]))
+if(strtolower($dataRole['role']) != "student")
 {
-    $cgpa = $_POST["cgpa"];
-    $availability = mysqli_real_escape_string($conn, $_POST["availability"]);
-    $reason = mysqli_real_escape_string($conn, $_POST["reason"]);
-
-    // =========================
-    // CGPA VALIDATION (IMPORTANT)
-    // =========================
-    if($cgpa < 3.50 || $cgpa > 4.00)
-    {
-        echo "<script>alert('CGPA must be between 3.50 - 4.00');</script>";
-        exit();
-    }
-
-    // =========================
-    // EXPERTISE
-    // =========================
-    $expertise = "";
-
-    if(isset($_POST["expertise"]) && count($_POST["expertise"]) > 0)
-    {
-        $expertise = implode(", ", $_POST["expertise"]);
-    }
-    else
-    {
-        echo "<script>alert('Please select at least one expertise subject!');</script>";
-        exit();
-    }
-
-    // =========================
-    // FILE UPLOAD (PDF ONLY)
-    // =========================
-    $fileName = "";
-
-    if(!empty($_FILES["transcript"]["name"]))
-    {
-        $fileExt = strtolower(pathinfo($_FILES["transcript"]["name"], PATHINFO_EXTENSION));
-
-        if($fileExt != "pdf")
-        {
-            echo "<script>alert('Only PDF file allowed for transcript!');</script>";
-            exit();
-        }
-
-        $fileName = time() . "_" . $_FILES["transcript"]["name"];
-
-        move_uploaded_file(
-            $_FILES["transcript"]["tmp_name"],
-            "uploads/" . $fileName
-        );
-    }
-    else
-    {
-        echo "<script>alert('Transcript is required!');</script>";
-        exit();
-    }
-
-    // =========================
-    // CHECK DUPLICATE (ONLY PENDING)
-    // =========================
-    $check = mysqli_query($conn,
-    " SELECT * FROM tutor_application
-    WHERE matricNoStudent='$matric'
-    AND(
-    status='Pending'
-    OR status='Approved'
-    )");
-
-if(mysqli_num_rows($check) > 0)
-{
-    $application = mysqli_fetch_assoc($check);
-
-    if($application['status'] == "Pending")
-    {
-        echo "<script>
-        alert('You already have a pending application.');
-        </script>";
-    }
-    else
-    {
-        echo "<script>
-        alert('You are already a Rakan Akademik.');
-        </script>";
-    }
-
+    echo "<script>
+    alert('Only students can apply.');
+    window.location='login.php';
+    </script>";
     exit();
 }
+// SUBMIT APPLICATION
+if(isset($_POST["btnSubmit"]))
+{
+    // Better numeric comparison
+    $cgpa = (float) $_POST["cgpa"];
 
-    // =========================
+    $availability = mysqli_real_escape_string(
+        $conn,
+        $_POST["availability"]
+    );
+
+    $reason = mysqli_real_escape_string(
+        $conn,
+        $_POST["reason"]
+    );
+
+    if($cgpa < 3.50 || $cgpa > 4.00)
+    {
+        echo "<script>
+        alert('CGPA must be between 3.50 and 4.00');
+        </script>";
+        exit();
+    }
+
+    if(empty($_POST["expertise"]))
+    {
+        echo "<script>
+        alert('Please select at least one expertise subject.');
+        </script>";
+        exit();
+    }
+
+    $expertise = implode(", ", $_POST["expertise"]);
+    // CHECK DUPLICATE FIRST
+    $check = mysqli_query(
+        $conn,
+        "SELECT *
+         FROM tutor_application
+         WHERE matricNoStudent='$matricNoStudent'
+         AND
+         (
+            status='Pending'
+            OR status='Approved'
+         )"
+    );
+
+    if(mysqli_num_rows($check) > 0)
+    {
+        $application = mysqli_fetch_assoc($check);
+
+        if($application["status"] == "Pending")
+        {
+            echo "<script>
+            alert('You already have a pending application.');
+            </script>";
+        }
+        else
+        {
+            echo "<script>
+            alert('You are already a Rakan Akademik.');
+            </script>";
+        }
+
+        exit();
+    }
+    // VALIDATE FILE
+    if(empty($_FILES["transcript"]["name"]))
+    {
+        echo "<script>
+        alert('Transcript is required.');
+        </script>";
+        exit();
+    }
+
+    $fileExt = strtolower(
+        pathinfo(
+            $_FILES["transcript"]["name"],
+            PATHINFO_EXTENSION
+        )
+    );
+
+    if($fileExt != "pdf")
+    {
+        echo "<script>
+        alert('Only PDF file is allowed.');
+        </script>";
+        exit();
+    }
+
+    if($_FILES["transcript"]["size"] > 5000000)
+    {
+        echo "<script>
+        alert('Maximum file size is 5MB.');
+        </script>";
+        exit();
+    }
+    // CREATE UPLOAD FOLDER
+    if(!is_dir("uploads"))
+    {
+        mkdir("uploads",0777,true);
+    }
+
+    $safeName = preg_replace(
+        '/\s+/',
+        '_',
+        $_FILES["transcript"]["name"]
+    );
+
+    $fileName = time()."_".$safeName;
+
+    if(!move_uploaded_file(
+        $_FILES["transcript"]["tmp_name"],
+        "uploads/".$fileName
+    ))
+    {
+        echo "<script>
+        alert('Failed to upload transcript.');
+        </script>";
+        exit();
+    }
     // INSERT APPLICATION
-    // =========================
     $sql = "
     INSERT INTO tutor_application
     (
-matricNoStudent,
-cgpa,
-expertise,
-availability,
-reason,
-transcript,
-status
+        matricNoStudent,
+        cgpa,
+        expertise,
+        availability,
+        reason,
+        transcript,
+        status
     )
     VALUES
     (
-'$matric',
-'$cgpa',
-'$expertise',
-'$availability',
-'$reason',
-'$fileName',
-'Pending'
+        '$matricNoStudent',
+        '$cgpa',
+        '$expertise',
+        '$availability',
+        '$reason',
+        '$fileName',
+        'Pending'
     )";
 
     if(mysqli_query($conn, $sql))
     {
         echo "<script>
-            alert('Application Submitted Successfully!');
-            window.location='student_dashboard.php';
+        alert('Application Submitted Successfully.');
+        window.location='student_dashboard.php';
         </script>";
     }
     else
     {
-        echo "<script>alert('Database error: failed to submit');</script>";
+        echo "<script>
+        alert('Failed to submit application.');
+        </script>";
     }
 }
 ?>
@@ -168,7 +241,6 @@ body{
     background-size: cover;
 }
 
-/* dark overlay supaya text jelas */
 body::before{
     content:"";
     position:fixed;
@@ -276,10 +348,13 @@ button{
 
 <h2>Apply as Rakan Akademik</h2>
 
-<form method="POST" enctype="multipart/form-data">
+<form
+method="POST"
+enctype="multipart/form-data"
+autocomplete="off">
 
 <label>Matric Number</label>
-<input type="text" value="<?php echo $matric; ?>" readonly>
+<input type="text" value="<?php echo $matricNoStudent; ?>" readonly>
 
 <label>CGPA</label>
 <input type="number" name="cgpa" step="0.01" min="3.50" max="4.00" required>
@@ -288,10 +363,7 @@ button{
 
 <div class="checkbox-group">
     <label><input type="checkbox" name="expertise[]" value="Programming"> Programming</label>
-    <label><input type="checkbox" name="expertise[]" value="Database"> Database</label>
-    <label><input type="checkbox" name="expertise[]" value="Web Development"> Web Development</label>
     <label><input type="checkbox" name="expertise[]" value="Data Structure"> Data Structure</label>
-    <label><input type="checkbox" name="expertise[]" value="Networking"> Networking</label>
 </div>
 
 <label>Availability</label>
@@ -301,7 +373,7 @@ button{
 <textarea name="reason" rows="5" required></textarea>
 
 <label>Upload Transcript (PDF only)</label>
-<input type="file" name="transcript" required>
+<input type="file" name="transcript" accept=".pdf" required>
 
 <button type="submit" name="btnSubmit" class="submit">Submit</button>
 <button type="reset" class="reset">Reset</button>
