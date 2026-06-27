@@ -4,8 +4,10 @@ include("db_connect.php");
 $sql = "SELECT
             q.category,
             COUNT(qa.attemptID) AS total_attempt,
-            MAX(qa.score) AS highest_score,
-            ROUND(AVG(qa.score),0) AS average_score
+
+            ROUND(MAX((qa.score / qa.total_question) * 100),0) AS highest_score,
+
+            ROUND(AVG((qa.score / qa.total_question) * 100),0) AS average_score
 
         FROM quiz_attempts qa
 
