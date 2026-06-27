@@ -124,7 +124,7 @@ if (isset($_POST['addSession'])) {
 
         <nav>
             <ul>
-                <li><a href="addtutoringsession.php" class="active-menu" >Add Tutoring Session</a></li>
+                <li><a href="addtutoringsession.php" class="active-menu">Add Tutoring Session</a></li>
                 <li><a href="mytutoringsession.php">My Tutoring Session</a></li>
                 <li><a href="teachingsessionrecord.php">Add Teaching Session</a></li>
                 <li><a href="sessionrecord.php">Session Record</a></li>
@@ -154,7 +154,11 @@ if (isset($_POST['addSession'])) {
 
             <label>Date</label>
 
-            <input type="date" name="sessionDate" required>
+            <input
+                type="date"
+                name="sessionDate"
+                min="<?php echo date('Y-m-d'); ?>"
+                required>
 
             <div class="time-row">
 
@@ -194,7 +198,7 @@ if (isset($_POST['addSession'])) {
                     placeholder="Paste Teams Link">
 
             </div>
-            
+
             <div id="f2fSection" style="display:none;">
 
                 <label>Venue</label>
@@ -202,7 +206,7 @@ if (isset($_POST['addSession'])) {
                 <input
                     type="text"
                     name="venue"
-                    placeholder="Example: FTMK Discussion Room 2">   
+                    placeholder="Example: FTMK Discussion Room 2">
             </div>
             <div class="button-row">
                 <button
