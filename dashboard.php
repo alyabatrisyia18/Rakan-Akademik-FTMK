@@ -1,5 +1,6 @@
 <?php
 session_start();
+include("db_connect.php");
 
 if(!isset($_SESSION['matric']))
 {
@@ -7,9 +8,20 @@ if(!isset($_SESSION['matric']))
     exit();
 }
 
-if($_SESSION['role'] != "Tutor")
+$matric = $_SESSION['matric'];
+
+$checkTutor = mysqli_query($conn, "
+    SELECT * FROM tutor_application
+    WHERE matricNoStudent='$matric'
+    AND status='Approved'
+");
+
+if(mysqli_num_rows($checkTutor) == 0)
 {
-    header("Location: choose_role.php");
+    echo "<script>
+        alert('You are not approved as Rakan Akademik yet!');
+        window.location='choose_role.php';
+    </script>";
     exit();
 }
 ?>
@@ -55,7 +67,7 @@ if($_SESSION['role'] != "Tutor")
         }
 
         .logo img{
-            height:60px;   /* ubah ikut saiz yang nak */
+            height:60px;
             width:auto;
         }
 
@@ -69,10 +81,27 @@ if($_SESSION['role'] != "Tutor")
         .welcome h1{
             font-size:32px;
         }
+        
+        .back-container{
+            width:85%;
+            margin:20px auto 0;
+        }
+
+        .back-btn{
+            cursor:pointer;
+            font-size:28px;
+            background:none;
+            border:none;
+            color:#1f3f98;
+        }
+
+        .back-btn:hover{
+            color:#284db6;
+        }
 
         .menu-container{
             width:85%;
-            margin:30px auto;
+            margin:20px auto 30px;
             display:grid;
             grid-template-columns:repeat(2,1fr);
             gap:25px;
@@ -121,6 +150,10 @@ if($_SESSION['role'] != "Tutor")
 <section class="welcome">
     <h1>WELCOME TO RAKAN AKADEMIK</h1>
 </section>
+
+<div class="back-container">
+    <button class="back-btn" onclick="window.location.href='choose_role.php'"><i class="fas fa-arrow-left"></i></button>
+</div>
 
 <section class="menu-container">
 
