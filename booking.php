@@ -101,12 +101,9 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
     <div class="search-box">
         <input type="text" placeholder="Hinted search text">
-        <i class="fas fa-search"></i>
     </div>
 
     <div class="header-icons">
-        <i class="far fa-bookmark"></i>
-        <i class="far fa-bell"></i>
         <i class="far fa-user-circle"></i>
         <i class="fas fa-home" onclick="location.href='dashboard.php'" title="Dashboard"></i>
     </div>
