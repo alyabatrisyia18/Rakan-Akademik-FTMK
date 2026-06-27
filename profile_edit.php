@@ -467,7 +467,7 @@ select:focus{
     <input
         type="file"
         name="photo"
-        accept=".jpg,.jpeg,.png,.webp">
+        accept=".jpg,.jpeg,.png">
 
     <label>Programme</label>
 
