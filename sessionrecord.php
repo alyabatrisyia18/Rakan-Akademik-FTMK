@@ -67,7 +67,7 @@ $result = mysqli_query($conn, $sql);
                 <li><a href="addtutoringsession.php">Add Tutoring Session</a></li>
                 <li><a href="mytutoringsession.php">My Tutoring Session</a></li>
                 <li><a href="teachingsessionrecord.php">Add Teaching Session</a></li>
-                <li><a href="sessionrecord.php" class="active-menu" >Session Record</a></li>
+                <li><a href="sessionrecord.php" class="active-menu">Session Record</a></li>
                 <li><a href="earningdashboard.php">Earnings Dashboard</a></li>
             </ul>
         </nav>
@@ -87,7 +87,28 @@ $result = mysqli_query($conn, $sql);
                     <td><?php echo $row['subject']; ?></td>
                     <td><?php echo $row['hours']; ?></td>
                     <td>RM <?php echo number_format($row['estimatedEarning'], 2); ?></td>
-                    <td><?php if ($row['approvalStatus'] == 'Approved') { ?><button class='approved'>APPROVED</button><?php } else { ?><button class='pending'>PENDING</button><?php } ?></td>
+                    <td>
+
+                        <?php
+                        if ($row['approvalStatus'] == 'Approved') {
+                        ?>
+                            <span class="approved">APPROVED</span>
+
+                        <?php
+                        } elseif ($row['approvalStatus'] == 'Rejected') {
+                        ?>
+                            <span class="reject">REJECTED</span>
+
+                        <?php
+                        } else {
+                        ?>
+                            <span class="pending">PENDING</span>
+
+                        <?php
+                        }
+                        ?>
+
+                    </td>
                 </tr><?php } ?>
         </table>
         <p>Note : Sessions marked as pending are waiting admin review before being approved for payment</p>
