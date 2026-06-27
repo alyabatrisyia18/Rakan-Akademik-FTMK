@@ -232,11 +232,19 @@ else
 }
 ?>
 
-<span class="status <?php echo $class; ?>">
-    <?php echo $user['status']; ?>
-</span>
+<div class="detail-row">
+
+    <span class="status <?php echo $class; ?>">
+        <?php echo $user['status']; ?>
+    </span>
 </div>
 
+</div>
+
+<div class="back-btn">
+    <a href="user_list.php">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
 </div>
 
 </section>
