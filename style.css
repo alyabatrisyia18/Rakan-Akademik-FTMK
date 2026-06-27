@@ -466,20 +466,36 @@ margin-top:25px;
 
 /* SESSION RECORD STATUS */
 
+.approved,
+.pending,
+.reject{
+
+    display:inline-block;
+    min-width:130px;
+
+    padding:10px 20px;
+
+    border:none;
+    border-radius:8px;
+
+    font-size:15px;
+    font-weight:bold;
+    text-align:center;
+
+    box-sizing:border-box;
+}
+
 .approved{
     background:#4CAF50;
     color:white;
-    border:none;
-    padding:10px 20px;
-    border-radius:6px;
-    font-weight:bold;
 }
 
 .pending{
     background:#FFD966;
     color:black;
-    border:none;
-    padding:10px 20px;
-    border-radius:6px;
-    font-weight:bold;
+}
+
+.reject{
+    background:#dc3545;
+    color:white;
 }
