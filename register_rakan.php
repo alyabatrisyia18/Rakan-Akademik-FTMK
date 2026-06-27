@@ -1,465 +1,383 @@
 <?php
-
+session_start();
 include("db_connect.php");
 
-if(isset($_POST["btnRegister"]))
+if(!isset($_SESSION['userId']))
 {
-    $name = $_POST["txtName"];
-    $matric = $_POST["txtMatric"];
-    $email = $_POST["txtEmail"];
-    $phone = $_POST["txtPhone"];
-    $cgpa = $_POST["txtCGPA"];
-    $gender = $_POST["gender"];
-    $password = $_POST["txtPassword"];
-    $confirmPassword = $_POST["txtConfirmPassword"];
+    header("Location: login.php");
+    exit();
+}
+// GET USER ID
+$userId = mysqli_real_escape_string($conn, $_SESSION['userId']);
+// CHECK STUDENT RECORD
+$checkStudent = mysqli_query(
+    $conn,
+    "SELECT matricNoStudent
+     FROM student
+     WHERE userID='$userId'"
+);
 
-    $subject = "";
-
-    if(isset($_POST["subject"]))
-    {
-        $subject = implode(", ", $_POST["subject"]);
-    }
-
-   if(empty($subject))
+if(mysqli_num_rows($checkStudent) == 0)
 {
     echo "<script>
-            alert('Please select at least one Expert Subject!');
-          </script>";
+    alert('Student record not found.');
+    window.location='login.php';
+    </script>";
+    exit();
 }
-    else if($password != $confirmPassword)
+
+$student = mysqli_fetch_assoc($checkStudent);
+$matricNoStudent = $student['matricNoStudent'];
+// CHECK ROLE
+$sqlRole = mysqli_query(
+    $conn,
+    "SELECT role
+     FROM user
+     WHERE userId='$userId'"
+);
+
+if(!$sqlRole)
+{
+    die(mysqli_error($conn));
+}
+
+if(mysqli_num_rows($sqlRole) == 0)
+{
+    session_destroy();
+    header("Location: login.php");
+    exit();
+}
+
+$dataRole = mysqli_fetch_assoc($sqlRole);
+
+if(strtolower($dataRole['role']) == "tutor")
+{
+    echo "<script>
+    alert('You are already a Rakan Akademik.');
+    window.location='dashboard.php';
+    </script>";
+    exit();
+}
+
+if(strtolower($dataRole['role']) != "student")
+{
+    echo "<script>
+    alert('Only students can apply.');
+    window.location='login.php';
+    </script>";
+    exit();
+}
+// SUBMIT APPLICATION
+if(isset($_POST["btnSubmit"]))
+{
+    // Better numeric comparison
+    $cgpa = (float) $_POST["cgpa"];
+
+    $availability = mysqli_real_escape_string(
+        $conn,
+        $_POST["availability"]
+    );
+
+    $reason = mysqli_real_escape_string(
+        $conn,
+        $_POST["reason"]
+    );
+
+    if($cgpa < 3.50 || $cgpa > 4.00)
     {
         echo "<script>
-            alert('Password does not match!');
-          </script>";
+        alert('CGPA must be between 3.50 and 4.00');
+        </script>";
+        exit();
     }
-else if($cgpa < 3.50 || $cgpa > 4.00)
-{
-    echo "<script>
-            alert('You do not meet the qualification requirements. CGPA must be between 3.50 and 4.00.');
-          </script>";
-}
 
-    else
+    if(empty($_POST["expertise"]))
     {
-        $checkUser = mysqli_query(
-            $conn,
-            "SELECT * FROM user WHERE userId='$matric'"
-        );
+        echo "<script>
+        alert('Please select at least one expertise subject.');
+        </script>";
+        exit();
+    }
 
-        if(mysqli_num_rows($checkUser) > 0)
+    $expertise = implode(", ", $_POST["expertise"]);
+    // CHECK DUPLICATE FIRST
+    $check = mysqli_query(
+        $conn,
+        "SELECT *
+         FROM tutor_application
+         WHERE matricNoStudent='$matricNoStudent'
+         AND
+         (
+            status='Pending'
+            OR status='Approved'
+         )"
+    );
+
+    if(mysqli_num_rows($check) > 0)
+    {
+        $application = mysqli_fetch_assoc($check);
+
+        if($application["status"] == "Pending")
         {
             echo "<script>
-                    alert('Matric Number Already Registered!');
-                  </script>";
+            alert('You already have a pending application.');
+            </script>";
         }
         else
         {
-            $hashedPassword = password_hash(
-                $password,
-                PASSWORD_DEFAULT
-            );
-
-            $sqlUser = "
-            INSERT INTO user
-            (
-                userId,
-                name,
-                email,
-                mobile_phone,
-                gender,
-                password,
-                status,
-                role
-            )
-            VALUES
-            (
-                '$matric',
-                '$name',
-                '$email',
-                '$phone',
-                '$gender',
-                '$hashedPassword',
-                'Active',
-                'Tutor'
-            )";
-
-            if(mysqli_query($conn, $sqlUser))
-            {
-                $sqlTutor = "
-                INSERT INTO tutor
-                (
-                    matricNoTutor,
-                    userID,
-                    expertise,
-                    availability
-                )
-                VALUES
-                (
-                    '$matric',
-                    '$matric',
-                    '$subject',
-                    'Available'
-                )";
-
-                mysqli_query($conn, $sqlTutor);
-
-                echo "<script>
-                        alert('Rakan Akademik Registration Successful');
-                        window.location='login.php';
-                      </script>";
-            }
-            else
-            {
-                echo "<script>
-                        alert('Registration Failed!');
-                      </script>";
-            }
+            echo "<script>
+            alert('You are already a Rakan Akademik.');
+            </script>";
         }
+
+        exit();
+    }
+    // VALIDATE FILE
+    if(empty($_FILES["transcript"]["name"]))
+    {
+        echo "<script>
+        alert('Transcript is required.');
+        </script>";
+        exit();
+    }
+
+    $fileExt = strtolower(
+        pathinfo(
+            $_FILES["transcript"]["name"],
+            PATHINFO_EXTENSION
+        )
+    );
+
+    if($fileExt != "pdf")
+    {
+        echo "<script>
+        alert('Only PDF file is allowed.');
+        </script>";
+        exit();
+    }
+
+    if($_FILES["transcript"]["size"] > 5000000)
+    {
+        echo "<script>
+        alert('Maximum file size is 5MB.');
+        </script>";
+        exit();
+    }
+    // CREATE UPLOAD FOLDER
+    if(!is_dir("uploads"))
+    {
+        mkdir("uploads",0777,true);
+    }
+
+    $safeName = preg_replace(
+        '/\s+/',
+        '_',
+        $_FILES["transcript"]["name"]
+    );
+
+    $fileName = time()."_".$safeName;
+
+    if(!move_uploaded_file(
+        $_FILES["transcript"]["tmp_name"],
+        "uploads/".$fileName
+    ))
+    {
+        echo "<script>
+        alert('Failed to upload transcript.');
+        </script>";
+        exit();
+    }
+    // INSERT APPLICATION
+    $sql = "
+    INSERT INTO tutor_application
+    (
+        matricNoStudent,
+        cgpa,
+        expertise,
+        availability,
+        reason,
+        transcript,
+        status
+    )
+    VALUES
+    (
+        '$matricNoStudent',
+        '$cgpa',
+        '$expertise',
+        '$availability',
+        '$reason',
+        '$fileName',
+        'Pending'
+    )";
+
+    if(mysqli_query($conn, $sql))
+    {
+        echo "<script>
+        alert('Application Submitted Successfully.');
+        window.location='student_dashboard.php';
+        </script>";
+    }
+    else
+    {
+        echo "<script>
+        alert('Failed to submit application.');
+        </script>";
     }
 }
-
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Rakan Akademik Registration</title>
+<title>Apply Rakan Akademik</title>
 
 <style>
-
-*{
+body{
+    font-family: 'Segoe UI', sans-serif;
     margin:0;
     padding:0;
-    box-sizing:border-box;
-    font-family:Segoe UI,sans-serif;
+    background: url('images/edubackground.jpg');
+    background-size: cover;
 }
 
-body{
-    background:#fff;
-}
-
-.header{
-    height:95px;
-    background:#2748A5;
-    position:relative;
-}
-
-.headerBackground{
-    position:absolute;
-    top:22px;
+body::before{
+    content:"";
+    position:fixed;
+    top:0;
     left:0;
     width:100%;
-    height:73px;
-    background:url("images/edubackground.jpg");
-    background-size:cover;
-    background-position:center;
-    opacity:0.4;
-}
-
-.logoArea{
-    position:relative;
-    z-index:2;
-    padding-top:20px;
-    padding-left:25px;
-}
-
-.logoUtem{
-    height:50px;
-}
-
-.logoFtmk{
-    height:48px;
-    margin-left:12px;
-}
-
-.mainContent{
-    width:100%;
-    min-height:calc(100vh - 95px);
-    display:flex;
-}
-
-.leftPanel{
-    width:55%;
-    background:#f8fbff;
-    position:relative;
-}
-
-.poster{
-    width:100%;
     height:100%;
-    object-fit:cover;
+    background:rgba(0,0,0,0.35);
+    z-index:-1;
 }
 
-.rightPanel{
-    width:45%;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:#fff;
+.container{
+    width:650px;
+    margin:60px auto;
+    background:rgba(255,255,255,0.95);
+    padding:35px;
+    border-radius:16px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.2);
+    backdrop-filter: blur(5px);
 }
 
-.registerBox{
-    width:420px;
-    background:#EEF3FA;
-    border:1px solid #dcdcdc;
-    border-radius:8px;
-    padding:30px;
-}
-
-.registerBox h2{
+h2{
     text-align:center;
+    color:#2748A5;
     margin-bottom:25px;
-    color:#222;
+    font-size:26px;
+    font-weight:700;
 }
 
-.formLabel{
+label{
+    font-weight:600;
+    color:#333;
     display:block;
-    margin-bottom:6px;
-    margin-top:10px;
-    font-weight:500;
+    margin-top:12px;
 }
 
-.textBox{
+input, textarea{
     width:100%;
-    padding:10px;
-    border:1px solid #ccc;
-    border-radius:4px;
-}
-
-.genderArea{
-    margin-top:8px;
-    margin-bottom:10px;
-}
-
-.genderArea label{
-    margin-right:25px;
-}
-
-.subjectArea{
-    margin-top:8px;
-    margin-bottom:10px;
-}
-
-.subjectArea label{
-    display:block;
-    margin-bottom:5px;
-}
-
-.registerButton{
-    width:100%;
-    margin-top:20px;
     padding:12px;
+    margin-top:6px;
+    margin-bottom:15px;
+    border:1px solid #ddd;
+    border-radius:8px;
+    font-size:14px;
+    transition:0.2s;
+}
+
+input:focus, textarea:focus{
+    outline:none;
+    border-color:#2748A5;
+    box-shadow:0 0 5px rgba(39,72,165,0.3);
+}
+
+/* checkbox style */
+input[type="checkbox"]{
+    width:auto;
+    margin-right:8px;
+    transform: scale(1.1);
+}
+
+button{
+    padding:12px 18px;
     border:none;
-    border-radius:4px;
+    cursor:pointer;
+    border-radius:8px;
+    font-weight:600;
+    transition:0.2s;
+}
+
+.submit{
     background:#2748A5;
     color:white;
-    cursor:pointer;
-    font-size:15px;
+    width:100%;
+    margin-top:10px;
 }
 
-.registerButton:hover{
+.submit:hover{
     background:#1d3987;
+    transform: translateY(-2px);
 }
 
-.backLogin{
-    text-align:center;
-    margin-top:15px;
+.reset{
+    background:#e0e0e0;
+    color:#333;
+    width:100%;
+    margin-top:8px;
 }
 
-.backLogin a{
-    text-decoration:none;
-    color:#2748A5;
+.reset:hover{
+    background:#cfcfcf;
 }
 
-.backLogin a:hover{
-    text-decoration:underline;
+.checkbox-group{
+    background:#f7f9ff;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #e6e6e6;
 }
-
-@media screen and (max-width:900px){
-
-    .mainContent{
-        flex-direction:column;
-    }
-
-    .leftPanel,
-    .rightPanel{
-        width:100%;
-    }
-
-    .leftPanel{
-        height:350px;
-    }
-
-    .registerBox{
-        width:90%;
-        margin:30px 0;
-    }
-}
-
 </style>
-
 </head>
 
 <body>
 
-<div class="header">
+<div class="container">
 
-    <div class="headerBackground"></div>
+<h2>Apply as Rakan Akademik</h2>
 
-    <div class="logoArea">
+<form
+method="POST"
+enctype="multipart/form-data"
+autocomplete="off">
 
-        <img src="images/utem.png" class="logoUtem">
-        <img src="images/ftmk.png" class="logoFtmk">
+<label>Matric Number</label>
+<input type="text" value="<?php echo $matricNoStudent; ?>" readonly>
 
-    </div>
+<label>CGPA</label>
+<input type="number" name="cgpa" step="0.01" min="3.50" max="4.00" required>
 
+<label>Expertise Subject</label>
+
+<div class="checkbox-group">
+    <label><input type="checkbox" name="expertise[]" value="Programming"> Programming</label>
+    <label><input type="checkbox" name="expertise[]" value="Data Structure"> Data Structure</label>
 </div>
 
-<div class="mainContent">
+<label>Availability</label>
+<input type="text" name="availability" required>
 
-    <div class="leftPanel">
+<label>Reason to Become Tutor</label>
+<textarea name="reason" rows="5" required></textarea>
 
-        <img src="images/posterRegister.png" class="poster">
+<label>Upload Transcript (PDF only)</label>
+<input type="file" name="transcript" accept=".pdf" required>
 
-    </div>
+<button type="submit" name="btnSubmit" class="submit">Submit</button>
+<button type="reset" class="reset">Reset</button>
 
-    <div class="rightPanel">
-
-        <div class="registerBox">
-
-            <h2>Register As Rakan Akademik</h2>
-
-            <form method="POST">
-
-                <label class="formLabel">Full Name</label>
-                <input
-                    type="text"
-                    name="txtName"
-                    class="textBox"
-                    required>
-
-                <label class="formLabel">Matric Number</label>
-                <input
-                    type="text"
-                    name="txtMatric"
-                    class="textBox"
-                    placeholder="Example: B032310123"
-                    required>
-
-                <label class="formLabel">Email</label>
-                <input
-                    type="email"
-                    name="txtEmail"
-                    class="textBox"
-                    required>
-
-                <label class="formLabel">Mobile Phone</label>
-                <input
-                    type="text"
-                    name="txtPhone"
-                    class="textBox"
-                    required>
-
-                <label class="formLabel">CGPA</label>
-                <input
-                    type="number"
-                    name="txtCGPA"
-                    class="textBox"
-                    min="3.50"
-                    max="4.00"
-                    step="0.01"
-                    placeholder="Example: 3.75"
-                    required>
-
-                <label class="formLabel">Expert Subject</label>
-
-                <div class="subjectArea">
-
-                    <label>
-                        <input
-                            type="checkbox"
-                            name="subject[]"
-                            value="Programming">
-
-                        Programming
-                    </label>
-
-                    <label>
-                        <input
-                            type="checkbox"
-                            name="subject[]"
-                            value="Data Structure & Algorithm">
-
-                        Data Structure & Algorithm
-                    </label>
-
-                </div>
-
-                <label class="formLabel">Gender</label>
-
-                <div class="genderArea">
-
-                    <label>
-                        <input
-                            type="radio"
-                            name="gender"
-                            value="Male"
-                            required>
-
-                        Male
-                    </label>
-
-                    <label>
-                        <input
-                            type="radio"
-                            name="gender"
-                            value="Female">
-
-                        Female
-                    </label>
-
-                </div>
-
-                <label class="formLabel">Password</label>
-                <input
-                    type="password"
-                    name="txtPassword"
-                    class="textBox"
-                    required>
-
-                <label class="formLabel">
-                    Confirm Password
-                </label>
-
-                <input
-                    type="password"
-                    name="txtConfirmPassword"
-                    class="textBox"
-                    required>
-
-                <input
-                    type="submit"
-                    name="btnRegister"
-                    value="Register As Rakan Akademik"
-                    class="registerButton">
-
-            </form>
-
-            <div class="backLogin">
-
-                <a href="login.php">
-                    Back To Login
-                </a>
-
-            </div>
-
-        </div>
-
-    </div>
+</form>
 
 </div>
 

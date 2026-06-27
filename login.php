@@ -2,60 +2,103 @@
 session_start();
 include("db_connect.php");
 
-$username = "";
-$password = "";
-
 if(isset($_POST["btnLogin"]))
 {
-    $username = $_POST["txtUser"];
+    $username = trim($_POST["txtUser"]);
     $password = $_POST["txtPassword"];
 
-    // Admin Login
+    // ADMIN LOGIN
+    
     if($username == "admin" && $password == "1234")
     {
+        $_SESSION['userId'] = "admin";
+        $_SESSION['name'] = "Administrator";
+        $_SESSION['role'] = "Admin";
+
         echo "
         <script>
             alert('Admin Login Successful');
-            window.location.href='dashboard.php';
+            window.location.href='admin_dashboard.php';
         </script>
         ";
+        exit();
     }
-    else
+    // USER LOGIN
+    $sql = "SELECT * FROM user WHERE userId='$username'";
+    $result = mysqli_query($conn, $sql);
+
+    if(mysqli_num_rows($result) > 0)
     {
-        $sql = "SELECT * FROM user WHERE userId='$username'";
-        $result = mysqli_query($conn,$sql);
+        $row = mysqli_fetch_assoc($result);
 
-        if(mysqli_num_rows($result) > 0)
+        // Check Password
+        if(password_verify($password, $row['password']))
         {
-            $row = mysqli_fetch_assoc($result);
+            // Check Account Status
+            if(strtolower($row['status']) != "active")
+            {
+                echo "
+                <script>
+                    alert('Your account is inactive.');
+                    window.location.href='login.php';
+                </script>
+                ";
+                exit();
+            }
+            // Create Session
+            $_SESSION['userId'] = $row['userId'];
+            $_SESSION['name'] = $row['name'];
+            $_SESSION['role'] = $row['role'];
 
-            if(password_verify($password, $row['password']))
-{
-    $_SESSION['matric'] = $row['userId'];
-    $_SESSION['name'] = $row['name'];
-    $_SESSION['role'] = $row['role'];
+            // Redirect Based On Role
+            if(strtolower($row['role']) == "student")
+            {
+                echo "
+                <script>
+                    alert('Login Successful');
+                    window.location.href='student_dashboard.php';
+                </script>
+                ";
+            }
+            else if(strtolower($row['role']) == "tutor")
+            {
+                echo "
+                <script>
+                    alert('Login Successful');
+                    window.location.href='choose_role.php';
+                </script>
+                ";
+            }
+            else
+            {
+                echo "
+                <script>
+                    alert('Invalid user role.');
+                    window.location.href='login.php';
+                </script>
+                ";
+            }
 
-    echo "
-    <script>
-        alert('Login Successful');
-        window.location.href='dashboard.php';
-    </script>
-    ";
-}
-
+            exit();
         }
         else
         {
             echo "
             <script>
-                alert('User Not Found');
+                alert('Wrong Password');
             </script>
             ";
         }
-        
+    }
+    else
+    {
+        echo "
+        <script>
+            alert('User Not Found');
+        </script>
+        ";
     }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -80,8 +123,6 @@ body{
     background:white;
     overflow:hidden;
 }
-
-/* Header */
 
 .header{
     height:95px;
@@ -119,8 +160,6 @@ body{
     margin-left:12px;
 }
 
-/* Content */
-
 .mainContent{
     height:calc(100vh - 95px);
 }
@@ -139,8 +178,6 @@ body{
     float:left;
     position:relative;
 }
-
-/* Background Shapes */
 
 .circleTop{
     width:500px;
@@ -163,8 +200,6 @@ body{
     bottom:-120px;
 }
 
-/* Main Image */
-
 .mainImage{
     width:55%;
     max-width:380px;
@@ -182,8 +217,6 @@ body{
     font-size:13px;
     color:#666;
 }
-
-/* Login Section */
 
 .loginBox{
     width:430px;
@@ -269,8 +302,6 @@ body{
     background:#54A8E2;
 }
 
-/* Modal */
-
 .modal{
     display:none;
     position:fixed;
@@ -319,7 +350,6 @@ body{
     background:#f5f5f5;
 }
 
-/* Responsive */
 
 @media screen and (max-width:768px){
 
@@ -417,7 +447,7 @@ body{
                     type="text"
                     name="txtUser"
                     class="textBox"
-                    placeholder="Student ID / Admin">
+                    placeholder="Matric Number / Admin">
 
                 <div class="passwordBox">
 

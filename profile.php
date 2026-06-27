@@ -1,9 +1,80 @@
 <?php
-$name = "Puteri Sarah";
-$email = "puterisarah@gmail.com";
-$phone = "013-4789014";
-$university = "Universiti Teknikal Malaysia Melaka, UTeM";
-$education = "Diploma in Computer Science";
+session_start();
+include("db_connect.php");
+
+if (!isset($_SESSION['userId'])) {
+    header("Location: login.php");
+    exit();
+}
+
+$userId = $_SESSION['userId'];
+$sqlUser = mysqli_query($conn, "
+    SELECT *
+    FROM user
+    WHERE userId = '$userId'
+");
+
+if (!$sqlUser || mysqli_num_rows($sqlUser) == 0) {
+    die("User not found.");
+}
+
+$user = mysqli_fetch_assoc($sqlUser);
+
+$name          = $user['name'];
+$email         = $user['email'];
+$phone         = $user['mobile_phone'];
+$role          = $user['role'];
+$accountStatus = $user['status'];
+
+$role_clean = strtolower(trim($role));
+
+if ($role_clean != "student" && $role_clean != "tutor") {
+    header("Location: login.php");
+    exit();
+}
+
+function getDashboard($role)
+{
+    if ($role == "student") {
+        return "student_dashboard.php";
+    }
+
+    return "dashboard.php";
+}
+
+$dashboard = getDashboard($role_clean);
+$photo = "images/profile.jpg";
+
+$university    = "-";
+$education     = "-";
+$cgpa          = "-";
+$currentStatus = "-";
+
+if ($role_clean == "tutor") {
+
+    $sqlTutor = mysqli_query($conn, "
+        SELECT *
+        FROM rakan_profile
+        WHERE matricNoTutor = '$userId'
+    ");
+
+    if ($sqlTutor && mysqli_num_rows($sqlTutor) > 0) {
+
+        $tutor = mysqli_fetch_assoc($sqlTutor);
+
+        $university    = $tutor['institution'];
+        $education     = $tutor['academicBackground'];
+        $cgpa          = $tutor['cgpa'];
+        $currentStatus = $tutor['currentStatus'];
+
+        if (
+            !empty($tutor['photo']) &&
+            file_exists("uploads/" . $tutor['photo'])
+        ) {
+            $photo = "uploads/" . $tutor['photo'];
+        }
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -11,332 +82,223 @@ $education = "Diploma in Computer Science";
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <style>
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:Arial, sans-serif;
-        }
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
 
-        body{
-            background-image: url('images/edubackground.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-        }
+body{
+    background-image: url('images/edubackground.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
 
-        /* Layout ats */
+header{
+    background:#1f3f98;
+    color:white;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 30px;
+}
 
-        header{
-            background:#1f3f98;
-            color:white;
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            padding:15px 30px;
-        }
+.logo img{
+    height:60px;
+    width:auto;
+}
 
-        .search-box{
-            width:40%;
-            position:relative;
-        }
+.icons{
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
 
-        .search-box input{
-            width:100%;
-            padding:10px 40px 10px 15px;
-            border:none;
-            border-radius:30px;
-        }
+.icon-btn{
+    color:white;
+    font-size:20px;
+    width:40px;
+    height:40px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    transition:0.2s;
+    background:rgba(255,255,255,0.1);
+    text-decoration:none;
+}
 
-        .search-box i{
-            position:absolute;
-            right:15px;
-            top:50%;
-            transform:translateY(-50%);
-            color:gray;
-        }
+.icon-btn:hover{
+    transform: scale(1.1);
+    background:rgba(255,255,255,0.25);
+}
 
-        .icons i{
-            font-size:24px;
-            margin-left:20px;
-            cursor:pointer;
-        }
+.bottom-profile-wrapper{
+    padding: 30px;
+    display:flex;
+    justify-content:center;
+}
 
-        .icons i:hover{
-            transform: scale(1.1);
-            transition: 0.2s;
-        } 
+.profile-main-container{
+    width:100%;
+    max-width:1300px;
+}
 
-        .logo img{
-            height:60px;   
-            width:auto;
-        }
-    
-         /* Layout ats */
+.profile-card{
+    background:white;
+    border-radius:28px;
+    padding:28px 32px;
+    display:flex;
+    align-items:center;
+    gap:28px;
+    flex-wrap:wrap;
+    box-shadow:0 20px 35px -12px rgba(0,0,0,0.15);
+    border:1px solid rgba(39,72,165,0.2);
+    margin-bottom:32px;
+}
 
-         .nav-left h3 {
-            font-weight: 600;
-            font-size: 1.5rem;
-            letter-spacing: 0.5px;
-            background: linear-gradient(135deg, #ffffff, #e0e7ff);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            text-shadow: none;
-        }
+.profile-pic{
+    width:130px;
+    height:130px;
+    border-radius:50%;
+    object-fit:cover;
+    border:5px solid #2748A5;
+    background:#f9f9ff;
+    box-shadow:0 8px 18px rgba(0,0,0,0.1);
+}
 
-        .btn-group {
-            display: flex;
-            gap: 14px;
-        }
+.profile-info h2{
+    font-size:1.9rem;
+    font-weight:700;
+    color:#111827;
+}
 
-        .btn {
-            padding: 8px 20px;
-            border: none;
-            cursor: pointer;
-            border-radius: 40px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255,255,255,0.12);
-            color: white;
-        }
+.profile-info p{
+    color:#4b5563;
+    font-size:1.05rem;
+    margin-top:6px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
 
-        .btn i {
-            font-size: 1rem;
-        }
+.profile-info p i{
+    color:#2748A5;
+}
 
-        .home-btn {
-            background: #0f01ce;
-        }
+.details-grid{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:28px;
+}
 
-        .home-btn:hover {
-            background: #0a0092;
-            transform: scale(1.02);
-        }
+.info-box{
+    background:white;
+    padding:24px 26px;
+    border-radius:24px;
+    box-shadow:0 10px 22px -8px rgba(0,0,0,0.08);
+    border:1px solid #eef2ff;
+    transition:0.2s;
+}
 
-        .logout-btn {
-            background: #b91c1c;
-        }
+.info-box:hover{
+    transform:translateY(-3px);
+    box-shadow:0 20px 28px -12px rgba(0,0,0,0.12);
+}
 
-        .logout-btn:hover {
-            background: #991b1b;
-            transform: scale(1.02);
-        }
+.info-box h3{
+    color:#1e3a8a;
+    font-size:1.5rem;
+    margin-bottom:18px;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    border-left:5px solid #3b82f6;
+    padding-left:16px;
+}
 
-        .logo-section{
-            display:flex;
-            flex-direction:column;
-            align-items:center;
-            gap:15px;
-        }
+.info-box p{
+    color:#1f2937;
+    line-height:1.65;
+    font-size:1rem;
+}
 
-        .logout-container{
-            display:flex;
-            justify-content:center;
-            margin-top:15px;
-             margin-bottom:20px;
-        }
+.footer-text{
+    margin-top:32px;
+    text-align:center;
+    font-size:0.75rem;
+    color:#4b5563;
+    border-top:1px solid #e2e8f0;
+    padding-top:20px;
+}
 
-        .hero-banner {
-            background: linear-gradient(105deg, #102a5e 0%, #2c5282 100%);
-            height: 260px;
-            width: 100%;
-            position: relative;
-            overflow: hidden;
-        }
+.btn{
+    border:none;
+    cursor:pointer;
+}
 
-        .hero-banner::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 200" opacity="0.1"><path fill="white" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z"/></svg>');
-            background-repeat: repeat-x;
-            background-position: bottom;
-            background-size: 800px;
-            pointer-events: none;
-        }
+.logout-container{
+    display:flex;
+    justify-content:center;
+    margin-top:15px;
+    margin-bottom:20px;
+}
 
-        .bottom-profile-wrapper {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;   
-            margin-top: auto;         
-            padding: 20px 30px 50px 30px;  
-        }
+.logout-btn{
+    padding:10px 20px;
+    background:#b91c1c;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    transition:0.2s;
+}
 
-        .profile-main-container {
-            width: 100%;
-            max-width: 1300px;
-            margin: 0 auto;
-        }
+.logout-btn:hover{
+    background:#991b1b;
+}
 
-        /* CARD UTAMA (profile ringkas + gambar) */
-        .profile-card {
-            background: white;
-            border-radius: 28px;
-            padding: 28px 32px;
-            display: flex;
-            align-items: center;
-            gap: 28px;
-            flex-wrap: wrap;
-            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
-            border: 1px solid rgba(39, 72, 165, 0.2);
-            transition: transform 0.2s;
-            margin-bottom: 32px;
-        }
+.edit-profile{
+    text-align:center;
+    margin-bottom:25px;
+}
 
-        .profile-pic {
-            width: 130px;
-            height: 130px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 5px solid #2748A5;
-            background: #f9f9ff;
-            box-shadow: 0 8px 18px rgba(0,0,0,0.1);
-        }
+.edit-btn{
+    display:inline-block;
+    background:#2748A5;
+    color:white;
+    padding:10px 24px;
+    border-radius:8px;
+    text-decoration:none;
+    transition:0.2s;
+}
 
-        .profile-info h2 {
-            font-size: 1.9rem;
-            font-weight: 700;
-            color: #111827;
-            letter-spacing: -0.3px;
-        }
+.edit-btn:hover{
+    background:#1d3781;
+    color:white;
+    text-decoration:none;
+}
 
-        .profile-info p {
-            color: #4b5563;
-            font-size: 1.05rem;
-            margin-top: 6px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+@media (max-width:850px){
+    .details-grid{
+        grid-template-columns:1fr;
+    }
 
-        .profile-info p i {
-            color: #2748A5;
-        }
+    .profile-card{
+        flex-direction:column;
+        text-align:center;
+    }
+}
 
-        .details-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 28px;
-            margin-top: 8px;
-        }
-
-        .info-box {
-            background: white;
-            padding: 24px 26px;
-            border-radius: 24px;
-            box-shadow: 0 10px 22px -8px rgba(0, 0, 0, 0.08);
-            transition: all 0.2s;
-            border: 1px solid #eef2ff;
-        }
-
-        .info-box:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 20px 28px -12px rgba(0, 0, 0, 0.12);
-            border-color: #cbdff2;
-        }
-
-        .info-box h3 {
-            color: #1e3a8a;
-            font-size: 1.5rem;
-            margin-bottom: 18px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-left: 5px solid #3b82f6;
-            padding-left: 16px;
-        }
-
-        .info-box h3 i {
-            font-size: 1.4rem;
-            color: #2c5f9a;
-        }
-
-        .info-box p, .info-box ul {
-            color: #1f2937;
-            line-height: 1.65;
-            font-size: 1rem;
-        }
-
-        .skill-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 8px;
-        }
-
-        .skill-badge {
-            background: #eef2ff;
-            padding: 6px 16px;
-            border-radius: 40px;
-            font-weight: 500;
-            color: #1e3a8a;
-            font-size: 0.9rem;
-            letter-spacing: 0.3px;
-        }
-
-        .about-text {
-            background: #fafcff;
-            padding: 12px 0 4px 0;
-            border-radius: 12px;
-        }
-
-        @media (max-width: 850px) {
-            .details-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .profile-card {
-                flex-direction: column;
-                text-align: center;
-                padding: 24px 20px;
-            }
-
-            .profile-info h2 {
-                font-size: 1.6rem;
-            }
-
-            .bottom-profile-wrapper {
-                padding: 10px 20px 40px 20px;
-            }
-        }
-
-        @media (max-width: 500px) {
-            header {
-                flex-direction: column;
-                align-items: stretch;
-                text-align: center;
-            }
-            .btn-group {
-                justify-content: center;
-            }
-            .info-box {
-                padding: 20px;
-            }
-        }
-
-        .btn:active {
-            transform: scale(0.97);
-        }
-
-    </style>
+</style>
 </head>
 <body>
 
@@ -347,81 +309,139 @@ $education = "Diploma in Computer Science";
         <img src="images/logoFtmk.png" alt="FTMK Logo">
     </div>
 
-    <div class="search-box">
-        <input type="text" placeholder="Search">
-        <i class="fas fa-search"></i>
-    </div>
-
     <div class="icons">
-        <i class="far fa-bookmark"></i>
-        <i class="far fa-bell"></i>
-        <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
+
+        <a href="<?php echo $dashboard; ?>" class="icon-btn" title="Back">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <a href="<?php echo $dashboard; ?>" class="icon-btn" title="Home">
+            <i class="fas fa-home"></i>
+        </a>
+        <a href="profile.php" class="icon-btn" title="Profile">
+            <i class="far fa-user"></i>
+        </a>
     </div>
 </header>
 
-<div class="hero-banner">
-     <button class="btn home-btn" onclick="location.href='dashboard.php'">
-            <i class="fa fa-home"></i> Home
-        </button>
-</div>
-
 <div class="bottom-profile-wrapper">
-    <div class="profile-main-container">
-        
-        <div class="profile-card">
-            <img src="images/profile.jpg" class="profile-pic" alt="Profile picture" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?background=2748A5&color=fff&name=Rogayah+Binti+Isnin&size=120&rounded=true&bold=true';">
-            <div class="profile-info">
-                <h2><?php echo htmlspecialchars($name); ?></h2>
-                <p><i class="fas fa-university"></i> <?php echo htmlspecialchars($university); ?></p>
-                <p><i class="fas fa-map-marker-alt"></i> Melaka, Malaysia</p>
-            </div>
+<div class="profile-main-container">
+
+    <div class="profile-card">
+        <img src="<?php echo $photo; ?>"
+             class="profile-pic"
+             alt="Profile Picture">
+        <div class="profile-info">
+            <h2><?php echo htmlspecialchars($name); ?></h2>
+            <?php if($role_clean=="tutor"){ ?>
+                <p>
+                    <i class="fas fa-university"></i>
+                    <?php echo htmlspecialchars($university); ?>
+                </p>
+            <?php } ?>
+            <p>
+                <i class="fas fa-user-tag"></i>
+                <?php echo htmlspecialchars($role); ?>
+            </p>
         </div>
 
-        <div class="details-grid">
+    </div>
+    <div class="edit-profile">
+        <a href="profile_edit.php" class="edit-btn">
+            <i class="fas fa-pen"></i>
+            Edit Profile
+        </a>
+    </div>
 
-            <div class="info-box">
-                <h3><i class="fas fa-address-card"></i> Contact</h3>
-                <p><i class="fas fa-envelope" style="width: 24px; color:#2c3e66;"></i> <strong>Email:</strong> <?php echo htmlspecialchars($email); ?></p>
-                <p style="margin-top: 12px;"><i class="fas fa-phone-alt" style="width: 24px; color:#2c3e66;"></i> <strong>Phone:</strong> <?php echo htmlspecialchars($phone); ?></p>
-                <p style="margin-top: 12px;"><i class="fab fa-whatsapp" style="width: 24px; color:#25D366;"></i> <strong>WhatsApp:</strong> +60<?php echo substr(htmlspecialchars($phone), 3); ?></p>
-            </div>
-
-            <div class="info-box">
-                <h3><i class="fas fa-book-open"></i> Education</h3>
-                <p><i class="fas fa-graduation-cap"></i> <?php echo htmlspecialchars($education); ?></p>
-                <p style="margin-top: 14px;"><i class="fas fa-clock"></i> Status: Active Student (Year 2)</p>
-                <p><i class="fas fa-chalkboard-user"></i> CGPA: 3.70 / 4.00</p>
-            </div>
-
-            <div class="info-box">
-                <h3><i class="fas fa-code"></i> Technical Skills</h3>
-                <div class="skill-list">
-                    <span class="skill-badge"><i class="fab fa-cuttlefish"></i> C++</span>
-                    <span class="skill-badge"><i class="fab fa-html5"></i> HTML</span>
-                    <span class="skill-badge"><i class="fab fa-js"></i> JavaScript</span>
-                    <span class="skill-badge"><i class="fas fa-database"></i> MySQL</span>
-                </div>
-                <p style="margin-top: 18px;"><strong>Tools:</strong> VS Code, Figma (basic)</p>
-            </div>
-
-            <div class="info-box">
-                <h3><i class="fas fa-user-astronaut"></i> About Me</h3>
-                <div class="about-text">
-                    <p>Active student at <strong>Universiti Teknikal Malaysia Melaka (UTeM)</strong> in <strong>Computer Science</strong>.</p>
-                </div>
-            </div>
+    <div class="details-grid">
+        <div class="info-box">
+            <h3>
+                <i class="fas fa-address-card"></i>
+                Contact Information
+            </h3>
+            <p>
+                <i class="fas fa-envelope"></i>
+                Email :
+                <?php echo htmlspecialchars($email); ?>
+            </p>
+            <p style="margin-top:12px;">
+                <i class="fas fa-phone"></i>
+                Phone :
+                <?php echo htmlspecialchars($phone); ?>
+            </p>
         </div>
-
-        <div style="margin-top: 32px; text-align: center; font-size: 0.75rem; color: #4b5563; border-top: 1px solid #e2e8f0; padding-top: 20px;">
-            <i class="fas fa-id-card"></i> RAKAN AKADEMIK • Student Profile 
+        <div class="info-box">
+            <h3>
+                <i class="fas fa-graduation-cap"></i>
+                Education
+            </h3>
+            <?php if($role_clean=="student"){ ?>
+                <p>-</p>
+            <?php } else { ?>
+                <p>
+                    <?php echo htmlspecialchars($education); ?>
+                </p>
+                <p style="margin-top:15px;">
+                    <i class="fas fa-star"></i>
+                    CGPA :
+                    <?php echo htmlspecialchars($cgpa); ?>
+                </p>
+            <?php } ?>
         </div>
-        
-        <div class="logout-container">
-            <button class="btn logout-btn" onclick="location.href='login.php'">
-                <i class="fa fa-sign-out-alt"></i> Logout
-            </button>
+        <div class="info-box">
+            <h3>
+                <i class="fas fa-book-open"></i>
+                Academic Information
+            </h3>
+            <?php if($role_clean=="student"){ ?>
+                <p>
+                    Student Account
+                </p>
+            <?php } else { ?>
+                <p>
+                    <?php echo htmlspecialchars($currentStatus); ?>
+                </p>
+            <?php } ?>
+        </div>
+        <div class="info-box">
+            <h3>
+                <i class="fas fa-info-circle"></i>
+                Account Status
+            </h3>
+            <p>
+                Role :
+                <strong>
+                    <?php echo htmlspecialchars($role); ?>
+                </strong>
+            </p>
+            <p style="margin-top:12px;">
+                Account :
+                <strong>
+                    <?php echo htmlspecialchars($user['status']); ?>
+                </strong>
+            </p>
         </div>
     </div>
+
+    <div class="footer-text">
+        <i class="fas fa-id-card"></i>
+        RAKAN AKADEMIK •
+        <?php
+        echo ($role_clean=="student")
+        ? "Student Profile"
+        : "Tutor Profile";
+        ?>
+    </div>
+
+    <div class="logout-container">
+        <button
+            class="btn logout-btn"
+            onclick="location.href='logout.php'">
+            <i class="fas fa-sign-out-alt"></i>
+            Logout
+        </button>
+    </div>
+
+</div>
 </div>
 
 </body>

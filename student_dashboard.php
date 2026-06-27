@@ -1,31 +1,3 @@
-<?php
-session_start();
-include("db_connect.php");
-
-if(!isset($_SESSION['matric']))
-{
-    header("Location: login.php");
-    exit();
-}
-
-$matric = $_SESSION['matric'];
-
-$checkTutor = mysqli_query($conn, "
-    SELECT * FROM tutor_application
-    WHERE matricNoStudent='$matric'
-    AND status='Approved'
-");
-
-if(mysqli_num_rows($checkTutor) == 0)
-{
-    echo "<script>
-        alert('You are not approved as Rakan Akademik yet!');
-        window.location='choose_role.php';
-    </script>";
-    exit();
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -60,6 +32,26 @@ if(mysqli_num_rows($checkTutor) == 0)
             padding:15px 30px;
         }
 
+        .search-box{
+            width:40%;
+            position:relative;
+        }
+
+        .search-box input{
+            width:100%;
+            padding:10px 40px 10px 15px;
+            border:none;
+            border-radius:30px;
+        }
+
+        .search-box i{
+            position:absolute;
+            right:15px;
+            top:50%;
+            transform:translateY(-50%);
+            color:gray;
+        }
+
         .icons i{
             font-size:24px;
             margin-left:20px;
@@ -67,7 +59,7 @@ if(mysqli_num_rows($checkTutor) == 0)
         }
 
         .logo img{
-            height:60px;
+            height:60px;   /* ubah ikut saiz yang nak */
             width:auto;
         }
 
@@ -76,32 +68,35 @@ if(mysqli_num_rows($checkTutor) == 0)
             color:white;
             text-align:center;
             padding:20px;
+            position:relative;
         }
-
+        
         .welcome h1{
             font-size:32px;
         }
-        
-        .back-container{
-            width:85%;
-            margin:20px auto 0;
+
+        .apply-btn{ 
+            position:absolute;
+            right:30px;
+            bottom:15px;
+            background:whitw;
+            color:black;
+            padding:10px 20px;
+            border:none;
+            border-radius:30px;
+            font-size:15px;
+            cursor:pointer;
+            transition:0.3s;
         }
 
         .back-btn{
             cursor:pointer;
             font-size:28px;
-            background:none;
-            border:none;
-            color:#1f3f98;
-        }
-
-        .back-btn:hover{
-            color:#284db6;
         }
 
         .menu-container{
             width:85%;
-            margin:20px auto 30px;
+            margin:30px auto;
             display:grid;
             grid-template-columns:repeat(2,1fr);
             gap:25px;
@@ -148,7 +143,10 @@ if(mysqli_num_rows($checkTutor) == 0)
 </header>
 
 <section class="welcome">
-    <h1>WELCOME TO RAKAN AKADEMIK</h1>
+    <h1>WELCOME TO STUDENT</h1>
+
+    <button class="apply-btn"
+        onclick="window.location.href='register_rakan.php'"><i class="fas fa-user-plus"></i> Apply Tutor </button>
 </section>
 
 <div class="back-container">
@@ -183,20 +181,20 @@ if(mysqli_num_rows($checkTutor) == 0)
 function openPage(page){
 
     switch(page){
-        case "module":
-            window.location.href="module.php";
+        case "learning module":
+            window.location.href="";
             break;
 
         case "quiz":
-            window.location.href="quiz.php";
+            window.location.href="category.php";
             break;
 
         case "timetable":
-            window.location.href="booking.php";
+            window.location.href="";
             break;
 
         case "mentor":
-            window.location.href="rakan_form.php";
+            window.location.href="rakan_page.php";
             break;
 
         default:
@@ -204,6 +202,6 @@ function openPage(page){
     }
 }
 </script>
-
+//
 </body>
 </html>
