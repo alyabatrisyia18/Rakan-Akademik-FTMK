@@ -2,119 +2,201 @@
 session_start();
 include("db_connect.php");
 
-if(!isset($_SESSION['userId'])) {
+if (!isset($_SESSION['userId'])) {
     header("Location: login.php");
     exit();
 }
 
 $userId = $_SESSION['userId'];
 
-/* =========================
-   GET USER DATA
-========================= */
-$sqlUser = mysqli_query($conn, "
-    SELECT * FROM user 
-    WHERE userId='$userId'
+$sqlUser = mysqli_query($conn,"
+SELECT *
+FROM user
+WHERE userId='$userId'
 ");
+
+if(!$sqlUser || mysqli_num_rows($sqlUser)==0){
+    die("User not found.");
+}
 
 $user = mysqli_fetch_assoc($sqlUser);
 
-if(!$user) {
-    die("User not found");
-}
-
 $name  = $user['name'];
 $email = $user['email'];
-$phone = $user['phone'];
+$phone = $user['mobile_phone'];
 $role  = $user['role'];
 
-/* =========================
-   GET TUTOR DATA (IF ANY)
-========================= */
-$university = "";
-$education  = "";
-$cgpa       = "";
-$about      = "";
+$role_clean = strtolower(trim($role));
 
-if($role == "Tutor") {
+if($role_clean!="student" && $role_clean!="tutor"){
+    header("Location:login.php");
+    exit();
+}
 
-    $sqlTutor = mysqli_query($conn, "
-        SELECT * FROM rakan_profile 
-        WHERE matricNoTutor='$userId'
+$dashboard = ($role_clean=="student")
+? "student_dashboard.php"
+: "dashboard.php";
+
+$photo = "images/profile.jpg";
+
+$programme          = "";
+$institution        = "";
+$currentStatus      = "";
+$academicBackground = "";
+$academicStrengths  = "";
+$cgpa               = "";
+$availability       = "";
+
+if($role_clean=="tutor"){
+
+    $sqlTutor=mysqli_query($conn,"
+    SELECT *
+    FROM rakan_profile
+    WHERE matricNoTutor='$userId'
     ");
 
-    $tutor = mysqli_fetch_assoc($sqlTutor);
+    if(mysqli_num_rows($sqlTutor)>0){
 
-    if($tutor) {
-        $university = $tutor['university'];
-        $education  = $tutor['education'];
-        $cgpa       = $tutor['cgpa'];
-        $about      = $tutor['about'];
+        $tutor=mysqli_fetch_assoc($sqlTutor);
+
+        $programme          = $tutor['programme'];
+        $institution        = $tutor['institution'];
+        $currentStatus      = $tutor['currentStatus'];
+        $academicBackground = $tutor['academicBackground'];
+        $academicStrengths  = $tutor['academicStrengths'];
+        $cgpa              = $tutor['cgpa'];
+        $availability      = $tutor['availability'];
+
+        if(!empty($tutor['photo']) &&
+           file_exists("uploads/".$tutor['photo']))
+        {
+            $photo="uploads/".$tutor['photo'];
+        }
     }
 }
 
-/* =========================
-   UPDATE PROCESS
-========================= */
-if(isset($_POST['btnUpdate'])) {
+if(isset($_POST['btnUpdate'])){
 
-    $name  = $_POST['name'];
-    $email = $_POST['email'];
-    $phone = $_POST['phone'];
+    $name  = mysqli_real_escape_string($conn,$_POST['name']);
+    $email = mysqli_real_escape_string($conn,$_POST['email']);
+    $phone = mysqli_real_escape_string($conn,$_POST['phone']);
 
-    // update user table
-    mysqli_query($conn, "
-        UPDATE user SET
-        name='$name',
-        email='$email',
-        phone='$phone'
-        WHERE userId='$userId'
+    mysqli_query($conn,"
+    UPDATE user SET
+
+    name='$name',
+    email='$email',
+    mobile_phone='$phone'
+
+    WHERE userId='$userId'
     ");
 
-    // IF TUTOR → update extra table
-    if($role == "Tutor") {
+    if($role_clean=="tutor"){
 
-        $university = $_POST['university'];
-        $education  = $_POST['education'];
-        $cgpa       = $_POST['cgpa'];
-        $about      = $_POST['about'];
+        $programme          = mysqli_real_escape_string($conn,$_POST['programme']);
+        $institution        = mysqli_real_escape_string($conn,$_POST['institution']);
+        $currentStatus      = mysqli_real_escape_string($conn,$_POST['currentStatus']);
+        $academicBackground = mysqli_real_escape_string($conn,$_POST['academicBackground']);
+        $academicStrengths  = mysqli_real_escape_string($conn,$_POST['academicStrengths']);
+        $cgpa              = mysqli_real_escape_string($conn,$_POST['cgpa']);
+        $availability      = mysqli_real_escape_string($conn,$_POST['availability']);
 
-        // check exists
-        $check = mysqli_query($conn, "
-            SELECT * FROM rakan_profile 
+        $photoName="";
+
+        if(isset($_FILES['photo']) && $_FILES['photo']['error']==0){
+
+            $photoName=time()."_".$_FILES['photo']['name'];
+
+            move_uploaded_file(
+                $_FILES['photo']['tmp_name'],
+                "uploads/".$photoName
+            );
+
+        }else{
+
+            $photoQuery=mysqli_query($conn,"
+            SELECT photo
+            FROM rakan_profile
             WHERE matricNoTutor='$userId'
-        ");
-
-        if(mysqli_num_rows($check) > 0) {
-
-            // update
-            mysqli_query($conn, "
-                UPDATE rakan_profile SET
-                university='$university',
-                education='$education',
-                cgpa='$cgpa',
-                about='$about'
-                WHERE matricNoTutor='$userId'
             ");
 
-        } else {
+            if(mysqli_num_rows($photoQuery)>0){
 
-            // insert
-            mysqli_query($conn, "
-                INSERT INTO rakan_profile
-                (matricNoTutor, university, education, cgpa, about)
-                VALUES
-                ('$userId','$university','$education','$cgpa','$about')
+                $old=mysqli_fetch_assoc($photoQuery);
+
+                $photoName=$old['photo'];
+
+            }
+
+        }
+
+        $check=mysqli_query($conn,"
+        SELECT *
+        FROM rakan_profile
+        WHERE matricNoTutor='$userId'
+        ");
+
+        if(mysqli_num_rows($check)>0){
+
+            mysqli_query($conn,"
+            UPDATE rakan_profile SET
+
+            photo='$photoName',
+            programme='$programme',
+            institution='$institution',
+            currentStatus='$currentStatus',
+            academicBackground='$academicBackground',
+            academicStrengths='$academicStrengths',
+            cgpa='$cgpa',
+            availability='$availability',
+            contactNumber='$phone',
+            email='$email'
+            WHERE matricNoTutor='$userId'
+            ");
+        }else{
+            mysqli_query($conn,"
+            INSERT INTO rakan_profile(
+            matricNoTutor,
+            photo,
+            name,
+            programme,
+            institution,
+            currentStatus,
+            academicBackground,
+            academicStrengths,
+            cgpa,
+            availability,
+            contactNumber,
+            email
+            )
+            VALUES(
+            '$userId',
+            '$photoName',
+            '$name',
+            '$programme',
+            '$institution',
+            '$currentStatus',
+            '$academicBackground',
+            '$academicStrengths',
+            '$cgpa',
+            '$availability',
+            '$phone',
+            '$email'
+            )
             ");
         }
     }
 
     echo "
     <script>
-        alert('Profile Updated Successfully');
-        window.location.href='profile.php';
+    alert('Profile updated successfully.');
+    window.location='profile.php';
     </script>
+
     ";
+
+    exit();
+
 }
 ?>
 
@@ -143,17 +225,60 @@ body{
     background-attachment: fixed;
 }
 
-/* HEADER (keep same style) */
 header{
     background:#1f3f98;
-    color:white;
+    height:80px;
     display:flex;
     justify-content:space-between;
     align-items:center;
-    padding:15px 30px;
+    padding:0 30px;
+    box-shadow:0 3px 12px rgba(0,0,0,0.2);
 }
 
-/* FORM WRAPPER */
+.logo{
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
+.logo img{
+    height:52px;
+    width:auto;
+    object-fit:contain;
+}
+
+.icons{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.icon-btn{
+    width:42px;
+    height:42px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    color:#fff;
+    background:rgba(255,255,255,0.12);
+
+    border-radius:50%;
+    text-decoration:none;
+
+    transition:.25s;
+}
+
+.icon-btn i{
+    font-size:18px;
+}
+
+.icon-btn:hover{
+    background:white;
+    color:#1f3f98;
+    transform:translateY(-2px);
+}
+
 form{
     width: 55%;
     margin: 40px auto;
@@ -164,7 +289,6 @@ form{
     backdrop-filter: blur(6px);
 }
 
-/* SECTION TITLE */
 h3{
     margin-top:25px;
     color:#1f3f98;
@@ -172,7 +296,6 @@ h3{
     padding-left:10px;
 }
 
-/* LABEL */
 label{
     display:block;
     margin-top:15px;
@@ -180,7 +303,6 @@ label{
     color:#333;
 }
 
-/* INPUT STYLE */
 input, textarea{
     width:100%;
     padding:12px 14px;
@@ -192,19 +314,16 @@ input, textarea{
     font-size:14px;
 }
 
-/* FOCUS EFFECT */
 input:focus, textarea:focus{
     border-color:#1f3f98;
     box-shadow:0 0 8px rgba(31,63,152,0.3);
 }
 
-/* TEXTAREA */
 textarea{
     min-height:100px;
     resize:vertical;
 }
 
-/* BUTTON */
 button{
     margin-top:25px;
     width:100%;
@@ -223,6 +342,20 @@ button:hover{
     background:#0f01ce;
     transform:scale(1.02);
 }
+select{
+    width:100%;
+    padding:12px 14px;
+    margin-top:6px;
+    border:1px solid #d0d0d0;
+    border-radius:10px;
+    outline:none;
+    font-size:14px;
+}
+
+select:focus{
+    border-color:#1f3f98;
+    box-shadow:0 0 8px rgba(31,63,152,0.3);
+}
 
 /* RESPONSIVE */
 @media(max-width:768px){
@@ -238,41 +371,148 @@ button:hover{
 <body>
 
 <header>
-    <h2 style="color:white; padding:15px;">Edit Profile</h2>
+    <div class="logo">
+        <img src="images/logoRakan.png">
+        <img src="images/logoUtem.png">
+        <img src="images/logoFtmk.png">
+    </div>
+
+    <div class="icons">
+
+        <a href="<?php echo $dashboard; ?>" class="icon-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+
+        <a href="<?php echo $dashboard; ?>" class="icon-btn">
+            <i class="fas fa-home"></i>
+        </a>
+
+        <a href="profile.php" class="icon-btn">
+            <i class="far fa-user"></i>
+        </a>
+
+    </div>
+
 </header>
 
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
+
+    <h2 style="text-align:center;color:#1f3f98;">
+        Edit Profile
+    </h2>
+
+    <h3>Basic Information</h3>
 
     <label>Name</label>
-    <input type="text" name="name" value="<?php echo htmlspecialchars($name); ?>">
+    <input
+        type="text"
+        name="name"
+        value="<?php echo htmlspecialchars($name); ?>"
+        required>
 
     <label>Email</label>
-    <input type="email" name="email" value="<?php echo htmlspecialchars($email); ?>">
+    <input
+        type="email"
+        name="email"
+        value="<?php echo htmlspecialchars($email); ?>"
+        required>
 
-    <label>Phone</label>
-    <input type="text" name="phone" value="<?php echo htmlspecialchars($phone); ?>">
+    <label>Phone Number</label>
+    <input
+        type="text"
+        name="phone"
+        value="<?php echo htmlspecialchars($phone); ?>"
+        required>
 
-    <?php if($role == "Tutor") { ?>
+    <?php if($role_clean=="tutor"){ ?>
 
-        <h3 style="margin-top:20px;">Tutor Info</h3>
+    <h3>Tutor Information</h3>
 
-        <label>University</label>
-        <input type="text" name="university" value="<?php echo htmlspecialchars($university); ?>">
+    <label>Profile Picture</label>
 
-        <label>Education</label>
-        <input type="text" name="education" value="<?php echo htmlspecialchars($education); ?>">
+    <img
+        src="<?php echo $photo; ?>"
+        style="width:120px;height:120px;border-radius:50%;object-fit:cover;margin:10px 0;display:block;">
 
-        <label>CGPA</label>
-        <input type="text" name="cgpa" value="<?php echo htmlspecialchars($cgpa); ?>">
+    <input
+        type="file"
+        name="photo"
+        accept="image/*">
 
-        <label>About</label>
-        <textarea name="about"><?php echo htmlspecialchars($about); ?></textarea>
+    <label>Programme</label>
+    <input
+        type="text"
+        name="programme"
+        value="<?php echo htmlspecialchars($programme); ?>">
+
+    <label>Institution</label>
+    <input
+        type="text"
+        name="institution"
+        value="<?php echo htmlspecialchars($institution); ?>">
+
+    <label>Current Status</label>
+    <input
+        type="text"
+        name="currentStatus"
+        value="<?php echo htmlspecialchars($currentStatus); ?>">
+
+    <label>Academic Background</label>
+    <textarea
+        name="academicBackground"><?php echo htmlspecialchars($academicBackground); ?></textarea>
+
+    <label>Academic Strengths</label>
+    <textarea
+        name="academicStrengths"><?php echo htmlspecialchars($academicStrengths); ?></textarea>
+
+    <label>CGPA</label>
+    <input
+        type="number"
+        step="0.01"
+        min="0"
+        max="4.00"
+        name="cgpa"
+        value="<?php echo htmlspecialchars($cgpa); ?>">
+
+    <label>Availability</label>
+
+    <select name="availability">
+
+        <option value="Available"
+        <?php if($availability=="Available") echo "selected"; ?>>
+        Available
+        </option>
+
+        <option value="Busy"
+        <?php if($availability=="Busy") echo "selected"; ?>>
+        Busy
+        </option>
+
+        <option value="Unavailable"
+        <?php if($availability=="Unavailable") echo "selected"; ?>>
+        Unavailable
+        </option>
+
+    </select>
 
     <?php } ?>
 
-    <button type="submit" name="btnUpdate">
-        Update Profile
-    </button>
+    <div style="display:flex;gap:15px;margin-top:30px;">
+
+        <button
+            type="button"
+            onclick="window.location='profile.php';"
+            style="background:#6c757d;">
+            Cancel
+        </button>
+
+        <button
+            type="submit"
+            name="btnUpdate">
+            Update Profile
+        </button>
+
+    </div>
 
 </form>
 
