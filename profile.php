@@ -1,83 +1,78 @@
-<?php 
+<?php
 session_start();
 include("db_connect.php");
 
-// SECURITY CHECK
-if(!isset($_SESSION['userId'])) {
+if (!isset($_SESSION['userId'])) {
     header("Location: login.php");
     exit();
 }
 
 $userId = $_SESSION['userId'];
-
-/* =========================
-   GET USER BASIC INFO
-========================= */
 $sqlUser = mysqli_query($conn, "
-    SELECT * FROM user 
-    WHERE userId='$userId'
+    SELECT *
+    FROM user
+    WHERE userId = '$userId'
 ");
+
+if (!$sqlUser || mysqli_num_rows($sqlUser) == 0) {
+    die("User not found.");
+}
 
 $user = mysqli_fetch_assoc($sqlUser);
 
-if(!$user) {
-    die("User not found");
-}
+$name          = $user['name'];
+$email         = $user['email'];
+$phone         = $user['mobile_phone'];
+$role          = $user['role'];
+$accountStatus = $user['status'];
 
-$name  = $user['name'];
-$email = $user['email'];
-$phone = $user['phone'];
-$role  = $user['role'];
-
-/* =========================
-   NORMALIZE ROLE (IMPORTANT)
-========================= */
 $role_clean = strtolower(trim($role));
 
-/* =========================
-   DASHBOARD ROUTING (FIXED)
-========================= */
-function getDashboard($role_clean) {
+if ($role_clean != "student" && $role_clean != "tutor") {
+    header("Location: login.php");
+    exit();
+}
 
-    switch($role_clean) {
-        case "student":
-            return "student_dashboard.php";
-
-        case "rakan":
-        case "tutor":
-        case "admin":
-        default:
-            return "dashboard.php";
+function getDashboard($role)
+{
+    if ($role == "student") {
+        return "student_dashboard.php";
     }
+
+    return "dashboard.php";
 }
 
 $dashboard = getDashboard($role_clean);
+$photo = "images/profile.jpg";
 
-/* =========================
-   DEFAULT PROFILE VALUES
-========================= */
-$university = "-";
-$education  = "-";
-$cgpa       = "-";
-$about      = "No profile information yet";
+$university    = "-";
+$education     = "-";
+$cgpa          = "-";
+$currentStatus = "-";
 
-/* =========================
-   EXTRA DATA (ONLY IF EXISTS)
-========================= */
-if($role_clean == "tutor" || $role_clean == "rakan") {
+if ($role_clean == "tutor") {
 
     $sqlTutor = mysqli_query($conn, "
-        SELECT * FROM rakan_profile 
-        WHERE matricNoTutor='$userId'
+        SELECT *
+        FROM rakan_profile
+        WHERE matricNoTutor = '$userId'
     ");
 
-    if($sqlTutor && mysqli_num_rows($sqlTutor) > 0) {
+    if ($sqlTutor && mysqli_num_rows($sqlTutor) > 0) {
+
         $tutor = mysqli_fetch_assoc($sqlTutor);
 
-        $university = $tutor['university'];
-        $education  = $tutor['education'];
-        $cgpa       = $tutor['cgpa'];
-        $about      = $tutor['about'];
+        $university    = $tutor['institution'];
+        $education     = $tutor['academicBackground'];
+        $cgpa          = $tutor['cgpa'];
+        $currentStatus = $tutor['currentStatus'];
+
+        if (
+            !empty($tutor['photo']) &&
+            file_exists("uploads/" . $tutor['photo'])
+        ) {
+            $photo = "uploads/" . $tutor['photo'];
+        }
     }
 }
 ?>
@@ -106,7 +101,6 @@ body{
     background-attachment: fixed;
 }
 
-/* ===== HEADER ===== */
 header{
     background:#1f3f98;
     color:white;
@@ -127,7 +121,6 @@ header{
     gap:18px;
 }
 
-/* ICON BUTTON */
 .icon-btn{
     color:white;
     font-size:20px;
@@ -147,20 +140,17 @@ header{
     background:rgba(255,255,255,0.25);
 }
 
-/* HERO SPACING (kalau nak kosong bawah header) */
 .bottom-profile-wrapper{
     padding: 30px;
     display:flex;
     justify-content:center;
 }
 
-/* CONTAINER */
 .profile-main-container{
     width:100%;
     max-width:1300px;
 }
 
-/* PROFILE CARD */
 .profile-card{
     background:white;
     border-radius:28px;
@@ -203,14 +193,12 @@ header{
     color:#2748A5;
 }
 
-/* GRID */
 .details-grid{
     display:grid;
     grid-template-columns:repeat(2, 1fr);
     gap:28px;
 }
 
-/* BOX */
 .info-box{
     background:white;
     padding:24px 26px;
@@ -243,7 +231,6 @@ header{
     font-size:1rem;
 }
 
-/* FOOTER TEXT */
 .footer-text{
     margin-top:32px;
     text-align:center;
@@ -253,7 +240,6 @@ header{
     padding-top:20px;
 }
 
-/* LOGOUT */
 .btn{
     border:none;
     cursor:pointer;
@@ -280,7 +266,27 @@ header{
     background:#991b1b;
 }
 
-/* RESPONSIVE */
+.edit-profile{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.edit-btn{
+    display:inline-block;
+    background:#2748A5;
+    color:white;
+    padding:10px 24px;
+    border-radius:8px;
+    text-decoration:none;
+    transition:0.2s;
+}
+
+.edit-btn:hover{
+    background:#1d3781;
+    color:white;
+    text-decoration:none;
+}
+
 @media (max-width:850px){
     .details-grid{
         grid-template-columns:1fr;
@@ -302,87 +308,140 @@ header{
         <img src="images/logoUtem.png" alt="UTeM Logo">
         <img src="images/logoFtmk.png" alt="FTMK Logo">
     </div>
-    
-<div class="icons">
 
-    <!-- BACK -->
-    <a href="<?php echo $dashboard; ?>" class="icon-btn" title="Back">
-        <i class="fas fa-arrow-left"></i>
-    </a>
+    <div class="icons">
 
-    <!-- HOME -->
-    <a href="<?php echo $dashboard; ?>" class="icon-btn" title="Home">
-        <i class="fas fa-home"></i>
-    </a>
-
-    <!-- PROFILE -->
-    <a href="profile.php" class="icon-btn" title="Profile">
-        <i class="fa-regular fa-user"></i>
-    </a>
-
-</div>
+        <a href="<?php echo $dashboard; ?>" class="icon-btn" title="Back">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <a href="<?php echo $dashboard; ?>" class="icon-btn" title="Home">
+            <i class="fas fa-home"></i>
+        </a>
+        <a href="profile.php" class="icon-btn" title="Profile">
+            <i class="far fa-user"></i>
+        </a>
+    </div>
 </header>
 
 <div class="bottom-profile-wrapper">
-    <div class="profile-main-container">
-        
-        <div class="profile-card">
-            <img src="images/profile.jpg" class="profile-pic" alt="Profile picture" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?background=2748A5&color=fff&name=Rogayah+Binti+Isnin&size=120&rounded=true&bold=true';">
-            <div class="profile-info">
-                    <h2><?php echo htmlspecialchars($name); ?></h2>
-                    <p><i class="fas fa-university"></i>
-                    <?php echo htmlspecialchars($university); ?></p>
-                    <p><i class="fas fa-user-tag"></i>
-                    Role: <?php echo htmlspecialchars($role); ?></p>
-            </div>
-        </div>
+<div class="profile-main-container">
 
-        <div class="details-grid">
-
-            <div class="info-box">
-                    <h3><i class="fas fa-address-card"></i> Contact</h3>
-                    <p><i class="fas fa-envelope"></i>
-                    Email: <?php echo htmlspecialchars($email); ?></p>
-                    <p style="margin-top: 12px;">
-                        <i class="fas fa-phone-alt"></i>
-                        Phone: <?php echo htmlspecialchars($phone); ?></p>
-            </div>
-
-            <div class="info-box">
-                    <h3><i class="fas fa-book-open"></i> Education</h3>
-                    <p><i class="fas fa-graduation-cap"></i>
-                    <?php echo htmlspecialchars($education); ?></p>
-                    
-                    <p style="margin-top: 14px;">
-                        <i class="fas fa-star"></i>
-                        CGPA: <?php echo htmlspecialchars($cgpa); ?></p>
-            </div>
-
-            <div class="info-box">
-                    <h3><i class="fas fa-user-astronaut"></i> About Me</h3>
-                    <p><?php echo htmlspecialchars($about); ?></p>
-            </div>
-
-            <div class="info-box">
-                <h3><i class="fas fa-info-circle"></i> Status</h3>
-                <p>Account Role: <strong><?php echo htmlspecialchars($role); ?></strong></p>
-                
-                <p style="margin-top: 12px;">
-                    System Status: Active
+    <div class="profile-card">
+        <img src="<?php echo $photo; ?>"
+             class="profile-pic"
+             alt="Profile Picture">
+        <div class="profile-info">
+            <h2><?php echo htmlspecialchars($name); ?></h2>
+            <?php if($role_clean=="tutor"){ ?>
+                <p>
+                    <i class="fas fa-university"></i>
+                    <?php echo htmlspecialchars($university); ?>
                 </p>
-            </div>
+            <?php } ?>
+            <p>
+                <i class="fas fa-user-tag"></i>
+                <?php echo htmlspecialchars($role); ?>
+            </p>
         </div>
 
-        <div style="margin-top: 32px; text-align: center; font-size: 0.75rem; color: #4b5563; border-top: 1px solid #e2e8f0; padding-top: 20px;">
-            <i class="fas fa-id-card"></i> RAKAN AKADEMIK • Student Profile 
+    </div>
+    <div class="edit-profile">
+        <a href="profile_edit.php" class="edit-btn">
+            <i class="fas fa-pen"></i>
+            Edit Profile
+        </a>
+    </div>
+
+    <div class="details-grid">
+        <div class="info-box">
+            <h3>
+                <i class="fas fa-address-card"></i>
+                Contact Information
+            </h3>
+            <p>
+                <i class="fas fa-envelope"></i>
+                Email :
+                <?php echo htmlspecialchars($email); ?>
+            </p>
+            <p style="margin-top:12px;">
+                <i class="fas fa-phone"></i>
+                Phone :
+                <?php echo htmlspecialchars($phone); ?>
+            </p>
         </div>
-        
-        <div class="logout-container">
-            <button class="btn logout-btn" onclick="location.href='login.php'">
-                <i class="fa fa-sign-out-alt"></i> Logout
-            </button>
+        <div class="info-box">
+            <h3>
+                <i class="fas fa-graduation-cap"></i>
+                Education
+            </h3>
+            <?php if($role_clean=="student"){ ?>
+                <p>-</p>
+            <?php } else { ?>
+                <p>
+                    <?php echo htmlspecialchars($education); ?>
+                </p>
+                <p style="margin-top:15px;">
+                    <i class="fas fa-star"></i>
+                    CGPA :
+                    <?php echo htmlspecialchars($cgpa); ?>
+                </p>
+            <?php } ?>
+        </div>
+        <div class="info-box">
+            <h3>
+                <i class="fas fa-book-open"></i>
+                Academic Information
+            </h3>
+            <?php if($role_clean=="student"){ ?>
+                <p>
+                    Student Account
+                </p>
+            <?php } else { ?>
+                <p>
+                    <?php echo htmlspecialchars($currentStatus); ?>
+                </p>
+            <?php } ?>
+        </div>
+        <div class="info-box">
+            <h3>
+                <i class="fas fa-info-circle"></i>
+                Account Status
+            </h3>
+            <p>
+                Role :
+                <strong>
+                    <?php echo htmlspecialchars($role); ?>
+                </strong>
+            </p>
+            <p style="margin-top:12px;">
+                Account :
+                <strong>
+                    <?php echo htmlspecialchars($user['status']); ?>
+                </strong>
+            </p>
         </div>
     </div>
+
+    <div class="footer-text">
+        <i class="fas fa-id-card"></i>
+        RAKAN AKADEMIK •
+        <?php
+        echo ($role_clean=="student")
+        ? "Student Profile"
+        : "Tutor Profile";
+        ?>
+    </div>
+
+    <div class="logout-container">
+        <button
+            class="btn logout-btn"
+            onclick="location.href='logout.php'">
+            <i class="fas fa-sign-out-alt"></i>
+            Logout
+        </button>
+    </div>
+
+</div>
 </div>
 
 </body>
