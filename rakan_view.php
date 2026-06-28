@@ -1,25 +1,25 @@
 <?php
 session_start();
 
-if(!isset($_SESSION['matric']))
-{
+if (!isset($_SESSION['userId'])) {
+
     header("Location: login.php");
     exit();
 }
 
-if($_SESSION['role'] != "Tutor")
-{
+$userId = $_SESSION['userId'];
+$role_clean = strtolower(trim($_SESSION['role']));
+
+if (!in_array($role_clean, ['tutor','rakan'])) {
     header("Location: dashboard.php");
     exit();
 }
 
 include("db_connect.php");
 
-$matric = $_SESSION['matric'];
-
 $sqlCheck = mysqli_query($conn,
 "SELECT * FROM rakan_profile
-WHERE matricNoTutor='$matric'");
+WHERE matricNoTutor='$userId'");
 
 $data = mysqli_fetch_assoc($sqlCheck);
 
@@ -34,11 +34,13 @@ if(!$data)
     exit();
 }
 
-$image = "images/default.png";
+$image = "images/profile.jpg";
 
-if(!empty($data['photo']))
-{
-    $image = "images/profile/".$data['photo'];
+if(
+    !empty($data['photo']) &&
+    file_exists("imagess/".$data['photo'])
+){
+    $image = "imagess/".$data['photo'];
 }
 ?>
 
@@ -46,7 +48,8 @@ if(!empty($data['photo']))
 <html>
 
 <head>
-
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <title>Rakan Akademik</title>
 
 <style>
@@ -191,7 +194,7 @@ Rakan Akademik
 
 <p>
 <strong>Current Status :</strong>
-<?php echo $data['current_status']; ?>
+<?php echo htmlspecialchars($data['currentStatus']); ?>
 </p>
 
 <div class="section-title">
@@ -199,7 +202,7 @@ Academic Background
 </div>
 
 <p>
-<?php echo nl2br($data['academic_background']); ?>
+<?php echo nl2br(htmlspecialchars($data['academicBackground'])); ?>
 </p>
 
 <div class="section-title">
@@ -207,7 +210,7 @@ Academic Strengths
 </div>
 
 <p>
-<?php echo nl2br($data['academic_strengths']); ?>
+<?php echo nl2br(htmlspecialchars($data['academicStrengths'])); ?>
 </p>
 
 </div>
@@ -238,7 +241,7 @@ Email :
 
 <p>
 Phone :
-<?php echo $data['contact_number']; ?>
+<?php echo htmlspecialchars($data['contactNumber']); ?>
 </p>
 
 </div>
