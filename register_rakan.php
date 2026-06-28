@@ -7,9 +7,7 @@ if(!isset($_SESSION['userId']))
     header("Location: login.php");
     exit();
 }
-// GET USER ID
 $userId = mysqli_real_escape_string($conn, $_SESSION['userId']);
-// CHECK STUDENT RECORD
 $checkStudent = mysqli_query(
     $conn,
     "SELECT matricNoStudent
@@ -28,7 +26,7 @@ if(mysqli_num_rows($checkStudent) == 0)
 
 $student = mysqli_fetch_assoc($checkStudent);
 $matricNoStudent = $student['matricNoStudent'];
-// CHECK ROLE
+
 $sqlRole = mysqli_query(
     $conn,
     "SELECT role
@@ -67,7 +65,7 @@ if(strtolower($dataRole['role']) != "student")
     </script>";
     exit();
 }
-// SUBMIT APPLICATION
+
 if(isset($_POST["btnSubmit"]))
 {
     // Better numeric comparison
@@ -100,7 +98,7 @@ if(isset($_POST["btnSubmit"]))
     }
 
     $expertise = implode(", ", $_POST["expertise"]);
-    // CHECK DUPLICATE FIRST
+
     $check = mysqli_query(
         $conn,
         "SELECT *
@@ -132,7 +130,7 @@ if(isset($_POST["btnSubmit"]))
 
         exit();
     }
-    // VALIDATE FILE
+
     if(empty($_FILES["transcript"]["name"]))
     {
         echo "<script>
@@ -163,7 +161,7 @@ if(isset($_POST["btnSubmit"]))
         </script>";
         exit();
     }
-    // CREATE UPLOAD FOLDER
+
     if(!is_dir("uploads"))
     {
         mkdir("uploads",0777,true);
@@ -187,7 +185,7 @@ if(isset($_POST["btnSubmit"]))
         </script>";
         exit();
     }
-    // INSERT APPLICATION
+    
     $sql = "
     INSERT INTO tutor_application
     (

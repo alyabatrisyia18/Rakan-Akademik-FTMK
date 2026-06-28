@@ -43,7 +43,7 @@ function getDashboard($role)
 }
 
 $dashboard = getDashboard($role_clean);
-$photo = "images/profile.jpg";
+$photo = "uploads/profile.jpg";
 
 $university    = "-";
 $education     = "-";

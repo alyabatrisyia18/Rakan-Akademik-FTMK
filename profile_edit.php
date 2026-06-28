@@ -36,7 +36,7 @@ $dashboard = ($role_clean == "student")
     ? "student_dashboard.php"
     : "dashboard.php";
 
-$photo = "images/profile.jpg";
+$photo = "uploads/profile.jpg";
 
 $programme          = "";
 $institution        = "";

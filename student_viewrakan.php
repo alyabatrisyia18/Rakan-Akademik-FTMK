@@ -34,13 +34,13 @@ if(!$data)
     exit();
 }
 
-$image = "images/profile.jpg";
+$image = "uploads/profile.jpg";
 
 if (
     !empty($data['photo']) &&
     file_exists("uploads/".$data['photo'])
 ){
-    $image = "images/".$data['photo'];
+    $image = "uploads/".$data['photo'];
 }
 ?>
 
