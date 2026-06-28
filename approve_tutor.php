@@ -135,7 +135,6 @@ th{
 
 <div class="container">
     <h2>Tutor Applications</h2>
-
     <table>
         <tr>
             <th>Matric No</th>

@@ -68,13 +68,19 @@
             color:white;
             text-align:center;
             padding:20px;
+<<<<<<< HEAD
             position:relative;
         }
         
+=======
+        }
+
+>>>>>>> sofea
         .welcome h1{
             font-size:32px;
         }
 
+<<<<<<< HEAD
         .apply-btn{ 
             position:absolute;
             right:30px;
@@ -94,6 +100,8 @@
             font-size:28px;
         }
 
+=======
+>>>>>>> sofea
         .menu-container{
             width:85%;
             margin:30px auto;
@@ -144,6 +152,7 @@
 
 <section class="welcome">
     <h1>WELCOME TO STUDENT</h1>
+<<<<<<< HEAD
 
     <button class="apply-btn"
         onclick="window.location.href='register_rakan.php'"><i class="fas fa-user-plus"></i> Apply Tutor </button>
@@ -153,6 +162,10 @@
     <button class="back-btn" onclick="window.location.href='choose_role.php'"><i class="fas fa-arrow-left"></i></button>
 </div>
 
+=======
+</section>
+
+>>>>>>> sofea
 <section class="menu-container">
 
     <div class="card" onclick="openPage('module')">
@@ -190,7 +203,11 @@ function openPage(page){
             break;
 
         case "timetable":
+<<<<<<< HEAD
             window.location.href="booking.php";
+=======
+            window.location.href="";
+>>>>>>> sofea
             break;
 
         case "mentor":
@@ -202,6 +219,10 @@ function openPage(page){
     }
 }
 </script>
+<<<<<<< HEAD
 //
+=======
+
+>>>>>>> sofea
 </body>
 </html>

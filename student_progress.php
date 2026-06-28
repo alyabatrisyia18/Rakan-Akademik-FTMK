@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php
 include("db_connect.php");
 
@@ -49,6 +50,8 @@ $best_result = mysqli_query($conn, $best_sql);
 
 $best = mysqli_fetch_assoc($best_result);
 ?>
+=======
+>>>>>>> sofea
 <!DOCTYPE html>
 <html>
 <head>
@@ -133,6 +136,7 @@ $best = mysqli_fetch_assoc($best_result);
     }
 
     .score{
+<<<<<<< HEAD
         display:inline-block;
         min-width:55px;
         padding:6px 12px;
@@ -169,6 +173,26 @@ $best = mysqli_fetch_assoc($best_result);
 
     .subject-link:hover{
     color:#1a2f75;
+=======
+    font-weight:bold;
+    font-size:18px;
+    }
+
+    .high{
+        color:#28a745;
+    }
+
+    .medium{
+        color:#0d47a1;
+    }
+
+    .low{
+        color:#ffc107;
+    }
+
+    .fail{
+        color:#dc3545;
+>>>>>>> sofea
     }
 
     </style>
@@ -194,7 +218,11 @@ $best = mysqli_fetch_assoc($best_result);
 </header>
 
 <div class="menu-bar">
+<<<<<<< HEAD
     <a href="student_progress.php" class="active-menu">Progress Tracker</a>
+=======
+    <a href="progress.php" class="active-menu">Progress Tracker</a>
+>>>>>>> sofea
 </div>
 
 <div class="main-content">
@@ -214,6 +242,7 @@ $best = mysqli_fetch_assoc($best_result);
                 <th>Average Score</th>
             </tr>
 
+<<<<<<< HEAD
           <?php
 while($row = mysqli_fetch_assoc($result))
 {
@@ -244,17 +273,41 @@ while($row = mysqli_fetch_assoc($result))
 <?php
 }
 ?>
+=======
+            <tr>
+                <td>Programming</td>
+                <td>8</td>
+                <td>95%</td>
+                <td>82%</td>
+            </tr>
+
+            <tr>
+                <td>Data Structure & Algorithm</td>
+                <td>6</td>
+                <td>88%</td>
+                <td>75%</td>
+            </tr>
+
+>>>>>>> sofea
         </table>
 
         <div class="overall-box">
 
             <h3>Overall Summary</h3>
 
+<<<<<<< HEAD
             <p><strong>Total Quiz :</strong> <?php echo $summary['total_quiz']; ?></p>
 
             <p><strong>Overall Average :</strong> <?php echo $summary['overall_average']; ?>%</p>
 
             <p><strong>Best Subject :</strong> <?php echo $best['category']; ?></p>
+=======
+            <p><strong>Total Quiz :</strong> 14</p>
+
+            <p><strong>Overall Average :</strong> 79%</p>
+
+            <p><strong>Best Subject :</strong> Programming</p>
+>>>>>>> sofea
 
         </div>
 

@@ -29,7 +29,7 @@ AND b.bookingStatus='Booked'
 ORDER BY t.sessionDate ASC
 ";
 
-$result = mysqli_query($conn,$sql);
+$result = mysqli_query($conn, $sql);
 ?>
 
 <!DOCTYPE html>

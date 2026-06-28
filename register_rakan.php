@@ -127,9 +127,72 @@ if(isset($_POST["btnSubmit"]))
         }
         else
         {
+<<<<<<< HEAD
             echo "<script>
             alert('You are already a Rakan Akademik.');
             </script>";
+=======
+            $hashedPassword = password_hash(
+                $password,
+                PASSWORD_DEFAULT
+            );
+
+            $sqlUser = "
+            INSERT INTO user
+            (
+                userId,
+                name,
+                email,
+                mobile_phone,
+                gender,
+                password,
+                status,
+                role
+            )
+            VALUES
+            (
+                '$matric',
+                '$name',
+                '$email',
+                '$phone',
+                '$gender',
+                '$hashedPassword',
+                'Pending',
+                'Tutor'
+            )";
+
+            if(mysqli_query($conn, $sqlUser))
+            {
+                $sqlTutor = "
+                INSERT INTO tutor
+                (
+                    matricNoTutor,
+                    userID,
+                    expertise,
+                    availability
+                )
+                VALUES
+                (
+                    '$matric',
+                    '$matric',
+                    '$subject',
+                    'Available'
+                )";
+
+                mysqli_query($conn, $sqlTutor);
+
+                echo "<script>
+                        alert('Registration successful! Please wait for admin approval.');
+                        window.location='login.php';
+                      </script>";
+            }
+            else
+            {
+                echo "<script>
+                        alert('Registration Failed!');
+                      </script>";
+            }
+>>>>>>> sofea
         }
 
         exit();

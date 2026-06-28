@@ -43,7 +43,16 @@ $sql = mysqli_query($conn,
             <i class="fas fa-home"></i>
         </div>
 
+<<<<<<< HEAD
         <a href="profile.php" class="profile-link">
+=======
+        <div class="search-box">
+            <input type="text" placeholder="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+        </div>
+        <div class="icon-section">
+>>>>>>> sofea
             <div class="profile-icon">
                 <i class="fa-regular fa-user"></i>
             </div>

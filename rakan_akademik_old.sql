@@ -2,13 +2,8 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
-<<<<<<< HEAD
--- Host: 127.0.0.1:3307
--- Generation Time: Jun 28, 2026 at 10:27 AM
-=======
 -- Host: 127.0.0.1
--- Generation Time: Jun 25, 2026 at 02:51 PM
->>>>>>> sofea
+-- Generation Time: Jun 20, 2026 at 10:17 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -58,24 +53,12 @@ CREATE TABLE `booking` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `chapters`
---
-
-CREATE TABLE `chapters` (
-  `chapter_id` int(11) NOT NULL,
-  `subject` varchar(20) NOT NULL,
-  `chapter_name` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `payment`
 --
 
 CREATE TABLE `payment` (
   `paymentID` varchar(20) NOT NULL COMMENT 'Payment identifier',
-  `recordID` varchar(20) NOT NULL COMMENT 'Reference to booking',
+  `bookingID` varchar(20) NOT NULL COMMENT 'Reference to booking',
   `amount` decimal(10,2) NOT NULL COMMENT 'Payment amount',
   `payment_date` date NOT NULL COMMENT 'Payment date',
   `paymentStatus` varchar(20) NOT NULL COMMENT 'Payment status'
@@ -96,38 +79,10 @@ CREATE TABLE `quiz` (
   `difficulty` varchar(50) DEFAULT NULL,
   `cover` varchar(255) DEFAULT NULL,
   `time_limit` int(11) DEFAULT NULL,
-  `attempts` int(11) DEFAULT NULL
+  `attempts` int(11) DEFAULT NULL,
+  `visibility` varchar(20) NOT NULL,
+  `show_results` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `quiz`
---
-
-INSERT INTO `quiz` (`quizID`, `matricNoTutor`, `title`, `description`, `category`, `difficulty`, `cover`, `time_limit`, `attempts`) VALUES
-('Q1782223233', 'd0112', '1234567', '', 'Programming', 'Easy', '', 10, 3);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `quiz_attempts`
---
-
-CREATE TABLE `quiz_attempts` (
-  `attemptID` int(11) NOT NULL,
-  `quizID` varchar(20) NOT NULL,
-  `userID` varchar(20) NOT NULL,
-  `score` int(11) NOT NULL,
-  `total_question` int(11) NOT NULL,
-  `user_answer` text NOT NULL,
-  `attempt_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `quiz_attempts`
---
-
-INSERT INTO `quiz_attempts` (`attemptID`, `quizID`, `userID`, `score`, `total_question`, `user_answer`, `attempt_date`) VALUES
-(6, 'Q1782223233', 'd0112', 1, 2, '{\"22\":\"A\",\"23\":\"A\"}', '2026-06-23 14:00:59');
 
 -- --------------------------------------------------------
 
@@ -146,14 +101,6 @@ CREATE TABLE `quiz_question` (
   `correct_answer` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `quiz_question`
---
-
-INSERT INTO `quiz_question` (`questionID`, `quizID`, `question`, `optionA`, `optionB`, `optionC`, `optionD`, `correct_answer`) VALUES
-(22, 'Q1782223233', '1', 'where', 'set', 'Child Node', '8', 'A'),
-(23, 'Q1782223233', '345tyu', 'where', 'Root Node', 'insert', '8', 'D');
-
 -- --------------------------------------------------------
 
 --
@@ -170,45 +117,6 @@ CREATE TABLE `quiz_result` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `rakan_profile`
---
-
-CREATE TABLE `rakan_profile` (
-  `profileID` int(11) NOT NULL,
-  `matricNoTutor` varchar(20) NOT NULL,
-  `photo` varchar(255) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `programme` varchar(100) NOT NULL,
-  `institution` varchar(255) NOT NULL,
-  `currentStatus` varchar(100) NOT NULL,
-  `academicBackground` text NOT NULL,
-  `academicStrengths` text NOT NULL,
-  `cgpa` decimal(3,2) NOT NULL,
-  `availability` varchar(100) NOT NULL,
-  `contactNumber` varchar(20) NOT NULL,
-  `email` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
-<<<<<<< HEAD
--- Table structure for table `resources`
---
-
-CREATE TABLE `resources` (
-  `resource_id` int(11) NOT NULL,
-  `topic_id` int(11) NOT NULL,
-  `type` varchar(20) NOT NULL,
-  `title` varchar(50) NOT NULL,
-  `link` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
-=======
->>>>>>> sofea
 -- Table structure for table `student`
 --
 
@@ -224,13 +132,7 @@ CREATE TABLE `student` (
 
 INSERT INTO `student` (`matricNoStudent`, `userID`, `course`) VALUES
 ('B032410001', 'U001', 'BITP'),
-('d011', 'd011', 'sc'),
-<<<<<<< HEAD
-('D032410021', 'D032410021', 'Diploma in Science Computer'),
-('D123', 'D123', 'Diploma in Science Computer');
-=======
-('D032410021', 'D032410021', 'Diploma in Science Computer');
->>>>>>> sofea
+('d011', 'd011', 'sc');
 
 -- --------------------------------------------------------
 
@@ -248,33 +150,15 @@ CREATE TABLE `teaching record` (
   `endTime` time NOT NULL,
   `sessionType` varchar(20) NOT NULL,
   `meetingLink` varchar(20) NOT NULL,
-  `venue` varchar(255) NOT NULL,
-  `proofFile` varchar(255) NOT NULL,
-  `hours` int(11) NOT NULL,
-  `estimatedEarning` decimal(10,2) NOT NULL,
-  `approvalStatus` varchar(20) NOT NULL,
-  `submitDate` datetime DEFAULT NULL,
-  `approvalDate` datetime DEFAULT NULL
+  `venue` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `teaching record`
 --
 
-INSERT INTO `teaching record` (`recordID`, `matricNoTutor`, `subject`, `sessionDate`, `teachingStatus`, `startTime`, `endTime`, `sessionType`, `meetingLink`, `venue`, `proofFile`, `hours`, `estimatedEarning`, `approvalStatus`, `submitDate`, `approvalDate`) VALUES
-('R526', 'd0112', 'Programming', '2026-03-12', 'Available', '17:22:00', '18:22:00', 'Online', 'https://teams.live.c', '', '', 0, 0.00, '', NULL, NULL);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `topics`
---
-
-CREATE TABLE `topics` (
-  `topic_id` int(11) NOT NULL,
-  `chapter_id` int(11) NOT NULL,
-  `topic_name` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+INSERT INTO `teaching record` (`recordID`, `matricNoTutor`, `subject`, `sessionDate`, `teachingStatus`, `startTime`, `endTime`, `sessionType`, `meetingLink`, `venue`) VALUES
+('R526', 'd0112', 'Programming', '2026-03-12', 'Available', '17:22:00', '18:22:00', 'Online', 'https://teams.live.c', '');
 
 -- --------------------------------------------------------
 
@@ -295,39 +179,7 @@ CREATE TABLE `tutor` (
 
 INSERT INTO `tutor` (`matricNoTutor`, `userID`, `expertise`, `availability`) VALUES
 ('d0112', 'd0112', 'Programming, Data Structure & Algorithm', 'Available'),
-<<<<<<< HEAD
-('D032410021', 'D032410021', 'Data Structure & Algorithm', 'Available'),
-=======
-('D032410021', 'D032410021', 'Programming', 'Available'),
->>>>>>> sofea
 ('T001', 'U002', 'Programming', 'Available');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `tutor_application`
---
-
-CREATE TABLE `tutor_application` (
-  `applicationID` int(11) NOT NULL,
-  `matricNoStudent` varchar(20) NOT NULL,
-  `cgpa` decimal(3,2) NOT NULL,
-  `expertise` varchar(255) NOT NULL,
-  `availability` varchar(100) NOT NULL,
-  `reason` text NOT NULL,
-  `transcript` varchar(255) NOT NULL,
-  `applicationDate` datetime DEFAULT current_timestamp(),
-  `status` enum('Pending','Approved','Rejected') DEFAULT 'Pending',
-  `adminRemark` text DEFAULT NULL,
-  `popupStatus` tinyint(1) DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tutor_application`
---
-
-INSERT INTO `tutor_application` (`applicationID`, `matricNoStudent`, `cgpa`, `expertise`, `availability`, `reason`, `transcript`, `applicationDate`, `status`, `adminRemark`, `popupStatus`) VALUES
-(0, 'D123', 3.50, 'Data Structure', '-', '-', '1782501502_ANALYSIS DOCUMENT.pdf', '2026-06-27 03:18:22', 'Approved', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -351,14 +203,8 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`userId`, `name`, `email`, `mobile_phone`, `gender`, `password`, `status`, `role`) VALUES
-('d011', 'sofea', 'aisya@gmail.com', '011', 'Female', '111', 'Active', 'Student'),
+('d011', 'sofea', 'aisya@gmail.com', '011', 'Female', '$2y$10$J02DKpbisCXpFJ4tdi8DrudUJmJBBz6O4ExpKuAfyOfhldoOAyeLu', 'Active', 'Student'),
 ('d0112', 'sofea', 'sofea@gmail.com', '011', 'Female', '$2y$10$88BQsIt8Q3ugxVe./il2..JBSD8MZme2A1/OHWG4J2ycfGJRifqGC', 'Active', 'Tutor'),
-<<<<<<< HEAD
-('D032410021', 'alya', 'batrisyiaalya13@gmail.com', '01153110996', 'Female', '$2y$10$G8lAx6nQNtQw44qzr4rXV.i2vdoKnHYf6rhuLNEMlsS7yS3aXxZZe', 'Approved', 'Tutor'),
-('D123', 'bat', 'batrisyia@gmail.com', '0123456789', 'Female', '$2y$10$/NivSmmQYPiNIDgCW50BeeHnMxdsOjRfQDLjVq815hyc8vtIzzM6C', 'Active', 'Student'),
-=======
-('D032410021', 'alya', 'batrisyiaalya13@gmail.com', '01153110996', 'Female', '$2y$10$/wcM1MejrxNuyi3Z.S7Ppu9jg9eGPZt2I6egFHV8ENJvL67QqE0/O', 'Approved', 'Tutor'),
->>>>>>> sofea
 ('U001', 'Aisya', 'aisya@gmail.com', '0123456789', 'Female', '123456', 'Active', 'Student'),
 ('U002', 'Ahmad ', 'ahmad@gmail.com', '01111111111', 'Male', '123456', 'Active', 'Tutor');
 
@@ -383,17 +229,11 @@ ALTER TABLE `booking`
   ADD KEY `recordID` (`recordID`);
 
 --
--- Indexes for table `chapters`
---
-ALTER TABLE `chapters`
-  ADD PRIMARY KEY (`chapter_id`);
-
---
 -- Indexes for table `payment`
 --
 ALTER TABLE `payment`
   ADD PRIMARY KEY (`paymentID`),
-  ADD KEY `bookingID` (`recordID`);
+  ADD KEY `bookingID` (`bookingID`);
 
 --
 -- Indexes for table `quiz`
@@ -401,14 +241,6 @@ ALTER TABLE `payment`
 ALTER TABLE `quiz`
   ADD PRIMARY KEY (`quizID`),
   ADD KEY `matricNoTutor` (`matricNoTutor`);
-
---
--- Indexes for table `quiz_attempts`
---
-ALTER TABLE `quiz_attempts`
-  ADD PRIMARY KEY (`attemptID`),
-  ADD KEY `quizID` (`quizID`),
-  ADD KEY `userID` (`userID`);
 
 --
 -- Indexes for table `quiz_question`
@@ -426,13 +258,6 @@ ALTER TABLE `quiz_result`
   ADD KEY `quizID` (`quizID`);
 
 --
--- Indexes for table `resources`
---
-ALTER TABLE `resources`
-  ADD PRIMARY KEY (`resource_id`),
-  ADD KEY `topic_id` (`topic_id`);
-
---
 -- Indexes for table `student`
 --
 ALTER TABLE `student`
@@ -445,13 +270,6 @@ ALTER TABLE `student`
 ALTER TABLE `teaching record`
   ADD PRIMARY KEY (`recordID`),
   ADD KEY `matricNoTutor` (`matricNoTutor`);
-
---
--- Indexes for table `topics`
---
-ALTER TABLE `topics`
-  ADD PRIMARY KEY (`topic_id`),
-  ADD KEY `chapter_id` (`chapter_id`);
 
 --
 -- Indexes for table `tutor`
@@ -471,42 +289,12 @@ ALTER TABLE `user`
 --
 
 --
-<<<<<<< HEAD
--- AUTO_INCREMENT for table `chapters`
---
-ALTER TABLE `chapters`
-  MODIFY `chapter_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
-=======
->>>>>>> sofea
--- AUTO_INCREMENT for table `quiz_attempts`
---
-ALTER TABLE `quiz_attempts`
-  MODIFY `attemptID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
 -- AUTO_INCREMENT for table `quiz_question`
 --
 ALTER TABLE `quiz_question`
-  MODIFY `questionID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `questionID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
-<<<<<<< HEAD
--- AUTO_INCREMENT for table `resources`
---
-ALTER TABLE `resources`
-  MODIFY `resource_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `topics`
---
-ALTER TABLE `topics`
-  MODIFY `topic_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
-=======
->>>>>>> sofea
 -- Constraints for dumped tables
 --
 
@@ -527,20 +315,13 @@ ALTER TABLE `booking`
 -- Constraints for table `payment`
 --
 ALTER TABLE `payment`
-  ADD CONSTRAINT `payment_ibfk_1` FOREIGN KEY (`recordID`) REFERENCES `teaching record` (`recordID`);
+  ADD CONSTRAINT `payment_ibfk_1` FOREIGN KEY (`bookingID`) REFERENCES `booking` (`bookingID`);
 
 --
 -- Constraints for table `quiz`
 --
 ALTER TABLE `quiz`
   ADD CONSTRAINT `quiz_ibfk_1` FOREIGN KEY (`matricNoTutor`) REFERENCES `tutor` (`matricNoTutor`);
-
---
--- Constraints for table `quiz_attempts`
---
-ALTER TABLE `quiz_attempts`
-  ADD CONSTRAINT `quiz_attempts_ibfk_1` FOREIGN KEY (`quizID`) REFERENCES `quiz` (`quizID`),
-  ADD CONSTRAINT `quiz_attempts_ibfk_2` FOREIGN KEY (`userID`) REFERENCES `user` (`userId`);
 
 --
 -- Constraints for table `quiz_question`
@@ -555,22 +336,10 @@ ALTER TABLE `quiz_result`
   ADD CONSTRAINT `quiz_result_ibfk_2` FOREIGN KEY (`matricNoStudent`) REFERENCES `student` (`matricNoStudent`);
 
 --
--- Constraints for table `resources`
---
-ALTER TABLE `resources`
-  ADD CONSTRAINT `resources_ibfk_1` FOREIGN KEY (`topic_id`) REFERENCES `topics` (`topic_id`) ON DELETE CASCADE;
-
---
 -- Constraints for table `teaching record`
 --
 ALTER TABLE `teaching record`
   ADD CONSTRAINT `teaching record_ibfk_1` FOREIGN KEY (`matricNoTutor`) REFERENCES `tutor` (`matricNoTutor`);
-
---
--- Constraints for table `topics`
---
-ALTER TABLE `topics`
-  ADD CONSTRAINT `topics_ibfk_1` FOREIGN KEY (`chapter_id`) REFERENCES `chapters` (`chapter_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `tutor`
