@@ -2,23 +2,24 @@
 session_start();
 include("db_connect.php");
 
-if(!isset($_SESSION['matric']))
-{
+if (!isset($_SESSION['userId'])) {
+
     header("Location: login.php");
     exit();
 }
-
-if(!isset($_GET['id']))
-{
-    header("Location: rakan_page.php");
+$role = strtolower(trim($_SESSION['role']));
+if ($role != "student") {
+    header("Location: dashboard.php");
     exit();
 }
 
-$id = $_GET['id'];
+$id = (int)$_GET['id'];
 
-$sql = mysqli_query($conn,
-"SELECT * FROM rakan_profile
-WHERE profileID='$id'");
+$sql = mysqli_query($conn,"
+SELECT *
+FROM rakan_profile
+WHERE profileID=$id
+");
 
 $data = mysqli_fetch_assoc($sql);
 
@@ -33,11 +34,13 @@ if(!$data)
     exit();
 }
 
-$image = "images/default.png";
+$image = "images/profile.jpg";
 
-if(!empty($data['photo']))
-{
-    $image = "images/profile/".$data['photo'];
+if (
+    !empty($data['photo']) &&
+    file_exists("uploads/".$data['photo'])
+){
+    $image = "images/".$data['photo'];
 }
 ?>
 
@@ -191,7 +194,7 @@ Rakan Akademik
 
 <p>
 <strong>Current Status :</strong>
-<?php echo $data['current_status']; ?>
+<?php echo $data['currentStatus']; ?>
 </p>
 
 <div class="section-title">
@@ -199,7 +202,7 @@ Academic Background
 </div>
 
 <p>
-<?php echo nl2br($data['academic_background']); ?>
+<?php echo nl2br($data['academicBackground']); ?>
 </p>
 
 <div class="section-title">
@@ -207,7 +210,7 @@ Academic Strengths
 </div>
 
 <p>
-<?php echo nl2br($data['academic_strengths']); ?>
+<?php echo nl2br($data['academicStrengths']); ?>
 </p>
 
 </div>
@@ -238,7 +241,7 @@ Email :
 
 <p>
 Phone :
-<?php echo $data['contact_number']; ?>
+<?php echo $data['contactNumber']; ?>
 </p>
 
 </div>
