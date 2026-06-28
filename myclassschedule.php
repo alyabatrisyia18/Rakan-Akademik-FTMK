@@ -2,7 +2,7 @@
 session_start();
 include("db_connect.php");
 
-$userID = $_SESSION['userId'];
+$matricNoStudent = $_SESSION['matric'];
 
 $sql = "
 SELECT
@@ -14,20 +14,22 @@ SELECT
     t.sessionType,
     t.meetingLink,
     t.venue,
-    u.name
+    tutor.name
 FROM booking b
-JOIN `teaching record` t
+
+INNER JOIN `teaching record` t
 ON b.recordID = t.recordID
+
 INNER JOIN tutor
-ON t.matricNoTutor = tutor.matricNoTutor
-INNER JOIN user u
-ON tutor.userID = u.userID
-WHERE b.matricNoStudent='$userID'
+ON b.matricNoTutor = tutor.matricNoTutor
+
+WHERE b.matricNoStudent='$matricNoStudent'
 AND b.bookingStatus='Booked'
+
 ORDER BY t.sessionDate ASC
 ";
 
-$result = mysqli_query($conn, $sql);
+$result = mysqli_query($conn,$sql);
 ?>
 
 <!DOCTYPE html>
@@ -79,7 +81,7 @@ $result = mysqli_query($conn, $sql);
             ☰
         </div>
 
-        <h2>Student</h2>
+        <h2>Studenta</h2>
 
         <nav>
 
