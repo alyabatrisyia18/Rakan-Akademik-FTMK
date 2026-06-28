@@ -42,7 +42,7 @@ if(isset($_POST['btnSubmit']))
     $academic_strengths =
     mysqli_real_escape_string($conn,$_POST['academic_strengths']);
 
-    $cgpa = $_POST['cgpa'];
+    $cgpa = floatval($_POST['cgpa']);
 
     $availability =
     mysqli_real_escape_string($conn,$_POST['availability']);
@@ -300,7 +300,6 @@ button:hover{
     gap:20px;
 }
 
-/* HOME BUTTON (adapted to small navbar version) */
 .home-btn{
     background:#1f3f98;
     color:white;
@@ -323,7 +322,6 @@ button:hover{
     font-size:20px;
 }
 
-/* PROFILE ICON */
 .profile-link{
     text-decoration:none;
 }
@@ -364,7 +362,7 @@ button:hover{
     <div class="icon-section">
 
 <div class="home-btn"
-     onclick="location.href='student_dashboard.php'">
+     onclick="location.href='dashboard.php'">
 
     <i class="fas fa-home"></i>
 </div>
@@ -392,7 +390,7 @@ enctype="multipart/form-data">
 
 <?php
 
-$image = "uploads/profile.jpg";
+$image = "images/profile.jpg";
 
 if(!empty($data['photo']) &&
 file_exists("uploads/".$data['photo']))
@@ -406,7 +404,16 @@ $image="uploads/".$data['photo'];
 
 <br><br>
 
-<input type="file" name="photo">
+<label>Profile Picture</label>
+
+<small style="color:#666;">
+Maximum file size: 2MB (JPG, JPEG, PNG, WEBP)
+</small>
+
+<input
+type="file"
+name="photo"
+accept=".jpg,.jpeg,.png,.webp">
 
 </div>
 
@@ -472,10 +479,11 @@ value="<?php echo $data['cgpa'] ?? ''; ?>">
 
 <label>Availability</label>
 
-<input type="text"
+<textarea
 name="availability"
-required
-value="<?php echo $data['availability'] ?? ''; ?>">
+rows="3"
+required><?php echo 
+htmlspecialchars($data['availability'] ?? ''); ?></textarea>
 
 <label>Contact Number</label>
 
