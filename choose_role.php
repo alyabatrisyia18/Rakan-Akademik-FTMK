@@ -7,9 +7,22 @@ if(!isset($_SESSION['userId']))
     exit();
 }
 
-if($_SESSION['role'] != "Tutor" && $_SESSION['role'] != "tutor")
+$roles = array_map('trim', explode(',', $_SESSION['role']));
+
+$hasStudent = in_array("Student", $roles);
+$hasTutor   = in_array("Tutor", $roles);
+
+if(!$hasStudent || !$hasTutor)
 {
-    header("Location: student_dashboard.php");
+    if($hasTutor)
+    {
+        header("Location: dashboard.php");
+    }
+    else
+    {
+        header("Location: student_dashboard.php");
+    }
+
     exit();
 }
 ?>

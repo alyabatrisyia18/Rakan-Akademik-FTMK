@@ -6,8 +6,6 @@ if(isset($_POST["btnLogin"]))
 {
     $username = trim($_POST["txtUser"]);
     $password = $_POST["txtPassword"];
-
-    // ADMIN LOGIN
     
     if($username == "admin" && $password == "1234")
     {
@@ -23,7 +21,7 @@ if(isset($_POST["btnLogin"]))
         ";
         exit();
     }
-    // USER LOGIN
+
     $sql = "SELECT * FROM user WHERE userId='$username'";
     $result = mysqli_query($conn, $sql);
 
@@ -31,10 +29,9 @@ if(isset($_POST["btnLogin"]))
     {
         $row = mysqli_fetch_assoc($result);
 
-        // Check Password
         if(password_verify($password, $row['password']))
         {
-            // Check Account Status
+
             if(strtolower($row['status']) != "active")
             {
                 echo "
@@ -45,41 +42,39 @@ if(isset($_POST["btnLogin"]))
                 ";
                 exit();
             }
-            // Create Session
+            
             $_SESSION['userId'] = $row['userId'];
             $_SESSION['name'] = $row['name'];
-            $_SESSION['role'] = $row['role'];
-
-            // Redirect Based On Role
-            if(strtolower($row['role']) == "student")
-            {
+            $_SESSION['role'] = trim($row['role']);
+            $role = strtolower(trim($row['role']));
+            if($role == "student"){
                 echo "
                 <script>
+                alert('Login Successful');
+                window.location.href='student_dashboard.php';
+                </script>
+                ";
+                }
+                else if($role == "tutor"){
+                    echo "
+                    <script>
                     alert('Login Successful');
-                    window.location.href='student_dashboard.php';
-                </script>
-                ";
-            }
-            else if(strtolower($row['role']) == "tutor")
-            {
-                echo "
-                <script>
-                    alert('Login Successful');
-                    window.location.href='choose_role.php';
-                </script>
-                ";
-            }
-            else
-            {
-                echo "
-                <script>
-                    alert('Invalid user role.');
-                    window.location.href='login.php';
-                </script>
-                ";
-            }
-
-            exit();
+                    window.location.href='dashboard.php';</script>";
+                    }
+                    else if($role == "student,tutor"){
+                        echo "
+                        <script>
+                        alert('Login Successful');
+                        window.location.href='choose_role.php';
+                        </script>";
+                        }
+                    else{
+                        echo "
+                        <script>
+                        alert('Invalid user role.');
+                        window.location.href='login.php'; </script>";
+                    }
+                        exit();
         }
         else
         {
@@ -520,7 +515,7 @@ body{
 
             </span>
 
-            <h3>Choose To Register</h3>
+            <h3>Register As Student</h3>
 
         </div>
 
@@ -529,11 +524,6 @@ body{
             <a href="register_student.php" class="registerButton">
                 Register As Student
             </a>
-
-            <a href="register_rakan.php" class="registerButton">
-                Register As Rakan Akademik
-            </a>
-
         </div>
 
     </div>

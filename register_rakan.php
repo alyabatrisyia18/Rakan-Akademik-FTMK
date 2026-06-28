@@ -48,7 +48,12 @@ if(mysqli_num_rows($sqlRole) == 0)
 
 $dataRole = mysqli_fetch_assoc($sqlRole);
 
-if(strtolower($dataRole['role']) == "tutor")
+$roles = array_map(
+    'trim',
+    explode(',', $dataRole['role'])
+);
+
+if(in_array("Tutor",$roles))
 {
     echo "<script>
     alert('You are already a Rakan Akademik.');
@@ -57,7 +62,7 @@ if(strtolower($dataRole['role']) == "tutor")
     exit();
 }
 
-if(strtolower($dataRole['role']) != "student")
+if(!in_array("Student",$roles))
 {
     echo "<script>
     alert('Only students can apply.');
@@ -68,7 +73,6 @@ if(strtolower($dataRole['role']) != "student")
 
 if(isset($_POST["btnSubmit"]))
 {
-    // Better numeric comparison
     $cgpa = (float) $_POST["cgpa"];
 
     $availability = mysqli_real_escape_string(
