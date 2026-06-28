@@ -1,5 +1,16 @@
 <?php
 session_start();
+
+if (!isset($_SESSION['userId'])) {
+    header("Location: login.php");
+    exit();
+}
+$role = strtolower(trim($_SESSION['role']));
+
+if ($role != "student") {
+    header("Location: dashboard.php");
+    exit();
+}
 include("db_connect.php");
 
 $sql = mysqli_query($conn,
@@ -16,7 +27,6 @@ $sql = mysqli_query($conn,
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
-<body>
 <body>
 <div class="navbar-custom">
 
@@ -61,11 +71,8 @@ $sql = mysqli_query($conn,
         {
         ?>
         
-        <a href="student_viewrakan.php?id=
-        
-        <?php echo $row['profileID']; ?>" class="student-card">
+        <a href="student_viewrakan.php?id=<?php echo $row['profileID']; ?>"class="student-card">
             <i class="fa-regular fa-user"></i>
-            
             <div class="student-name"> <?php echo $row['name']; ?> </div>
         </a>
         <?php
