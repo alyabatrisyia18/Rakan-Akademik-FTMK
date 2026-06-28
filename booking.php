@@ -2,7 +2,7 @@
 session_start();
 include("db_connect.php");
 
-$userID = $_SESSION['userId'];
+$matricNoStudent = $_SESSION['matric'];
 
 if(isset($_POST['bookSession']))
 {
@@ -32,7 +32,7 @@ if(isset($_POST['bookSession']))
     (
         '$bookingID',
         '$matricNoTutor',
-        '$userID',
+        '$matricNoStudent',
         '$schedule',
         'Booked',
         '$subject',
@@ -50,12 +50,11 @@ if(isset($_POST['bookSession']))
     </script>";
 }
 
+
 $sql = "SELECT *
         FROM `teaching record`
         INNER JOIN tutor
         ON `teaching record`.matricNoTutor = tutor.matricNoTutor
-        INNER JOIN user
-        ON tutor.userID = user.userId
         WHERE teachingStatus='Available'";
 
 $result = mysqli_query($conn,$sql);
@@ -63,11 +62,14 @@ $result = mysqli_query($conn,$sql);
 $pastSql = "
 SELECT
     booking.*,
+    `teaching record`.subject,
     `teaching record`.sessionDate,
+    `teaching record`.startTime,
+    `teaching record`.endTime,
     `teaching record`.sessionType,
     `teaching record`.meetingLink,
     `teaching record`.venue,
-    user.name
+    tutor.name
 FROM booking
 
 INNER JOIN `teaching record`
@@ -76,10 +78,7 @@ ON booking.recordID = `teaching record`.recordID
 INNER JOIN tutor
 ON booking.matricNoTutor = tutor.matricNoTutor
 
-INNER JOIN user
-ON tutor.userID = user.userId
-
-WHERE booking.matricNoStudent='$userID'
+WHERE booking.matricNoStudent='$matricNoStudent'
 ";
 
 $pastResult = mysqli_query($conn,$pastSql);
@@ -140,7 +139,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         ☰
     </div>
 
-    <h2>Student</h2>
+    <h2>Studenta</h2>
 
     <nav>
         <ul>
@@ -203,15 +202,14 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
             {
                 $recordID = $row['recordID'];
 
-                $isTutorSession =
-                    ($userID == $row['matricNoTutor']);
+                $isTutorSession = false;
 
                 $checkBooking = mysqli_query(
                     $conn,
                     "SELECT *
                     FROM booking
                     WHERE recordID='$recordID'
-                    AND matricNoStudent='$userID'"
+AND matricNoStudent='$matricNoStudent'"
                 );
 
                 $alreadyBooked = mysqli_num_rows($checkBooking);
