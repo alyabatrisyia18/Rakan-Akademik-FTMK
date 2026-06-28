@@ -5,17 +5,27 @@ include("db_connect.php");
 $matricNoStudent = $_SESSION['matric'];
 
 $sql = "
-SELECT b.*, t.sessionDate, t.sessionType,
-       t.meetingLink, t.venue, u.name
+SELECT
+    b.*,
+    t.subject,
+    t.sessionDate,
+    t.startTime,
+    t.endTime,
+    t.sessionType,
+    t.meetingLink,
+    t.venue,
+    tutor.name
 FROM booking b
-JOIN `teaching record` t
+
+INNER JOIN `teaching record` t
 ON b.recordID = t.recordID
+
 INNER JOIN tutor
-ON t.matricNoTutor = tutor.matricNoTutor
-INNER JOIN user u
-ON tutor.userID = u.userId
+ON b.matricNoTutor = tutor.matricNoTutor
+
 WHERE b.matricNoStudent='$matricNoStudent'
 AND b.bookingStatus='Booked'
+
 ORDER BY t.sessionDate ASC
 ";
 
@@ -56,15 +66,10 @@ $result = mysqli_query($conn, $sql);
 
         </div>
 
-        <div class="search-box">
-            <input type="text" placeholder="Hinted search text">
-            <i class="fas fa-search"></i>
-        </div>
-
         <div class="header-icons">
-            <i class="far fa-user-circle"></i>
+            <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
             <i class="fas fa-home"
-                onclick="location.href='dashboard.php'"></i>
+                onclick="location.href='student_dashboard.php'"></i>
         </div>
 
     </div>
