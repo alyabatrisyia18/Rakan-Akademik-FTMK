@@ -2,7 +2,7 @@
 session_start();
 include("db_connect.php");
 
-$matricNoStudent = $_SESSION['matric'];
+$userID = $_SESSION['userId'];
 
 if(isset($_POST['bookSession']))
 {
@@ -32,7 +32,7 @@ if(isset($_POST['bookSession']))
     (
         '$bookingID',
         '$matricNoTutor',
-        '$matricNoStudent',
+        '$userID',
         '$schedule',
         'Booked',
         '$subject',
@@ -60,13 +60,27 @@ $sql = "SELECT *
 
 $result = mysqli_query($conn,$sql);
 
-$pastSql = "SELECT *
-            FROM booking
-            INNER JOIN tutor
-            ON booking.matricNoTutor = tutor.matricNoTutor
-            INNER JOIN user
-            ON tutor.userID = user.userId
-            WHERE booking.matricNoStudent='$matricNoStudent'";
+$pastSql = "
+SELECT
+    booking.*,
+    `teaching record`.sessionDate,
+    `teaching record`.sessionType,
+    `teaching record`.meetingLink,
+    `teaching record`.venue,
+    user.name
+FROM booking
+
+INNER JOIN `teaching record`
+ON booking.recordID = `teaching record`.recordID
+
+INNER JOIN tutor
+ON booking.matricNoTutor = tutor.matricNoTutor
+
+INNER JOIN user
+ON tutor.userID = user.userId
+
+WHERE booking.matricNoStudent='$userID'
+";
 
 $pastResult = mysqli_query($conn,$pastSql);
 ?>
@@ -110,10 +124,10 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
     <div class="header-icons">
 
-        <i class="far fa-user-circle"></i>
+        <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
 
         <i class="fas fa-home"
-           onclick="location.href='dashboard.php'"
+           onclick="location.href='student_dashboard.php'"
            title="Dashboard"></i>
 
     </div>
@@ -190,14 +204,14 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
                 $recordID = $row['recordID'];
 
                 $isTutorSession =
-                    ($matricNoStudent == $row['matricNoTutor']);
+                    ($userID == $row['matricNoTutor']);
 
                 $checkBooking = mysqli_query(
                     $conn,
                     "SELECT *
                     FROM booking
                     WHERE recordID='$recordID'
-                    AND matricNoStudent='$matricNoStudent'"
+                    AND matricNoStudent='$userID'"
                 );
 
                 $alreadyBooked = mysqli_num_rows($checkBooking);
@@ -356,7 +370,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         <table>
 
             <tr>
-
+                <th>DATE & TIME</th>
                 <th>BOOKING ID</th>
                 <th>SUBJECT</th>
                 <th>TUTOR</th>
@@ -370,6 +384,38 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
             ?>
 
             <tr>
+                <td>
+
+                    <?php
+                    echo date(
+    "d F Y",
+    strtotime($pastRow['sessionDate'])
+);
+                    ?>
+
+                    <br>
+
+                    <small>
+
+                        <?php
+                        echo date(
+                            "h:i A",
+                            strtotime($pastRow['startTime'])
+                        );
+                        ?>
+
+                        -
+
+                        <?php
+                        echo date(
+                            "h:i A",
+                            strtotime($pastRow['endTime'])
+                        );
+                        ?>
+
+                    </small>
+
+                </td>
 
                 <td>
                     <?php echo $pastRow['bookingID']; ?>
