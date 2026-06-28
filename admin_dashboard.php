@@ -160,7 +160,7 @@
         <h2>Tutor Approvals</h2>
     </div>
 
-    <div class="card">
+    <div class="card" onclick="location.href='paymentapproval.php'">
         <img src="images/managetutor.jpg" alt="">
         <h2>Payment Approvals</h2>
     </div>

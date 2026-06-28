@@ -2,8 +2,8 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Jun 27, 2026 at 05:14 PM
+-- Host: 127.0.0.1:3307
+-- Generation Time: Jun 28, 2026 at 10:27 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -53,12 +53,24 @@ CREATE TABLE `booking` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `chapters`
+--
+
+CREATE TABLE `chapters` (
+  `chapter_id` int(11) NOT NULL,
+  `subject` varchar(20) NOT NULL,
+  `chapter_name` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `payment`
 --
 
 CREATE TABLE `payment` (
   `paymentID` varchar(20) NOT NULL COMMENT 'Payment identifier',
-  `bookingID` varchar(20) NOT NULL COMMENT 'Reference to booking',
+  `recordID` varchar(20) NOT NULL COMMENT 'Reference to booking',
   `amount` decimal(10,2) NOT NULL COMMENT 'Payment amount',
   `payment_date` date NOT NULL COMMENT 'Payment date',
   `paymentStatus` varchar(20) NOT NULL COMMENT 'Payment status'
@@ -175,6 +187,20 @@ CREATE TABLE `rakan_profile` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `resources`
+--
+
+CREATE TABLE `resources` (
+  `resource_id` int(11) NOT NULL,
+  `topic_id` int(11) NOT NULL,
+  `type` varchar(20) NOT NULL,
+  `title` varchar(50) NOT NULL,
+  `link` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `student`
 --
 
@@ -210,15 +236,33 @@ CREATE TABLE `teaching record` (
   `endTime` time NOT NULL,
   `sessionType` varchar(20) NOT NULL,
   `meetingLink` varchar(20) NOT NULL,
-  `venue` varchar(255) NOT NULL
+  `venue` varchar(255) NOT NULL,
+  `proofFile` varchar(255) NOT NULL,
+  `hours` int(11) NOT NULL,
+  `estimatedEarning` decimal(10,2) NOT NULL,
+  `approvalStatus` varchar(20) NOT NULL,
+  `submitDate` datetime DEFAULT NULL,
+  `approvalDate` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `teaching record`
 --
 
-INSERT INTO `teaching record` (`recordID`, `matricNoTutor`, `subject`, `sessionDate`, `teachingStatus`, `startTime`, `endTime`, `sessionType`, `meetingLink`, `venue`) VALUES
-('R526', 'd0112', 'Programming', '2026-03-12', 'Available', '17:22:00', '18:22:00', 'Online', 'https://teams.live.c', '');
+INSERT INTO `teaching record` (`recordID`, `matricNoTutor`, `subject`, `sessionDate`, `teachingStatus`, `startTime`, `endTime`, `sessionType`, `meetingLink`, `venue`, `proofFile`, `hours`, `estimatedEarning`, `approvalStatus`, `submitDate`, `approvalDate`) VALUES
+('R526', 'd0112', 'Programming', '2026-03-12', 'Available', '17:22:00', '18:22:00', 'Online', 'https://teams.live.c', '', '', 0, 0.00, '', NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `topics`
+--
+
+CREATE TABLE `topics` (
+  `topic_id` int(11) NOT NULL,
+  `chapter_id` int(11) NOT NULL,
+  `topic_name` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -319,11 +363,17 @@ ALTER TABLE `booking`
   ADD KEY `recordID` (`recordID`);
 
 --
+-- Indexes for table `chapters`
+--
+ALTER TABLE `chapters`
+  ADD PRIMARY KEY (`chapter_id`);
+
+--
 -- Indexes for table `payment`
 --
 ALTER TABLE `payment`
   ADD PRIMARY KEY (`paymentID`),
-  ADD KEY `bookingID` (`bookingID`);
+  ADD KEY `bookingID` (`recordID`);
 
 --
 -- Indexes for table `quiz`
@@ -356,6 +406,13 @@ ALTER TABLE `quiz_result`
   ADD KEY `quizID` (`quizID`);
 
 --
+-- Indexes for table `resources`
+--
+ALTER TABLE `resources`
+  ADD PRIMARY KEY (`resource_id`),
+  ADD KEY `topic_id` (`topic_id`);
+
+--
 -- Indexes for table `student`
 --
 ALTER TABLE `student`
@@ -368,6 +425,13 @@ ALTER TABLE `student`
 ALTER TABLE `teaching record`
   ADD PRIMARY KEY (`recordID`),
   ADD KEY `matricNoTutor` (`matricNoTutor`);
+
+--
+-- Indexes for table `topics`
+--
+ALTER TABLE `topics`
+  ADD PRIMARY KEY (`topic_id`),
+  ADD KEY `chapter_id` (`chapter_id`);
 
 --
 -- Indexes for table `tutor`
@@ -387,6 +451,12 @@ ALTER TABLE `user`
 --
 
 --
+-- AUTO_INCREMENT for table `chapters`
+--
+ALTER TABLE `chapters`
+  MODIFY `chapter_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `quiz_attempts`
 --
 ALTER TABLE `quiz_attempts`
@@ -397,6 +467,18 @@ ALTER TABLE `quiz_attempts`
 --
 ALTER TABLE `quiz_question`
   MODIFY `questionID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+
+--
+-- AUTO_INCREMENT for table `resources`
+--
+ALTER TABLE `resources`
+  MODIFY `resource_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `topics`
+--
+ALTER TABLE `topics`
+  MODIFY `topic_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
@@ -419,7 +501,7 @@ ALTER TABLE `booking`
 -- Constraints for table `payment`
 --
 ALTER TABLE `payment`
-  ADD CONSTRAINT `payment_ibfk_1` FOREIGN KEY (`bookingID`) REFERENCES `booking` (`bookingID`);
+  ADD CONSTRAINT `payment_ibfk_1` FOREIGN KEY (`recordID`) REFERENCES `teaching record` (`recordID`);
 
 --
 -- Constraints for table `quiz`
@@ -447,10 +529,22 @@ ALTER TABLE `quiz_result`
   ADD CONSTRAINT `quiz_result_ibfk_2` FOREIGN KEY (`matricNoStudent`) REFERENCES `student` (`matricNoStudent`);
 
 --
+-- Constraints for table `resources`
+--
+ALTER TABLE `resources`
+  ADD CONSTRAINT `resources_ibfk_1` FOREIGN KEY (`topic_id`) REFERENCES `topics` (`topic_id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `teaching record`
 --
 ALTER TABLE `teaching record`
   ADD CONSTRAINT `teaching record_ibfk_1` FOREIGN KEY (`matricNoTutor`) REFERENCES `tutor` (`matricNoTutor`);
+
+--
+-- Constraints for table `topics`
+--
+ALTER TABLE `topics`
+  ADD CONSTRAINT `topics_ibfk_1` FOREIGN KEY (`chapter_id`) REFERENCES `chapters` (`chapter_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `tutor`

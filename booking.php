@@ -2,7 +2,7 @@
 session_start();
 include("db_connect.php");
 
-$matricNoStudent = $_SESSION['matric'];
+$userID = $_SESSION['userId'];
 
 if(isset($_POST['bookSession']))
 {
@@ -32,7 +32,7 @@ if(isset($_POST['bookSession']))
     (
         '$bookingID',
         '$matricNoTutor',
-        '$matricNoStudent',
+        '$userID',
         '$schedule',
         'Booked',
         '$subject',
@@ -45,21 +45,42 @@ if(isset($_POST['bookSession']))
 
     echo "
     <script>
-    alert('Booking Successful!');
-    window.location='booking.php';
+        alert('Booking Successful!');
+        window.location='booking.php';
     </script>";
 }
 
 $sql = "SELECT *
         FROM `teaching record`
+        INNER JOIN tutor
+        ON `teaching record`.matricNoTutor = tutor.matricNoTutor
+        INNER JOIN user
+        ON tutor.userID = user.userId
         WHERE teachingStatus='Available'";
-        
 
 $result = mysqli_query($conn,$sql);
 
-$pastSql = "SELECT *
-            FROM booking
-            WHERE matricNoStudent='$matricNoStudent'";
+$pastSql = "
+SELECT
+    booking.*,
+    `teaching record`.sessionDate,
+    `teaching record`.sessionType,
+    `teaching record`.meetingLink,
+    `teaching record`.venue,
+    user.name
+FROM booking
+
+INNER JOIN `teaching record`
+ON booking.recordID = `teaching record`.recordID
+
+INNER JOIN tutor
+ON booking.matricNoTutor = tutor.matricNoTutor
+
+INNER JOIN user
+ON tutor.userID = user.userId
+
+WHERE booking.matricNoStudent='$userID'
+";
 
 $pastResult = mysqli_query($conn,$pastSql);
 ?>
@@ -68,6 +89,7 @@ $pastResult = mysqli_query($conn,$pastSql);
 <html lang="en">
 
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -77,6 +99,7 @@ $pastResult = mysqli_query($conn,$pastSql);
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
@@ -99,16 +122,14 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
     </div>
 
-    <div class="search-box">
-        <input type="text" placeholder="Hinted search text">
-        <i class="fas fa-search"></i>
-    </div>
-
     <div class="header-icons">
-        <i class="far fa-bookmark"></i>
-        <i class="far fa-bell"></i>
-        <i class="far fa-user-circle"></i>
-        <i class="fas fa-home" onclick="location.href='dashboard.php'" title="Dashboard"></i>
+
+        <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
+
+        <i class="fas fa-home"
+           onclick="location.href='student_dashboard.php'"
+           title="Dashboard"></i>
+
     </div>
 
 </div>
@@ -119,18 +140,23 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         ☰
     </div>
 
-    <h2>Student/Tutor</h2>
+    <h2>Student</h2>
 
     <nav>
         <ul>
-            <li><a href="booking.php" class="active-menu">Booking Class</a></li>
-            <li><a href="myclassschedule.php">My Class Schedule</a></li>
-            <li><a href="mytutoringsession.php">My Tutoring Session</a></li>
-            <li><a href="addtutoringsession.php">Add Tutoring Session</a></li>
-            <li><a href="teachingsessionrecord.php">Add Teaching Session</a></li>
-            <li><a href="sessionrecord.php">Session Record</a></li>
-            <li><a href="earningsdashboard.php">Earnings Dashboard</a></li>
-            <li><a href="#">Logout</a></li>
+
+            <li>
+                <a href="booking.php" class="active-menu">
+                    Booking Class
+                </a>
+            </li>
+
+            <li>
+                <a href="myclassschedule.php">
+                    My Class Schedule
+                </a>
+            </li>
+
         </ul>
     </nav>
 
@@ -150,49 +176,59 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
         </span>
 
-        <span id="pastTab"
-              onclick="showPast()">
+        <span id="bookingtab"
+              onclick="showBookings()">
 
-            Past
+            My Booking
 
         </span>
 
     </div>
-
-    <!-- UPCOMING -->
 
     <div id="upcomingTable">
 
         <table>
 
             <tr>
+
                 <th>DATE & TIME</th>
                 <th>SUBJECT</th>
                 <th>TUTOR NAME</th>
                 <th>ACTION</th>
+
             </tr>
 
             <?php
             while($row = mysqli_fetch_assoc($result))
-{
+            {
+                $recordID = $row['recordID'];
 
-    $recordID = $row['recordID'];
+                $isTutorSession =
+                    ($userID == $row['matricNoTutor']);
 
-    $checkBooking = mysqli_query(
-        $conn,
-        "SELECT *
-         FROM booking
-         WHERE recordID='$recordID'
-         AND matricNoStudent='$matricNoStudent'"
-    );
+                $checkBooking = mysqli_query(
+                    $conn,
+                    "SELECT *
+                    FROM booking
+                    WHERE recordID='$recordID'
+                    AND matricNoStudent='$userID'"
+                );
 
-    $alreadyBooked = mysqli_num_rows($checkBooking);
+                $alreadyBooked = mysqli_num_rows($checkBooking);
 
-                
+                $countSql = "SELECT COUNT(*) AS total
+                             FROM booking
+                             WHERE recordID='$recordID'";
+
+                $countResult = mysqli_query($conn,$countSql);
+
+                $countRow = mysqli_fetch_assoc($countResult);
+
+                $totalStudent = $countRow['total'];
             ?>
 
             <tr>
-                
+
                 <td>
 
                     <?php
@@ -231,7 +267,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
                 </td>
 
                 <td>
-                    <?php echo $row['matricNoTutor']; ?>
+                    <?php echo $row['name']; ?>
                 </td>
 
                 <td>
@@ -264,53 +300,56 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
                         value="<?php echo $row['endTime']; ?>">
 
                         <?php
-if($alreadyBooked > 0)
-{
-?>
-    <button
-    type="button"
-    class="attended"
-    disabled>
+                        if($isTutorSession)
+                        {
+                        ?>
 
-        ATTENDED
+                            <button
+                            type="button"
+                            class="available"
+                            onclick="alert('You are the tutor for this session. You cannot attend your own class.')">
 
-    </button>
-<?php
-}
-else
-{
-?>
-    <button
-    type="submit"
-    name="bookSession"
-    class="available">
+                                ATTEND
 
-        ATTEND
-
-    </button>
-<?php
-}
-?>
+                            </button>
 
                         <?php
+                        }
+                        elseif($alreadyBooked > 0)
+                        {
+                        ?>
 
-$recordID = $row['recordID'];
+                            <button
+                            type="button"
+                            class="attended"
+                            disabled>
 
-$countSql = "SELECT COUNT(*) AS total
-             FROM booking
-             WHERE recordID='$recordID'";
+                                ATTENDED
 
-$countResult = mysqli_query($conn,$countSql);
+                            </button>
 
-$countRow = mysqli_fetch_assoc($countResult);
+                        <?php
+                        }
+                        else
+                        {
+                        ?>
 
-$totalStudent = $countRow['total'];
+                            <button
+                            type="submit"
+                            name="bookSession"
+                            class="available">
 
-?>
+                                ATTEND
 
-<span class="student-count">
-    👥 <?php echo $totalStudent; ?>/10
-</span>
+                            </button>
+
+                        <?php
+                        }
+                        ?>
+
+                        <span class="student-count">
+                            👥 <?php echo $totalStudent; ?>/10
+                        </span>
 
                     </form>
 
@@ -326,17 +365,17 @@ $totalStudent = $countRow['total'];
 
     </div>
 
-    <!-- PAST -->
-
-    <div id="pastTable" style="display:none;">
+    <div id="bookings" style="display:none;">
 
         <table>
 
             <tr>
+                <th>DATE & TIME</th>
                 <th>BOOKING ID</th>
                 <th>SUBJECT</th>
                 <th>TUTOR</th>
                 <th>STATUS</th>
+
             </tr>
 
             <?php
@@ -345,6 +384,38 @@ $totalStudent = $countRow['total'];
             ?>
 
             <tr>
+                <td>
+
+                    <?php
+                    echo date(
+    "d F Y",
+    strtotime($pastRow['sessionDate'])
+);
+                    ?>
+
+                    <br>
+
+                    <small>
+
+                        <?php
+                        echo date(
+                            "h:i A",
+                            strtotime($pastRow['startTime'])
+                        );
+                        ?>
+
+                        -
+
+                        <?php
+                        echo date(
+                            "h:i A",
+                            strtotime($pastRow['endTime'])
+                        );
+                        ?>
+
+                    </small>
+
+                </td>
 
                 <td>
                     <?php echo $pastRow['bookingID']; ?>
@@ -355,7 +426,7 @@ $totalStudent = $countRow['total'];
                 </td>
 
                 <td>
-                    <?php echo $pastRow['matricNoTutor']; ?>
+                    <?php echo $pastRow['name']; ?>
                 </td>
 
                 <td>
@@ -404,21 +475,21 @@ function toggleSidebar()
     }
 }
 
-function showPast()
+function showBookings()
 {
     document.getElementById("upcomingTable").style.display = "none";
-    document.getElementById("pastTable").style.display = "block";
+    document.getElementById("bookings").style.display = "block";
 
     document.getElementById("upcomingTab").classList.remove("active-tab");
-    document.getElementById("pastTab").classList.add("active-tab");
+    document.getElementById("bookingtab").classList.add("active-tab");
 }
 
 function showUpcoming()
 {
     document.getElementById("upcomingTable").style.display = "block";
-    document.getElementById("pastTable").style.display = "none";
+    document.getElementById("bookings").style.display = "none";
 
-    document.getElementById("pastTab").classList.remove("active-tab");
+    document.getElementById("bookingtab").classList.remove("active-tab");
     document.getElementById("upcomingTab").classList.add("active-tab");
 }
 

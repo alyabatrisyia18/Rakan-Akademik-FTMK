@@ -247,10 +247,10 @@ while($row = mysqli_fetch_assoc($result))
     <td><?php echo $row['status']; ?></td>
 
     <td>
-        <a href="#" class="view-btn">
-            <i class="fas fa-eye"></i>
-        </a>
-    </td>
+    <a href="view_user.php?id=<?php echo $row['userId']; ?>" class="view-btn">
+        <i class="fas fa-eye"></i>
+    </a>
+</td>
 
 </tr>
 <?php
