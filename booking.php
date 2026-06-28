@@ -50,23 +50,36 @@ if(isset($_POST['bookSession']))
     </script>";
 }
 
+
 $sql = "SELECT *
         FROM `teaching record`
         INNER JOIN tutor
         ON `teaching record`.matricNoTutor = tutor.matricNoTutor
-        INNER JOIN user
-        ON tutor.userID = user.userId
         WHERE teachingStatus='Available'";
 
 $result = mysqli_query($conn,$sql);
 
-$pastSql = "SELECT *
-            FROM booking
-            INNER JOIN tutor
-            ON booking.matricNoTutor = tutor.matricNoTutor
-            INNER JOIN user
-            ON tutor.userID = user.userId
-            WHERE booking.matricNoStudent='$matricNoStudent'";
+$pastSql = "
+SELECT
+    booking.*,
+    `teaching record`.subject,
+    `teaching record`.sessionDate,
+    `teaching record`.startTime,
+    `teaching record`.endTime,
+    `teaching record`.sessionType,
+    `teaching record`.meetingLink,
+    `teaching record`.venue,
+    tutor.name
+FROM booking
+
+INNER JOIN `teaching record`
+ON booking.recordID = `teaching record`.recordID
+
+INNER JOIN tutor
+ON booking.matricNoTutor = tutor.matricNoTutor
+
+WHERE booking.matricNoStudent='$matricNoStudent'
+";
 
 $pastResult = mysqli_query($conn,$pastSql);
 ?>
@@ -110,10 +123,10 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
     <div class="header-icons">
 
-        <i class="far fa-user-circle"></i>
+        <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
 
         <i class="fas fa-home"
-           onclick="location.href='dashboard.php'"
+           onclick="location.href='student_dashboard.php'"
            title="Dashboard"></i>
 
     </div>
@@ -126,7 +139,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         ☰
     </div>
 
-    <h2>Student</h2>
+    <h2>Studenta</h2>
 
     <nav>
         <ul>
@@ -189,15 +202,14 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
             {
                 $recordID = $row['recordID'];
 
-                $isTutorSession =
-                    ($matricNoStudent == $row['matricNoTutor']);
+                $isTutorSession = false;
 
                 $checkBooking = mysqli_query(
                     $conn,
                     "SELECT *
                     FROM booking
                     WHERE recordID='$recordID'
-                    AND matricNoStudent='$matricNoStudent'"
+AND matricNoStudent='$matricNoStudent'"
                 );
 
                 $alreadyBooked = mysqli_num_rows($checkBooking);
@@ -356,7 +368,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         <table>
 
             <tr>
-
+                <th>DATE & TIME</th>
                 <th>BOOKING ID</th>
                 <th>SUBJECT</th>
                 <th>TUTOR</th>
@@ -370,6 +382,38 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
             ?>
 
             <tr>
+                <td>
+
+                    <?php
+                    echo date(
+    "d F Y",
+    strtotime($pastRow['sessionDate'])
+);
+                    ?>
+
+                    <br>
+
+                    <small>
+
+                        <?php
+                        echo date(
+                            "h:i A",
+                            strtotime($pastRow['startTime'])
+                        );
+                        ?>
+
+                        -
+
+                        <?php
+                        echo date(
+                            "h:i A",
+                            strtotime($pastRow['endTime'])
+                        );
+                        ?>
+
+                    </small>
+
+                </td>
 
                 <td>
                     <?php echo $pastRow['bookingID']; ?>
