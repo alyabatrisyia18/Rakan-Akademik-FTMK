@@ -81,7 +81,7 @@ $result = mysqli_query($conn, $sql);
             ☰
         </div>
 
-        <h2>Studenta</h2>
+        <h2>Student</h2>
 
         <nav>
 
