@@ -217,6 +217,38 @@ CREATE TABLE `user` (
   `role` varchar(20) NOT NULL COMMENT 'User role'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+
+--
+--
+--Table chapters, topics, resources for learning module
+--
+
+CREATE TABLE `chapters` (
+  `chapter_id` INT NOT NULL AUTO_INCREMENT,
+  `subject` VARCHAR(20) NOT NULL,
+  `chapter_name` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`chapter_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `topics` (
+  `topic_id` INT NOT NULL AUTO_INCREMENT,
+  `chapter_id` INT NOT NULL,
+  `topic_name` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`topic_id`),
+  FOREIGN KEY (`chapter_id`) REFERENCES `chapters`(`chapter_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `resources` (
+  `resource_id` INT NOT NULL AUTO_INCREMENT,
+  `topic_id` INT NOT NULL,
+  `type` VARCHAR(20) NOT NULL,
+  `title` VARCHAR(50) NOT NULL,
+  `link` TEXT NOT NULL,
+  PRIMARY KEY (`resource_id`),
+  FOREIGN KEY (`topic_id`) REFERENCES `topics`(`topic_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
 --
 -- Dumping data for table `user`
 --
