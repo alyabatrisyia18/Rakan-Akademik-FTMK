@@ -1,8 +1,7 @@
 <?php
 session_start();
 
-if(!isset($_SESSION['matric']))
-{
+if (!isset($_SESSION['matric'])) {
     header("Location: login.php");
     exit();
 }
@@ -12,14 +11,10 @@ $roles = array_map('trim', explode(',', $_SESSION['role']));
 $hasStudent = in_array("Student", $roles);
 $hasTutor = in_array("Tutor", $roles);
 
-if(!$hasStudent || !$hasTutor)
-{
-    if($hasTutor)
-    {
+if (!$hasStudent || !$hasTutor) {
+    if ($hasTutor) {
         header("Location: dashboard.php");
-    }
-    else
-    {
+    } else {
         header("Location: student_dashboard.php");
     }
 
@@ -29,107 +24,106 @@ if(!$hasStudent || !$hasTutor)
 
 <!DOCTYPE html>
 <html>
+
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<title>Choose Dashboard</title>
+    <title>Choose Dashboard</title>
 
-<style>
+    <style>
+        body {
+            margin: 0;
+            font-family: Segoe UI, sans-serif;
+            background-image: url('images/edubackground.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
 
-body{
-    margin:0;
-    font-family:Segoe UI,sans-serif;
-    background-image:url('images/edubackground.jpg');
-    background-size:cover;
-    background-position:center;
-    background-repeat:no-repeat;
-    background-attachment:fixed;
-}
+        .container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-.container{
-    width:100%;
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
+        .box {
+            width: 420px;
+            background: rgba(255, 255, 255, .9);
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, .2);
+        }
 
-.box{
-    width:420px;
-    background:rgba(255,255,255,.9);
-    padding:40px;
-    border-radius:15px;
-    text-align:center;
-    box-shadow:0 10px 25px rgba(0,0,0,.2);
-}
+        h1 {
+            color: #1f3f98;
+            margin-bottom: 10px;
+        }
 
-h1{
-    color:#1f3f98;
-    margin-bottom:10px;
-}
+        p {
+            color: #555;
+            margin-bottom: 25px;
+        }
 
-p{
-    color:#555;
-    margin-bottom:25px;
-}
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: white;
+            background: #3fa9f5;
+            font-weight: bold;
+            transition: .3s;
+        }
 
-.btn{
-    display:block;
-    width:100%;
-    padding:15px;
-    margin-bottom:15px;
-    border-radius:8px;
-    text-decoration:none;
-    color:white;
-    background:#3fa9f5;
-    font-weight:bold;
-    transition:.3s;
-}
-
-.btn:hover{
-    background:#1b8ce3;
-}
-
-</style>
+        .btn:hover {
+            background: #1b8ce3;
+        }
+    </style>
 
 </head>
 
 <body>
 
-<div class="container">
+    <div class="container">
 
-<div class="box">
+        <div class="box">
 
-<h1>Choose Dashboard</h1>
+            <h1>Choose Dashboard</h1>
 
-<p>
+            <p>
 
-Welcome,
+                Welcome,
 
-<b><?php echo $_SESSION['name']; ?></b>
+                <b><?php echo $_SESSION['name']; ?></b>
 
-</p>
+            </p>
 
-<a
-href="student_dashboard.php"
-class="btn">
+            <a
+                href="student_dashboard.php"
+                class="btn">
 
-Student Dashboard
+                Student Dashboard
 
-</a>
+            </a>
 
-<a
-href="dashboard.php"
-class="btn">
+            <a
+                href="dashboard.php"
+                class="btn">
 
-Rakan Akademik Dashboard
+                Rakan Akademik Dashboard
 
-</a>
+            </a>
 
-</div>
+        </div>
 
-</div>
+    </div>
 
 </body>
 
