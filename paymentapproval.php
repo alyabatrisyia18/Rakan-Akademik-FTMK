@@ -15,7 +15,7 @@ if (isset($_GET['approve'])) {
     WHERE recordID='$recordID'
     ");
 
-    // Get earning amount
+    
     $getRecord = mysqli_query($conn, "
     SELECT estimatedEarning
     FROM `teaching record`
@@ -24,7 +24,7 @@ if (isset($_GET['approve'])) {
 
     $record = mysqli_fetch_assoc($getRecord);
 
-    // Generate Payment ID
+
     do {
 
         $id = rand(100, 999);
