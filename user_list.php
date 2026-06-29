@@ -5,14 +5,14 @@ $search = isset($_GET['search']) ? mysqli_real_escape_string($conn, $_GET['searc
 
 $role = isset($_GET['role']) ? mysqli_real_escape_string($conn, $_GET['role']) : "";
 
-$sql = "SELECT userId, name, email, mobile_phone, role, status
+$sql = "SELECT matricNoStudent, name, email, mobile_phone, role, status
         FROM user
         WHERE 1=1";
 
 if($search != "")
 {
     $sql .= " AND (
-                userId LIKE '%$search%'
+                matricNoStudent LIKE '%$search%'
                 OR name LIKE '%$search%'
                 OR email LIKE '%$search%'
                 OR mobile_phone LIKE '%$search%'
@@ -24,7 +24,7 @@ if($role != "")
     $sql .= " AND role='$role'";
 }
 
-$sql .= " ORDER BY userId";
+$sql .= " ORDER BY matricNoStudent";
 
 $result = mysqli_query($conn, $sql);
 ?>
@@ -234,7 +234,7 @@ while($row = mysqli_fetch_assoc($result))
 ?>
 <tr>
 
-    <td><?php echo $row['userId']; ?></td>
+    <td><?php echo $row['matricNoStudent']; ?></td>
 
     <td><?php echo $row['name']; ?></td>
 
@@ -247,7 +247,7 @@ while($row = mysqli_fetch_assoc($result))
     <td><?php echo $row['status']; ?></td>
 
     <td>
-    <a href="view_user.php?id=<?php echo $row['userId']; ?>" class="view-btn">
+    <a href="view_user.php?id=<?php echo $row['matricNoStudent']; ?>" class="view-btn">
         <i class="fas fa-eye"></i>
     </a>
 </td>
