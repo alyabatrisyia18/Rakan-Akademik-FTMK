@@ -15,7 +15,7 @@ if (isset($_GET['approve'])) {
     WHERE recordID='$recordID'
     ");
 
-    
+
     $getRecord = mysqli_query($conn, "
     SELECT estimatedEarning
     FROM `teaching record`
@@ -59,7 +59,7 @@ if (isset($_GET['reject'])) {
 
     $recordID = $_GET['reject'];
 
-    mysqli_query($conn, "
+    mysqli_query($conn,"
     UPDATE `teaching record`
     SET
     approvalStatus='Rejected',
@@ -67,29 +67,71 @@ if (isset($_GET['reject'])) {
     WHERE recordID='$recordID'
     ");
 
-    header("Location: paymentapproval.php");
+    // Get earning
+    $getRecord = mysqli_query($conn,"
+    SELECT estimatedEarning
+    FROM `teaching record`
+    WHERE recordID='$recordID'
+    ");
+
+    $record = mysqli_fetch_assoc($getRecord);
+
+    // Generate Payment ID
+    do{
+
+        $paymentID = "PAY".rand(100,999);
+
+        $check = mysqli_query($conn,"
+        SELECT *
+        FROM payment
+        WHERE paymentID='$paymentID'
+        ");
+
+    }while(mysqli_num_rows($check)>0);
+
+    // Insert rejected payment
+    mysqli_query($conn,"
+    INSERT INTO payment
+    (
+        paymentID,
+        recordID,
+        amount,
+        payment_date,
+        paymentStatus
+    )
+    VALUES
+    (
+        '$paymentID',
+        '$recordID',
+        '".$record['estimatedEarning']."',
+        CURDATE(),
+        'Rejected'
+    )
+    ");
+
+    header("Location:paymentapproval.php");
     exit();
 }
 
 // Display Pending Payments
 $sql = "
 SELECT
-tr.recordID,
-u.name,
-tr.subject,
-tr.sessionDate,
-tr.hours,
-tr.estimatedEarning,
-tr.proofFile,
-tr.approvalStatus
+    tr.recordID,
+    u.name,
+    tr.subject,
+    tr.sessionDate,
+    tr.hours,
+    tr.estimatedEarning,
+    tr.proofFile,
+    tr.approvalStatus
 
 FROM `teaching record` tr
 
-JOIN tutor t
-ON tr.matricNoTutor=t.matricNoTutor
+INNER JOIN tutor t
+ON tr.matricNoTutor = t.matricNoTutor
 
-JOIN user u
-ON t.userID=u.userID
+INNER JOIN user u
+ON t.matricNoStudent = u.matricNoStudent
 
 WHERE tr.approvalStatus='Pending'
 
@@ -133,7 +175,6 @@ $result = mysqli_query($conn, $sql);
 
         </div>
 
-        <div class="header-icons">
 
             <i class="fas fa-home"
                 onclick="location.href='admin_dashboard.php'"
@@ -212,9 +253,17 @@ $result = mysqli_query($conn, $sql);
 
                     <td>
 
-                        <a href="viewproof.php?file=<?php echo $row['proofFile']; ?>">
-                            View Proof
-                        </a>
+                        <?php
+                        if (!empty($row['proofFile'])) {
+                        ?>
+                            <a href="viewproof.php?file=<?php echo $row['proofFile']; ?>">
+                                View Proof
+                            </a>
+                        <?php
+                        } else {
+                            echo "No Proof";
+                        }
+                        ?>
 
                     </td>
 
@@ -228,14 +277,22 @@ $result = mysqli_query($conn, $sql);
 
                     <td>
 
-                        <a href="paymentapproval.php?approve=<?php echo $row['recordID']; ?>"
-                            class="approve-btn">
+                        <a
+                            href="paymentapproval.php?approve=<?php echo $row['recordID']; ?>"
+                            class="approve-btn"
+                            onclick="return confirm('Approve this payment?')">
+
                             Approve
+
                         </a>
 
-                        <a href="paymentapproval.php?reject=<?php echo $row['recordID']; ?>"
-                            class="reject-btn">
+                        <a
+                            href="paymentapproval.php?reject=<?php echo $row['recordID']; ?>"
+                            class="reject-btn"
+                            onclick="return confirm('Reject this payment?')">
+
                             Reject
+
                         </a>
 
                     </td>

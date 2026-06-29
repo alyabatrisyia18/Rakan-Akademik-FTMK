@@ -161,11 +161,11 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     </nav>
 
 </div>
-<!-- test -->
+
 
 <div class="content">
 
-    <h1>Book Tutorings Session</h1>
+    <h1>Book Tutoring Session</h1>
 
     <div class="tab">
 

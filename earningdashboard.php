@@ -29,6 +29,9 @@ while ($row = mysqli_fetch_assoc($result)) {
 <head>
     <meta charset="UTF-8">
     <title>Earnings Dashboard</title>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -54,7 +57,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 
         <div class="header-icons">
             <i class="fas fa-home" onclick="location.href='dashboard.php'"></i>
-        <i class="far fa-user-circle" onclick="location.href='profile.php'" title="profile"></i>
+            <i class="far fa-user-circle" onclick="location.href='profile.php'" title="profile"></i>
         </div>
 
     </div>
