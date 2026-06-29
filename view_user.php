@@ -1,12 +1,10 @@
 <?php
 include("db_connect.php");
-
-$userId = $_GET['id'];
+$matricNoStudent = $_GET['id'];
 
 $sql = "SELECT *
         FROM user
-        WHERE userId='$userId'";
-
+        WHERE matricNoStudent='$matricNoStudent'";
 $result = mysqli_query($conn,$sql);
 
 $user = mysqli_fetch_assoc($result);
@@ -185,7 +183,7 @@ header{
 
 <div class="detail-row">
     <span class="detail-title">User ID</span>
-    <span><?php echo $user['userId']; ?></span>
+    <span><?php echo $user['matricNoStudent']; ?></span>
 </div>
 
 <div class="detail-row">
