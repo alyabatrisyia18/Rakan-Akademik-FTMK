@@ -4,10 +4,20 @@ include("db_connect.php");
 
 if(isset($_POST["btnReset"]))
 {
-    $userId = $_POST["txtUserId"];
+    $matric = $_POST["txtmatric"];
     $email = $_POST["txtEmail"];
     $password = $_POST["txtPassword"];
     $confirmPassword = $_POST["txtConfirmPassword"];
+
+    $matric=mysqli_real_escape_string(
+$conn,
+trim($_POST["txtmatric"])
+);
+
+$email=mysqli_real_escape_string(
+$conn,
+trim($_POST["txtEmail"])
+);
 
     if($password != $confirmPassword)
     {
@@ -22,7 +32,7 @@ if(isset($_POST["btnReset"]))
         $checkUser = mysqli_query(
             $conn,
             "SELECT * FROM user
-             WHERE userId='$userId'
+             WHERE matricNoStudent='$matric'
              AND email='$email'"
         );
 
@@ -37,7 +47,7 @@ if(isset($_POST["btnReset"]))
                 $conn,
                 "UPDATE user
                  SET password='$hashedPassword'
-                 WHERE userId='$userId'"
+                 WHERE matricNoStudent='$matric'"
             );
 
             echo "
@@ -56,6 +66,18 @@ if(isset($_POST["btnReset"]))
             ";
         }
     }
+    if(strlen($password)<8)
+{
+
+echo "<script>
+
+alert('Password must be at least 8 characters.');
+
+</script>";
+
+exit();
+
+}
 }
 
 ?>
@@ -135,7 +157,7 @@ h2{
 
         <input
             type="text"
-            name="txtUserId"
+            name="txtmatric"
             class="textBox"
             placeholder="User ID"
             required>

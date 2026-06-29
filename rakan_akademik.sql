@@ -2,8 +2,8 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1:3307
--- Generation Time: Jun 28, 2026 at 10:27 AM
+-- Host: 127.0.0.1:3306
+-- Generation Time: Jun 28, 2026 at 11:23 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -29,7 +29,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `admin` (
   `adminID` varchar(20) NOT NULL COMMENT 'Admin identifier',
-  `userID` varchar(20) NOT NULL COMMENT 'Reference to user'
+  `matricNoStudent` varchar(20) NOT NULL COMMENT 'Reference to user'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -94,13 +94,6 @@ CREATE TABLE `quiz` (
   `attempts` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `quiz`
---
-
-INSERT INTO `quiz` (`quizID`, `matricNoTutor`, `title`, `description`, `category`, `difficulty`, `cover`, `time_limit`, `attempts`) VALUES
-('Q1782223233', 'd0112', '1234567', '', 'Programming', 'Easy', '', 10, 3);
-
 -- --------------------------------------------------------
 
 --
@@ -110,19 +103,12 @@ INSERT INTO `quiz` (`quizID`, `matricNoTutor`, `title`, `description`, `category
 CREATE TABLE `quiz_attempts` (
   `attemptID` int(11) NOT NULL,
   `quizID` varchar(20) NOT NULL,
-  `userID` varchar(20) NOT NULL,
+  `matricNoStudent` varchar(20) NOT NULL,
   `score` int(11) NOT NULL,
   `total_question` int(11) NOT NULL,
   `user_answer` text NOT NULL,
   `attempt_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `quiz_attempts`
---
-
-INSERT INTO `quiz_attempts` (`attemptID`, `quizID`, `userID`, `score`, `total_question`, `user_answer`, `attempt_date`) VALUES
-(6, 'Q1782223233', 'd0112', 1, 2, '{\"22\":\"A\",\"23\":\"A\"}', '2026-06-23 14:00:59');
 
 -- --------------------------------------------------------
 
@@ -141,14 +127,6 @@ CREATE TABLE `quiz_question` (
   `correct_answer` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `quiz_question`
---
-
-INSERT INTO `quiz_question` (`questionID`, `quizID`, `question`, `optionA`, `optionB`, `optionC`, `optionD`, `correct_answer`) VALUES
-(22, 'Q1782223233', '1', 'where', 'set', 'Child Node', '8', 'A'),
-(23, 'Q1782223233', '345tyu', 'where', 'Root Node', 'insert', '8', 'D');
-
 -- --------------------------------------------------------
 
 --
@@ -160,28 +138,6 @@ CREATE TABLE `quiz_result` (
   `matricNoStudent` varchar(20) NOT NULL COMMENT 'Student taking quiz',
   `quizID` varchar(20) NOT NULL COMMENT 'Reference to quiz',
   `score` int(3) NOT NULL COMMENT 'Quiz score'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `rakan_profile`
---
-
-CREATE TABLE `rakan_profile` (
-  `profileID` int(11) NOT NULL,
-  `matricNoTutor` varchar(20) NOT NULL,
-  `photo` varchar(255) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `programme` varchar(100) NOT NULL,
-  `institution` varchar(255) NOT NULL,
-  `currentStatus` varchar(100) NOT NULL,
-  `academicBackground` text NOT NULL,
-  `academicStrengths` text NOT NULL,
-  `cgpa` decimal(3,2) NOT NULL,
-  `availability` varchar(100) NOT NULL,
-  `contactNumber` varchar(20) NOT NULL,
-  `email` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -206,7 +162,6 @@ CREATE TABLE `resources` (
 
 CREATE TABLE `student` (
   `matricNoStudent` varchar(20) NOT NULL COMMENT 'Student matric number',
-  `userID` varchar(20) NOT NULL COMMENT 'Reference student',
   `course` varchar(100) NOT NULL COMMENT 'Student course'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -214,11 +169,9 @@ CREATE TABLE `student` (
 -- Dumping data for table `student`
 --
 
-INSERT INTO `student` (`matricNoStudent`, `userID`, `course`) VALUES
-('B032410001', 'U001', 'BITP'),
-('d011', 'd011', 'sc'),
-('D032410021', 'D032410021', 'Diploma in Science Computer'),
-('D123', 'D123', 'Diploma in Science Computer');
+INSERT INTO `student` (`matricNoStudent`, `course`) VALUES
+('D032410021', 'Diploma in Science Computer'),
+('D777', 'Diploma In Science Computer');
 
 -- --------------------------------------------------------
 
@@ -245,13 +198,6 @@ CREATE TABLE `teaching record` (
   `approvalDate` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `teaching record`
---
-
-INSERT INTO `teaching record` (`recordID`, `matricNoTutor`, `subject`, `sessionDate`, `teachingStatus`, `startTime`, `endTime`, `sessionType`, `meetingLink`, `venue`, `proofFile`, `hours`, `estimatedEarning`, `approvalStatus`, `submitDate`, `approvalDate`) VALUES
-('R526', 'd0112', 'Programming', '2026-03-12', 'Available', '17:22:00', '18:22:00', 'Online', 'https://teams.live.c', '', '', 0, 0.00, '', NULL, NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -271,20 +217,27 @@ CREATE TABLE `topics` (
 --
 
 CREATE TABLE `tutor` (
-  `matricNoTutor` varchar(20) NOT NULL COMMENT 'Tutor matric number',
-  `userID` varchar(20) NOT NULL COMMENT 'Reference to user',
-  `expertise` varchar(100) NOT NULL COMMENT 'Tutor expertise',
-  `availability` varchar(100) NOT NULL COMMENT 'Tutor availability'
+  `matricNoTutor` varchar(20) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `programme` varchar(100) NOT NULL,
+  `institution` varchar(255) NOT NULL,
+  `currentStatus` varchar(100) NOT NULL,
+  `academicBackground` text NOT NULL,
+  `academicStrengths` text NOT NULL,
+  `cgpa` decimal(3,2) NOT NULL,
+  `availability` varchar(100) NOT NULL,
+  `contactNumber` varchar(20) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `matricNoStudent` varchar(20) NOT NULL,
+  `expertise` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tutor`
 --
 
-INSERT INTO `tutor` (`matricNoTutor`, `userID`, `expertise`, `availability`) VALUES
-('d0112', 'd0112', 'Programming, Data Structure & Algorithm', 'Available'),
-('D032410021', 'D032410021', 'Data Structure & Algorithm', 'Available'),
-('T001', 'U002', 'Programming', 'Available');
+INSERT INTO `tutor` (`matricNoTutor`, `name`, `programme`, `institution`, `currentStatus`, `academicBackground`, `academicStrengths`, `cgpa`, `availability`, `contactNumber`, `email`, `matricNoStudent`, `expertise`) VALUES
+('D777', 'abu bin osamn', 'Diploma in Science Computer', 'Utem', 'Diploma Student', 'takde', 'ade hidup', 4.00, 'Monday until kiamat', '0158663248', 'abu@gmail.com', 'D777', 'Programming');
 
 -- --------------------------------------------------------
 
@@ -298,20 +251,28 @@ CREATE TABLE `tutor_application` (
   `cgpa` decimal(3,2) NOT NULL,
   `expertise` varchar(255) NOT NULL,
   `availability` varchar(100) NOT NULL,
+  `contactNumber` varchar(20) NOT NULL,
+  `email` varchar(100) NOT NULL,
   `reason` text NOT NULL,
   `transcript` varchar(255) NOT NULL,
   `applicationDate` datetime DEFAULT current_timestamp(),
   `status` enum('Pending','Approved','Rejected') DEFAULT 'Pending',
-  `adminRemark` text DEFAULT NULL,
-  `popupStatus` tinyint(1) DEFAULT 0
+  `popupStatus` tinyint(1) DEFAULT 0,
+  `name` varchar(100) NOT NULL,
+  `programme` varchar(100) NOT NULL,
+  `institution` varchar(255) NOT NULL,
+  `currentStatus` varchar(100) NOT NULL,
+  `academicBackground` text NOT NULL,
+  `academicStrengths` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tutor_application`
 --
 
-INSERT INTO `tutor_application` (`applicationID`, `matricNoStudent`, `cgpa`, `expertise`, `availability`, `reason`, `transcript`, `applicationDate`, `status`, `adminRemark`, `popupStatus`) VALUES
-(0, 'D123', 3.50, 'Data Structure', '-', '-', '1782501502_ANALYSIS DOCUMENT.pdf', '2026-06-27 03:18:22', 'Approved', NULL, 0);
+INSERT INTO `tutor_application` (`applicationID`, `matricNoStudent`, `cgpa`, `expertise`, `availability`, `contactNumber`, `email`, `reason`, `transcript`, `applicationDate`, `status`, `popupStatus`, `name`, `programme`, `institution`, `currentStatus`, `academicBackground`, `academicStrengths`) VALUES
+(1, 'D123', 3.50, 'Data Structure', '-', '', '', '-', '1782501502_ANALYSIS DOCUMENT.pdf', '2026-06-27 03:18:22', 'Approved', 0, '', '', '', '', '', ''),
+(2, 'D777', 3.85, 'Programming, Data Structure', 'Monday until kiamat', '0158663248', 'abu@gmail.com', 'sbb nk ajak org ramai jadi bodoh', '1782679962_RESUME.pdf', '2026-06-29 04:52:42', 'Approved', 0, 'abu bin osamn', 'Diploma In Science Computer', 'Utem', 'Diploma Student', 'takde', 'takde hidup');
 
 -- --------------------------------------------------------
 
@@ -320,7 +281,7 @@ INSERT INTO `tutor_application` (`applicationID`, `matricNoStudent`, `cgpa`, `ex
 --
 
 CREATE TABLE `user` (
-  `userId` varchar(20) NOT NULL COMMENT 'Unique user identifier',
+  `matricNoStudent` varchar(20) NOT NULL COMMENT 'Unique user identifier',
   `name` varchar(100) NOT NULL COMMENT 'User full name',
   `email` varchar(100) DEFAULT NULL COMMENT 'User email address',
   `mobile_phone` varchar(20) DEFAULT NULL COMMENT 'User phone number',
@@ -334,13 +295,10 @@ CREATE TABLE `user` (
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`userId`, `name`, `email`, `mobile_phone`, `gender`, `password`, `status`, `role`) VALUES
-('d011', 'sofea', 'aisya@gmail.com', '011', 'Female', '111', 'Active', 'Student'),
-('d0112', 'sofea', 'sofea@gmail.com', '011', 'Female', '$2y$10$88BQsIt8Q3ugxVe./il2..JBSD8MZme2A1/OHWG4J2ycfGJRifqGC', 'Active', 'Tutor'),
+INSERT INTO `user` (`matricNoStudent`, `name`, `email`, `mobile_phone`, `gender`, `password`, `status`, `role`) VALUES
 ('D032410021', 'alya', 'batrisyiaalya13@gmail.com', '01153110996', 'Female', '$2y$10$G8lAx6nQNtQw44qzr4rXV.i2vdoKnHYf6rhuLNEMlsS7yS3aXxZZe', 'Approved', 'Tutor'),
-('D123', 'bat', 'batrisyia@gmail.com', '0123456789', 'Female', '$2y$10$/NivSmmQYPiNIDgCW50BeeHnMxdsOjRfQDLjVq815hyc8vtIzzM6C', 'Active', 'Student'),
-('U001', 'Aisya', 'aisya@gmail.com', '0123456789', 'Female', '123456', 'Active', 'Student'),
-('U002', 'Ahmad ', 'ahmad@gmail.com', '01111111111', 'Male', '123456', 'Active', 'Tutor');
+('D032410154', 'elsa binti hamid', 'elsa@gmail.com', '0177558020', 'Female', '$2y$10$AxQKOk6uBC7Q3HFRbEOSxuUgEKp1MxhmRB.ltpAbqE/XUKTl57lde', 'Active', 'Student'),
+('D777', 'abu bin osamn', 'abu@gmail.com', '0158663248', 'Male', '$2y$10$BoNrNPWAy0ZJ5KgICKd9YuZRS5LqUhK9vclEsqe0XyaKME/nAA44a', 'Active', 'Tutor');
 
 --
 -- Indexes for dumped tables
@@ -351,7 +309,7 @@ INSERT INTO `user` (`userId`, `name`, `email`, `mobile_phone`, `gender`, `passwo
 --
 ALTER TABLE `admin`
   ADD PRIMARY KEY (`adminID`),
-  ADD KEY `userID` (`userID`);
+  ADD KEY `userID` (`matricNoStudent`);
 
 --
 -- Indexes for table `booking`
@@ -388,7 +346,7 @@ ALTER TABLE `quiz`
 ALTER TABLE `quiz_attempts`
   ADD PRIMARY KEY (`attemptID`),
   ADD KEY `quizID` (`quizID`),
-  ADD KEY `userID` (`userID`);
+  ADD KEY `userID` (`matricNoStudent`);
 
 --
 -- Indexes for table `quiz_question`
@@ -416,8 +374,7 @@ ALTER TABLE `resources`
 -- Indexes for table `student`
 --
 ALTER TABLE `student`
-  ADD PRIMARY KEY (`matricNoStudent`),
-  ADD KEY `userID` (`userID`);
+  ADD PRIMARY KEY (`matricNoStudent`);
 
 --
 -- Indexes for table `teaching record`
@@ -438,13 +395,19 @@ ALTER TABLE `topics`
 --
 ALTER TABLE `tutor`
   ADD PRIMARY KEY (`matricNoTutor`),
-  ADD KEY `userID` (`userID`);
+  ADD KEY `matricNoStudent` (`matricNoStudent`);
+
+--
+-- Indexes for table `tutor_application`
+--
+ALTER TABLE `tutor_application`
+  ADD PRIMARY KEY (`applicationID`);
 
 --
 -- Indexes for table `user`
 --
 ALTER TABLE `user`
-  ADD PRIMARY KEY (`userId`);
+  ADD PRIMARY KEY (`matricNoStudent`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -481,6 +444,12 @@ ALTER TABLE `topics`
   MODIFY `topic_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `tutor_application`
+--
+ALTER TABLE `tutor_application`
+  MODIFY `applicationID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- Constraints for dumped tables
 --
 
@@ -488,7 +457,7 @@ ALTER TABLE `topics`
 -- Constraints for table `admin`
 --
 ALTER TABLE `admin`
-  ADD CONSTRAINT `admin_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `user` (`userId`);
+  ADD CONSTRAINT `admin_ibfk_1` FOREIGN KEY (`matricNoStudent`) REFERENCES `user` (`matricNoStudent`);
 
 --
 -- Constraints for table `booking`
@@ -514,7 +483,7 @@ ALTER TABLE `quiz`
 --
 ALTER TABLE `quiz_attempts`
   ADD CONSTRAINT `quiz_attempts_ibfk_1` FOREIGN KEY (`quizID`) REFERENCES `quiz` (`quizID`),
-  ADD CONSTRAINT `quiz_attempts_ibfk_2` FOREIGN KEY (`userID`) REFERENCES `user` (`userId`);
+  ADD CONSTRAINT `quiz_attempts_ibfk_2` FOREIGN KEY (`matricNoStudent`) REFERENCES `user` (`matricNoStudent`);
 
 --
 -- Constraints for table `quiz_question`
@@ -535,6 +504,12 @@ ALTER TABLE `resources`
   ADD CONSTRAINT `resources_ibfk_1` FOREIGN KEY (`topic_id`) REFERENCES `topics` (`topic_id`) ON DELETE CASCADE;
 
 --
+-- Constraints for table `student`
+--
+ALTER TABLE `student`
+  ADD CONSTRAINT `student_ibfk_1` FOREIGN KEY (`matricNoStudent`) REFERENCES `user` (`matricNoStudent`);
+
+--
 -- Constraints for table `teaching record`
 --
 ALTER TABLE `teaching record`
@@ -550,7 +525,7 @@ ALTER TABLE `topics`
 -- Constraints for table `tutor`
 --
 ALTER TABLE `tutor`
-  ADD CONSTRAINT `tutor_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `user` (`userId`);
+  ADD CONSTRAINT `tutor_ibfk_1` FOREIGN KEY (`matricNoStudent`) REFERENCES `user` (`matricNoStudent`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
