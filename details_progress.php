@@ -191,15 +191,35 @@ $no=1;
 while($question=mysqli_fetch_assoc($resultQuestion))
 {
 
-    $qid=$question['questionID'];
+    $qid = $question['questionID'];
 
-    $studentAnswer="";
+$studentAnswer = "";
 
-    if(isset($userAnswer[$qid]))
-    {
-        $studentAnswer=$userAnswer[$qid];
-    }
+if(isset($userAnswer[$qid]))
+{
+    $studentAnswer = $userAnswer[$qid];
+}
 
+$studentAnswerText = "";
+
+switch($studentAnswer)
+{
+    case "A":
+        $studentAnswerText = $question['optionA'];
+        break;
+
+    case "B":
+        $studentAnswerText = $question['optionB'];
+        break;
+
+    case "C":
+        $studentAnswerText = $question['optionC'];
+        break;
+
+    case "D":
+        $studentAnswerText = $question['optionD'];
+        break;
+}
 ?>
 
 <tr>
@@ -217,14 +237,7 @@ while($question=mysqli_fetch_assoc($resultQuestion))
 </td>
 
 <td>
-
-<?php echo $studentAnswer; ?>
-
-</td>
-
-<td>
-
-<?php echo $question['correct_answer']; ?>
+<?php echo $studentAnswerText; ?>
 
 </td>
 
@@ -232,17 +245,40 @@ while($question=mysqli_fetch_assoc($resultQuestion))
 
 <?php
 
-if($studentAnswer==$question['correct_answer'])
+switch($question['correct_answer'])
 {
+    case "A":
+        echo $question['optionA'];
+        break;
 
+    case "B":
+        echo $question['optionB'];
+        break;
+
+    case "C":
+        echo $question['optionC'];
+        break;
+
+    case "D":
+        echo $question['optionD'];
+        break;
+}
+
+?>
+
+</td>
+
+<td>
+
+<?php
+
+if($studentAnswer == $question['correct_answer'])
+{
     echo "<span style='color:green;font-weight:bold;'>✔ Correct</span>";
-
 }
 else
 {
-
     echo "<span style='color:red;font-weight:bold;'>✘ Wrong</span>";
-
 }
 
 ?>
