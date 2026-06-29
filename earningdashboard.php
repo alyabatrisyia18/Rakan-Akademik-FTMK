@@ -67,7 +67,7 @@ while ($row = mysqli_fetch_assoc($result)) {
             ☰
         </div>
 
-        <h2>Student/Tutor</h2>
+        <h2>Tutor</h2>
 
         <nav>
             <ul>
