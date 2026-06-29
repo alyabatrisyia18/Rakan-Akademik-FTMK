@@ -29,13 +29,14 @@ $accountStatus = $user['status'];
 $roles = array_map('trim', explode(",", $role));
 
 $isTutor = in_array("Tutor", $roles);
+$isStudent = in_array("Student", $roles);
 
 if ($isTutor) {
-
-    $dashboard = "choose_role.php";
-} else {
-
+    $dashboard = "dashboard.php"; // Rakan Akademik
+} elseif ($isStudent) {
     $dashboard = "student_dashboard.php";
+} else {
+    $dashboard = "login.php";
 }
 
 $programme = "-";
@@ -308,10 +309,6 @@ if (!$isTutor) {
         </div>
 
         <div class="icons">
-
-            <a href="<?php echo $dashboard; ?>" class="icon-btn" title="Back">
-                <i class="fas fa-arrow-left"></i>
-            </a>
 
             <a href="<?php echo $dashboard; ?>" class="icon-btn" title="Home">
                 <i class="fas fa-home"></i>
