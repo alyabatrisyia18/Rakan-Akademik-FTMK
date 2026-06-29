@@ -19,9 +19,17 @@ if($search != "")
               )";
 }
 
-if($role != "")
+if($role == "Student")
 {
-    $sql .= " AND role='$role'";
+    $sql .= " AND role LIKE '%Student%'";
+}
+else if($role == "Tutor")
+{
+    $sql .= " AND role LIKE '%Tutor%'";
+}
+else if($role == "Student,Tutor")
+{
+    $sql .= " AND role='Student,Tutor'";
 }
 
 $sql .= " ORDER BY matricNoStudent";
