@@ -13,18 +13,18 @@ if (!isset($_GET['attemptID'])) {
 }
 
 $attemptID = $_GET['attemptID'];
-$userID = $_SESSION['matric'];
+$matricNoStudent = $_SESSION['matric'];
 
 //ambik data attempt/result kuiz student
 $sqlAttempt = "SELECT * FROM quiz_attempts 
-               WHERE attemptID = ? AND userID = ?";
+               WHERE attemptID = ? AND matricNoStudent = ?";
 $stmtAttempt = mysqli_prepare($conn, $sqlAttempt);
 
 if (!$stmtAttempt) {
     die("SQL Attempt Error: " . mysqli_error($conn));
 }
 
-mysqli_stmt_bind_param($stmtAttempt, "is", $attemptID, $userID);
+mysqli_stmt_bind_param($stmtAttempt, "is", $attemptID, $matricNoStudent);
 mysqli_stmt_execute($stmtAttempt);
 $attemptResult = mysqli_stmt_get_result($stmtAttempt);
 $attempt = mysqli_fetch_assoc($attemptResult);
