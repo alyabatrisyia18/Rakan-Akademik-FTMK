@@ -9,8 +9,6 @@ if (!isset($_SESSION['matric'])) {
 
 $matricNoTutor = $_SESSION['matric'];
 
-/* Ambil data tutor */
-
 $sql = mysqli_query($conn, "
 SELECT *
 FROM tutor
@@ -83,7 +81,6 @@ if (isset($_POST['btnSubmit'])) {
         $conn,
         $_POST['email']
     );
-    /* Validation */
 
     if ($cgpa < 3.50 || $cgpa > 4.00) {
         echo "<script>
@@ -100,8 +97,6 @@ if (isset($_POST['btnSubmit'])) {
     }
 
     $expertise = implode(", ", $_POST['expertise']);
-
-    /* Update Tutor */
 
     $update = mysqli_query($conn, "
     UPDATE tutor
@@ -222,8 +217,9 @@ if (isset($_POST['btnSubmit'])) {
         }
 
         .button {
-
-            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
             margin-top: 30px;
         }
 
@@ -241,6 +237,14 @@ if (isset($_POST['btnSubmit'])) {
         button:hover {
 
             background: #18357d;
+        }
+
+        .back-btn {
+            background: #6c757d;
+        }
+
+        .back-btn:hover {
+            background: #545b62;
         }
     </style>
 
@@ -413,6 +417,15 @@ if (isset($_POST['btnSubmit'])) {
             </div>
 
             <div class="button">
+
+                <button
+                    type="button"
+                    class="back-btn"
+                    onclick="window.location.href='dashboard.php';">
+
+                    Back
+
+                </button>
 
                 <button
                     type="submit"
