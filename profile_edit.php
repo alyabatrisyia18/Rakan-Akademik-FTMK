@@ -28,11 +28,17 @@ $role   = trim($user['role']);
 $status = $user['status'];
 
 $roles = array_map('trim', explode(",", $role));
-$isTutor = in_array("Tutor", $roles);
 
-$dashboard = $isTutor
-    ? "choose_role.php"
-    : "student_dashboard.php";
+$isTutor = in_array("Tutor", $roles);
+$isStudent = in_array("Student", $roles);
+
+if ($isTutor) {
+    $dashboard = "dashboard.php"; // Rakan Akademik
+} elseif ($isStudent) {
+    $dashboard = "student_dashboard.php";
+} else {
+    $dashboard = "login.php";
+}
 
 $programme      = "-";
 $currentStatus  = "-";
@@ -283,10 +289,6 @@ if (isset($_POST['btnUpdate'])) {
         </div>
 
         <div class="icons">
-
-            <a href="<?php echo $dashboard; ?>" class="icon-btn" title="Back">
-                <i class="fas fa-arrow-left"></i>
-            </a>
 
             <a href="<?php echo $dashboard; ?>" class="icon-btn" title="Home">
                 <i class="fas fa-home"></i>
