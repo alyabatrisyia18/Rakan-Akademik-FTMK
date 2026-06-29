@@ -9,8 +9,6 @@ if (!isset($_SESSION['matric'])) {
 
 $matricNoStudent = $_SESSION['matric'];
 
-/* Ambil maklumat user */
-
 $getUser = mysqli_query($conn, "
 SELECT *
 FROM user
@@ -26,8 +24,6 @@ if (mysqli_num_rows($getUser) == 0) {
 }
 
 $user = mysqli_fetch_assoc($getUser);
-
-/* Ambil maklumat student */
 
 $getStudent = mysqli_query($conn, "
 SELECT *
@@ -45,14 +41,10 @@ if (mysqli_num_rows($getStudent) == 0) {
 
 $student = mysqli_fetch_assoc($getStudent);
 
-/* Auto isi maklumat */
-
 $name = $user['name'];
 $email = $user['email'];
 $contactNumber = $user['mobile_phone'];
 $programme = $student['course'];
-
-/* Semak kalau dah pernah apply */
 
 $checkApplication = mysqli_query($conn, "
 SELECT *
@@ -84,10 +76,6 @@ if (mysqli_num_rows($checkApplication) > 0) {
         exit();
     }
 }
-/* ===========================
-   PART 1B
-   Form Validation
-=========================== */
 
 if (isset($_POST['btnSubmit'])) {
     $name = mysqli_real_escape_string($conn, $_POST['name']);
@@ -127,16 +115,12 @@ if (isset($_POST['btnSubmit'])) {
         $_POST['reason']
     );
 
-    /* CGPA Validation */
-
     if ($cgpa < 3.50 || $cgpa > 4.00) {
         echo "<script>
         alert('CGPA must be between 3.50 and 4.00');
         </script>";
         exit();
     }
-
-    /* Expertise Validation */
 
     if (empty($_POST['expertise'])) {
         echo "<script>
@@ -147,97 +131,7 @@ if (isset($_POST['btnSubmit'])) {
 
     $expertise = implode(", ", $_POST['expertise']);
 
-    /* Transcript Validation */
-
-
-    if(mysqli_num_rows($check) > 0)
-    {
-        $application = mysqli_fetch_assoc($check);
-
-        if($application["status"] == "Pending")
-        {
-            echo "<script>
-            alert('You already have a pending application.');
-            </script>";
-        }
-        else
-        {
-
-            echo "<script>
-            alert('You are already a Rakan Akademik.');
-            </script>";
-
-            $hashedPassword = password_hash(
-                $password,
-                PASSWORD_DEFAULT
-            );
-
-            $sqlUser = "
-            INSERT INTO user
-            (
-                userId,
-                name,
-                email,
-                mobile_phone,
-                gender,
-                password,
-                status,
-                role
-            )
-            VALUES
-            (
-                '$matric',
-                '$name',
-                '$email',
-                '$phone',
-                '$gender',
-                '$hashedPassword',
-                'Pending',
-                'Tutor'
-            )";
-
-            if(mysqli_query($conn, $sqlUser))
-            {
-                $sqlTutor = "
-                INSERT INTO tutor
-                (
-                    matricNoTutor,
-                    userID,
-                    expertise,
-                    availability
-                )
-                VALUES
-                (
-                    '$matric',
-                    '$matric',
-                    '$subject',
-                    'Available'
-                )";
-
-                mysqli_query($conn, $sqlTutor);
-
-                echo "<script>
-                        alert('Registration successful! Please wait for admin approval.');
-                        window.location='login.php';
-                      </script>";
-            }
-            else
-            {
-                echo "<script>
-                        alert('Registration Failed!');
-                      </script>";
-            }
-
-        }
-
-        exit();
-    }
-
-    if(empty($_FILES["transcript"]["name"]))
-    {
-
     if (empty($_FILES['transcript']['name'])) {
-
         echo "<script>
         alert('Please upload your transcript.');
         </script>";
@@ -264,7 +158,6 @@ if (isset($_POST['btnSubmit'])) {
         </script>";
         exit();
     }
-    /* Create uploads folder */
 
     if (!is_dir("uploads")) {
         mkdir("uploads", 0777, true);
@@ -287,8 +180,6 @@ if (isset($_POST['btnSubmit'])) {
         </script>";
         exit();
     }
-
-    /* Save Application */
 
     $sql = "
     INSERT INTO tutor_application
