@@ -195,7 +195,7 @@ if(isset($_SESSION['approvedMessage']))
 function openPage(page){
 
     switch(page){
-        case "learning module":
+        case "module":
             window.location.href="moduleStudent.php";
             break;
 
