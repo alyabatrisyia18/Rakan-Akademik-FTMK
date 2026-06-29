@@ -15,7 +15,6 @@ ORDER BY name ASC
 
 ?>
 <!DOCTYPE html>
-
 <html>
 
 <head>
