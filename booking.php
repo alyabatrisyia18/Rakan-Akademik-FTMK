@@ -123,11 +123,13 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
     <div class="header-icons">
 
-        <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
-
         <i class="fas fa-home"
            onclick="location.href='student_dashboard.php'"
            title="Dashboard"></i>
+
+        <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
+
+        
 
     </div>
 
@@ -201,7 +203,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
             {
                 $recordID = $row['recordID'];
 
-                $isTutorSession = false;
+                $isTutorSession = ($matricNoStudent == $row['matricNoTutor']);
 
                 $checkBooking = mysqli_query(
                     $conn,
