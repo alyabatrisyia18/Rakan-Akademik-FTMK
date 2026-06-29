@@ -295,7 +295,7 @@ if (isset($_POST['publish'])) {
 </header>
 
 <div class="menu-bar">
-    <a href="progress.php" class="active-menu">Progress Tracker</a>
+    <a href="tutor_progress.php" class="active-menu">Progress Tracker</a>
 </div>
 
 <div class="main-container">
