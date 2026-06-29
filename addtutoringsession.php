@@ -1,6 +1,7 @@
 <?php
 session_start();
 include("db_connect.php");
+$matricNoTutor = $_SESSION['matric'];
 
 if (isset($_POST['addSession'])) {
     $subject = $_POST['subject'];

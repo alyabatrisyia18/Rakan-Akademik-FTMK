@@ -72,19 +72,13 @@ session_start();
             color:white;
             text-align:center;
             padding:20px;
-<<<<<<< HEAD
             position:relative;
         }
         
-=======
-        }
-
->>>>>>> sofea
         .welcome h1{
             font-size:32px;
         }
 
-<<<<<<< HEAD
         .apply-btn{ 
             position:absolute;
             right:30px;
@@ -104,8 +98,6 @@ session_start();
             font-size:28px;
         }
 
-=======
->>>>>>> sofea
         .menu-container{
             width:85%;
             margin:30px auto;
@@ -166,7 +158,6 @@ if(isset($_SESSION['approvedMessage']))
 
 <section class="welcome">
     <h1>WELCOME TO STUDENT</h1>
-<<<<<<< HEAD
 
     <button class="apply-btn"
         onclick="window.location.href='register_rakan.php'"><i class="fas fa-user-plus"></i> Apply Tutor </button>
@@ -176,10 +167,6 @@ if(isset($_SESSION['approvedMessage']))
     <button class="back-btn" onclick="window.location.href='choose_role.php'"><i class="fas fa-arrow-left"></i></button>
 </div>
 
-=======
-</section>
-
->>>>>>> sofea
 <section class="menu-container">
 
     <div class="card" onclick="openPage('module')">
@@ -208,8 +195,8 @@ if(isset($_SESSION['approvedMessage']))
 function openPage(page){
 
     switch(page){
-        case "learning module":
-            window.location.href="";
+        case "module":
+            window.location.href="moduleStudent.php";
             break;
 
         case "quiz":
@@ -217,11 +204,7 @@ function openPage(page){
             break;
 
         case "timetable":
-<<<<<<< HEAD
             window.location.href="booking.php";
-=======
-            window.location.href="";
->>>>>>> sofea
             break;
 
         case "mentor":
@@ -233,10 +216,6 @@ function openPage(page){
     }
 }
 </script>
-<<<<<<< HEAD
 //
-=======
-
->>>>>>> sofea
 </body>
 </html>
