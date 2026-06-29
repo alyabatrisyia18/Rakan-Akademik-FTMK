@@ -150,11 +150,6 @@ ORDER BY name ASC
 
             <a href="profile.php" class="profile-link">
 
-                <div class="search-box">
-                    <input type="text" placeholder="Search">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-
-                </div>
                 <div class="icon-section">
 
                     <div class="profile-icon">
