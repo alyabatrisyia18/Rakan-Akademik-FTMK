@@ -45,7 +45,7 @@ $completedResult = mysqli_query($conn, $completedSql);
         </div>
 
         <div class="header-icons">
-            <i class="far fa-user-circle"></i>
+            <i class="far fa-user-circle" onclick="location.href='profile.php'" title="profile"></i>
             <i class="fas fa-home" onclick="location.href='dashboard.php'"></i>
         </div>
     </div>
