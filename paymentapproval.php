@@ -15,7 +15,7 @@ if (isset($_GET['approve'])) {
     WHERE recordID='$recordID'
     ");
 
-    // Get earning amount
+    
     $getRecord = mysqli_query($conn, "
     SELECT estimatedEarning
     FROM `teaching record`
@@ -24,7 +24,7 @@ if (isset($_GET['approve'])) {
 
     $record = mysqli_fetch_assoc($getRecord);
 
-    // Generate Payment ID
+
     do {
 
         $id = rand(100, 999);
@@ -134,8 +134,6 @@ $result = mysqli_query($conn, $sql);
         </div>
 
         <div class="header-icons">
-
-            <i class="far fa-user-circle"></i>
 
             <i class="fas fa-home"
                 onclick="location.href='admin_dashboard.php'"

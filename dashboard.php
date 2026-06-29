@@ -83,12 +83,15 @@ if(mysqli_num_rows($checkTutor) == 0)
         }
         
         .back-container{
-            padding:10px 0 0 10px;
+            width:85%;
+            margin:20px auto 0;
         }
 
         .back-btn{
             cursor:pointer;
             font-size:28px;
+            background:none;
+            border:none;
             color:#1f3f98;
         }
 

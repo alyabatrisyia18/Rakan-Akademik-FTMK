@@ -4,7 +4,8 @@ include("db_connect.php");
 
 $matricNoStudent = $_SESSION['matric'];
 
-$sql = "
+// Upcoming classes
+$upcomingSql = "
 SELECT
     b.*,
     t.subject,
@@ -25,11 +26,42 @@ ON b.matricNoTutor = tutor.matricNoTutor
 
 WHERE b.matricNoStudent='$matricNoStudent'
 AND b.bookingStatus='Booked'
+AND TIMESTAMP(t.sessionDate,t.endTime) > NOW()
 
 ORDER BY t.sessionDate ASC
 ";
 
-$result = mysqli_query($conn, $sql);
+$upcomingResult = mysqli_query($conn, $upcomingSql);
+
+
+// Past classes
+$pastSql = "
+SELECT
+    b.*,
+    t.subject,
+    t.sessionDate,
+    t.startTime,
+    t.endTime,
+    t.sessionType,
+    t.meetingLink,
+    t.venue,
+    tutor.name
+FROM booking b
+
+INNER JOIN `teaching record` t
+ON b.recordID = t.recordID
+
+INNER JOIN tutor
+ON b.matricNoTutor = tutor.matricNoTutor
+
+WHERE b.matricNoStudent='$matricNoStudent'
+AND b.bookingStatus='Booked'
+AND TIMESTAMP(t.sessionDate,t.endTime) <= NOW()
+
+ORDER BY t.sessionDate DESC
+";
+
+$pastResult = mysqli_query($conn, $pastSql);
 ?>
 
 <!DOCTYPE html>
@@ -100,7 +132,7 @@ $result = mysqli_query($conn, $sql);
                     </a>
                 </li>
 
-                
+
 
             </ul>
 
@@ -111,102 +143,192 @@ $result = mysqli_query($conn, $sql);
     <div class="content">
 
         <h1>My Class Schedule</h1>
+        <div class="tab">
 
-        <table>
+            <span
+                id="upcomingTab"
+                class="active-tab"
+                onclick="showUpcoming()">
 
-            <tr>
-                <th>DATE & TIME</th>
-                <th>SUBJECT</th>
-                <th>TUTOR NAME</th>
-                <th>ACTION</th>
-            </tr>
+                Upcoming
 
-            <?php
-            while ($row = mysqli_fetch_assoc($result)) {
-            ?>
+            </span>
+
+            <span
+                id="pastTab"
+                onclick="showPast()">
+
+                Past
+
+            </span>
+
+        </div>
+
+        <div id="upcomingTable">
+
+            <table>
 
                 <tr>
-
-                    <td>
-
-                        <?php
-                        echo date(
-                            "d F Y",
-                            strtotime($row['sessionDate'])
-                        );
-                        ?>
-
-                        <br>
-
-                        <small>
-
-                            <?php
-                            echo date(
-                                "h:i A",
-                                strtotime($row['startTime'])
-                            );
-                            ?>
-
-                            -
-
-                            <?php
-                            echo date(
-                                "h:i A",
-                                strtotime($row['endTime'])
-                            );
-                            ?>
-
-                        </small>
-
-                    </td>
-
-                    <td>
-                        <?php echo $row['subject']; ?>
-                    </td>
-
-                    <td>
-                        <?php echo $row['name']; ?>
-                    </td>
-
-                    <td>
-
-                        <?php
-                        if ($row['sessionType'] == "Online") {
-                        ?>
-
-                            <button
-                                class="available"
-                                onclick="window.open('<?php echo $row['meetingLink']; ?>')">
-
-                                JOIN
-
-                            </button>
-
-                        <?php
-                        } else {
-                        ?>
-
-                            <button
-                                class="available"
-                                onclick="showVenue('<?php echo $row['venue']; ?>')">
-
-                                JOIN
-
-                            </button>
-
-                        <?php
-                        }
-                        ?>
-
-                    </td>
-
+                    <th>DATE & TIME</th>
+                    <th>SUBJECT</th>
+                    <th>TUTOR NAME</th>
+                    <th>ACTION</th>
                 </tr>
 
-            <?php
-            }
-            ?>
+                <?php
+                while ($row = mysqli_fetch_assoc($upcomingResult)) {
+                ?>
 
-        </table>
+                    <tr>
+
+                        <td>
+
+                            <?php
+                            echo date(
+                                "d F Y",
+                                strtotime($row['sessionDate'])
+                            );
+                            ?>
+
+                            <br>
+
+                            <small>
+
+                                <?php
+                                echo date(
+                                    "h:i A",
+                                    strtotime($row['startTime'])
+                                );
+                                ?>
+
+                                -
+
+                                <?php
+                                echo date(
+                                    "h:i A",
+                                    strtotime($row['endTime'])
+                                );
+                                ?>
+
+                            </small>
+
+                        </td>
+
+                        <td>
+                            <?php echo $row['subject']; ?>
+                        </td>
+
+                        <td>
+                            <?php echo $row['name']; ?>
+                        </td>
+
+                        <td>
+
+                            <?php
+                            if ($row['sessionType'] == "Online") {
+                            ?>
+
+                                <button
+                                    class="available"
+                                    onclick="window.open('<?php echo $row['meetingLink']; ?>')">
+
+                                    JOIN
+
+                                </button>
+
+                            <?php
+                            } else {
+                            ?>
+
+                                <button
+                                    class="available"
+                                    onclick="showVenue('<?php echo $row['venue']; ?>')">
+
+                                    JOIN
+
+                                </button>
+
+                            <?php
+                            }
+                            ?>
+
+                        </td>
+
+                    </tr>
+
+                <?php
+                }
+                ?>
+
+            </table>
+        </div>
+
+        <div id="pastTable" style="display:none;">
+
+            <table>
+
+                <tr>
+                    <th>DATE & TIME</th>
+                    <th>SUBJECT</th>
+                    <th>TUTOR NAME</th>
+                    <th>ACTION</th>
+                </tr>
+
+                <?php
+                while ($row = mysqli_fetch_assoc($pastResult)) {
+                ?>
+
+                    <tr>
+
+                        <td>
+
+                            <?php
+                            echo date("d F Y", strtotime($row['sessionDate']));
+                            ?>
+
+                            <br>
+
+                            <small>
+
+                                <?php
+                                echo date("h:i A", strtotime($row['startTime']));
+                                ?>
+
+                                -
+
+                                <?php
+                                echo date("h:i A", strtotime($row['endTime']));
+                                ?>
+
+                            </small>
+
+                        </td>
+
+                        <td><?php echo $row['subject']; ?></td>
+
+                        <td><?php echo $row['name']; ?></td>
+
+                        <td>
+
+                            <button
+                                class="completed"
+                                disabled>
+
+                                COMPLETED
+
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+                <?php
+                }
+                ?>
+
+            </table>
+
+        </div>
 
     </div>
 
@@ -232,6 +354,22 @@ $result = mysqli_query($conn, $sql);
                 "This is a Face-to-Face session\n\nVenue: " +
                 venue
             );
+        }
+
+        function showUpcoming() {
+            document.getElementById("upcomingTable").style.display = "block";
+            document.getElementById("pastTable").style.display = "none";
+
+            document.getElementById("upcomingTab").classList.add("active-tab");
+            document.getElementById("pastTab").classList.remove("active-tab");
+        }
+
+        function showPast() {
+            document.getElementById("upcomingTable").style.display = "none";
+            document.getElementById("pastTable").style.display = "block";
+
+            document.getElementById("pastTab").classList.add("active-tab");
+            document.getElementById("upcomingTab").classList.remove("active-tab");
         }
     </script>
 
