@@ -8,7 +8,6 @@ if (!isset($_SESSION['matric'])) {
 }
 
 $matric = $_SESSION['matric'];
-
 $sqlUser = mysqli_query($conn, "
 SELECT *
 FROM user
