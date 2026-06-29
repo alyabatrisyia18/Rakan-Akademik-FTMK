@@ -80,11 +80,23 @@ body{
 .home-btn{
     background:#1f3f98;
     color:white;
-    display:inline-block;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
     padding:8px 15px;
-    margin-left:25px;
     border-radius:0 0 8px 8px;
     font-size:13px;
+    cursor:pointer;
+    transition:0.3s;
+    margin-left:25px;
+}
+
+.home-btn:hover{
+    background:#162f73;
+}
+
+.home-btn i{
+    font-size:20px;
 }
 
 .main-panel{

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 25, 2026 at 02:51 PM
+-- Generation Time: Jun 27, 2026 at 05:14 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -191,7 +191,8 @@ CREATE TABLE `student` (
 INSERT INTO `student` (`matricNoStudent`, `userID`, `course`) VALUES
 ('B032410001', 'U001', 'BITP'),
 ('d011', 'd011', 'sc'),
-('D032410021', 'D032410021', 'Diploma in Science Computer');
+('D032410021', 'D032410021', 'Diploma in Science Computer'),
+('D123', 'D123', 'Diploma in Science Computer');
 
 -- --------------------------------------------------------
 
@@ -238,8 +239,35 @@ CREATE TABLE `tutor` (
 
 INSERT INTO `tutor` (`matricNoTutor`, `userID`, `expertise`, `availability`) VALUES
 ('d0112', 'd0112', 'Programming, Data Structure & Algorithm', 'Available'),
-('D032410021', 'D032410021', 'Programming', 'Available'),
+('D032410021', 'D032410021', 'Data Structure & Algorithm', 'Available'),
 ('T001', 'U002', 'Programming', 'Available');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tutor_application`
+--
+
+CREATE TABLE `tutor_application` (
+  `applicationID` int(11) NOT NULL,
+  `matricNoStudent` varchar(20) NOT NULL,
+  `cgpa` decimal(3,2) NOT NULL,
+  `expertise` varchar(255) NOT NULL,
+  `availability` varchar(100) NOT NULL,
+  `reason` text NOT NULL,
+  `transcript` varchar(255) NOT NULL,
+  `applicationDate` datetime DEFAULT current_timestamp(),
+  `status` enum('Pending','Approved','Rejected') DEFAULT 'Pending',
+  `adminRemark` text DEFAULT NULL,
+  `popupStatus` tinyint(1) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tutor_application`
+--
+
+INSERT INTO `tutor_application` (`applicationID`, `matricNoStudent`, `cgpa`, `expertise`, `availability`, `reason`, `transcript`, `applicationDate`, `status`, `adminRemark`, `popupStatus`) VALUES
+(0, 'D123', 3.50, 'Data Structure', '-', '-', '1782501502_ANALYSIS DOCUMENT.pdf', '2026-06-27 03:18:22', 'Approved', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -265,7 +293,8 @@ CREATE TABLE `user` (
 INSERT INTO `user` (`userId`, `name`, `email`, `mobile_phone`, `gender`, `password`, `status`, `role`) VALUES
 ('d011', 'sofea', 'aisya@gmail.com', '011', 'Female', '111', 'Active', 'Student'),
 ('d0112', 'sofea', 'sofea@gmail.com', '011', 'Female', '$2y$10$88BQsIt8Q3ugxVe./il2..JBSD8MZme2A1/OHWG4J2ycfGJRifqGC', 'Active', 'Tutor'),
-('D032410021', 'alya', 'batrisyiaalya13@gmail.com', '01153110996', 'Female', '$2y$10$/wcM1MejrxNuyi3Z.S7Ppu9jg9eGPZt2I6egFHV8ENJvL67QqE0/O', 'Approved', 'Tutor'),
+('D032410021', 'alya', 'batrisyiaalya13@gmail.com', '01153110996', 'Female', '$2y$10$G8lAx6nQNtQw44qzr4rXV.i2vdoKnHYf6rhuLNEMlsS7yS3aXxZZe', 'Approved', 'Tutor'),
+('D123', 'bat', 'batrisyia@gmail.com', '0123456789', 'Female', '$2y$10$/NivSmmQYPiNIDgCW50BeeHnMxdsOjRfQDLjVq815hyc8vtIzzM6C', 'Active', 'Student'),
 ('U001', 'Aisya', 'aisya@gmail.com', '0123456789', 'Female', '123456', 'Active', 'Student'),
 ('U002', 'Ahmad ', 'ahmad@gmail.com', '01111111111', 'Male', '123456', 'Active', 'Tutor');
 

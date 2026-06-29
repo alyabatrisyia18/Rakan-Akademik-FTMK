@@ -1,120 +1,237 @@
 <?php
-
+session_start();
 include("db_connect.php");
 
-if(isset($_POST["btnRegister"]))
-{
-    $name = $_POST["txtName"];
-    $matric = $_POST["txtMatric"];
-    $email = $_POST["txtEmail"];
-    $phone = $_POST["txtPhone"];
-    $cgpa = $_POST["txtCGPA"];
-    $gender = $_POST["gender"];
-    $password = $_POST["txtPassword"];
-    $confirmPassword = $_POST["txtConfirmPassword"];
-
-    $subject = "";
-
-    if(isset($_POST["subject"]))
-    {
-        $subject = implode(", ", $_POST["subject"]);
-    }
-
-   if(empty($subject))
-{
-    echo "<script>
-            alert('Please select at least one Expert Subject!');
-          </script>";
+if (!isset($_SESSION['matric'])) {
+    header("Location: login.php");
+    exit();
 }
-    else if($password != $confirmPassword)
-    {
+
+$matricNoStudent = $_SESSION['matric'];
+
+$getUser = mysqli_query($conn, "
+SELECT *
+FROM user
+WHERE matricNoStudent='$matricNoStudent'
+");
+
+if (mysqli_num_rows($getUser) == 0) {
+    echo "<script>
+    alert('User not found.');
+    window.location='login.php';
+    </script>";
+    exit();
+}
+
+$user = mysqli_fetch_assoc($getUser);
+
+$getStudent = mysqli_query($conn, "
+SELECT *
+FROM student
+WHERE matricNoStudent='$matricNoStudent'
+");
+
+if (mysqli_num_rows($getStudent) == 0) {
+    echo "<script>
+    alert('Student record not found.');
+    window.location='student_dashboard.php';
+    </script>";
+    exit();
+}
+
+$student = mysqli_fetch_assoc($getStudent);
+
+$name = $user['name'];
+$email = $user['email'];
+$contactNumber = $user['mobile_phone'];
+$programme = $student['course'];
+
+$checkApplication = mysqli_query($conn, "
+SELECT *
+FROM tutor_application
+WHERE matricNoStudent='$matricNoStudent'
+AND
+(
+status='Pending'
+OR status='Approved'
+)
+");
+
+if (mysqli_num_rows($checkApplication) > 0) {
+    $row = mysqli_fetch_assoc($checkApplication);
+
+    if ($row['status'] == "Pending") {
         echo "<script>
-            alert('Password does not match!');
-          </script>";
+        alert('You already have a pending application.');
+        window.location='student_dashboard.php';
+        </script>";
+        exit();
     }
-else if($cgpa < 3.50 || $cgpa > 4.00)
-{
-    echo "<script>
-            alert('You do not meet the qualification requirements. CGPA must be between 3.50 and 4.00.');
-          </script>";
+
+    if ($row['status'] == "Approved") {
+        echo "<script>
+        alert('You are already a Rakan Akademik.');
+        window.location='student_dashboard.php';
+        </script>";
+        exit();
+    }
 }
 
-    else
-    {
-        $checkUser = mysqli_query(
-            $conn,
-            "SELECT * FROM user WHERE userId='$matric'"
-        );
+if (isset($_POST['btnSubmit'])) {
+    $name = mysqli_real_escape_string($conn, $_POST['name']);
+    $programme = mysqli_real_escape_string($conn, $_POST['programme']);
+    $institution = mysqli_real_escape_string($conn, $_POST['institution']);
+    $currentStatus = mysqli_real_escape_string($conn, $_POST['currentStatus']);
 
-        if(mysqli_num_rows($checkUser) > 0)
-        {
-            echo "<script>
-                    alert('Matric Number Already Registered!');
-                  </script>";
-        }
-        else
-        {
-            $hashedPassword = password_hash(
-                $password,
-                PASSWORD_DEFAULT
-            );
+    $academicBackground = mysqli_real_escape_string(
+        $conn,
+        $_POST['academicBackground']
+    );
 
-            $sqlUser = "
-            INSERT INTO user
-            (
-                userId,
-                name,
-                email,
-                mobile_phone,
-                gender,
-                password,
-                status,
-                role
-            )
-            VALUES
-            (
-                '$matric',
-                '$name',
-                '$email',
-                '$phone',
-                '$gender',
-                '$hashedPassword',
-                'Pending',
-                'Tutor'
-            )";
+    $academicStrengths = mysqli_real_escape_string(
+        $conn,
+        $_POST['academicStrengths']
+    );
 
-            if(mysqli_query($conn, $sqlUser))
-            {
-                $sqlTutor = "
-                INSERT INTO tutor
-                (
-                    matricNoTutor,
-                    userID,
-                    expertise,
-                    availability
-                )
-                VALUES
-                (
-                    '$matric',
-                    '$matric',
-                    '$subject',
-                    'Available'
-                )";
+    $cgpa = (float)$_POST['cgpa'];
 
-                mysqli_query($conn, $sqlTutor);
+    $availability = mysqli_real_escape_string(
+        $conn,
+        $_POST['availability']
+    );
 
-                echo "<script>
-                        alert('Registration successful! Please wait for admin approval.');
-                        window.location='login.php';
-                      </script>";
-            }
-            else
-            {
-                echo "<script>
-                        alert('Registration Failed!');
-                      </script>";
-            }
-        }
+    $contactNumber = mysqli_real_escape_string(
+        $conn,
+        $_POST['contactNumber']
+    );
+
+    $email = mysqli_real_escape_string(
+        $conn,
+        $_POST['email']
+    );
+
+    $reason = mysqli_real_escape_string(
+        $conn,
+        $_POST['reason']
+    );
+
+    if ($cgpa < 3.50 || $cgpa > 4.00) {
+        echo "<script>
+        alert('CGPA must be between 3.50 and 4.00');
+        </script>";
+        exit();
+    }
+
+    if (empty($_POST['expertise'])) {
+        echo "<script>
+        alert('Please select at least one expertise.');
+        </script>";
+        exit();
+    }
+
+    $expertise = implode(", ", $_POST['expertise']);
+
+    if (empty($_FILES['transcript']['name'])) {
+        echo "<script>
+        alert('Please upload your transcript.');
+        </script>";
+        exit();
+    }
+
+    $extension = strtolower(
+        pathinfo(
+            $_FILES['transcript']['name'],
+            PATHINFO_EXTENSION
+        )
+    );
+
+    if ($extension != "pdf") {
+        echo "<script>
+        alert('Only PDF file is allowed.');
+        </script>";
+        exit();
+    }
+
+    if ($_FILES['transcript']['size'] > 5000000) {
+        echo "<script>
+        alert('Maximum file size is 5MB.');
+        </script>";
+        exit();
+    }
+
+    if (!is_dir("uploads")) {
+        mkdir("uploads", 0777, true);
+    }
+
+    $safeName = preg_replace(
+        '/\s+/',
+        '_',
+        $_FILES['transcript']['name']
+    );
+
+    $fileName = time() . "_" . $safeName;
+
+    if (!move_uploaded_file(
+        $_FILES['transcript']['tmp_name'],
+        "uploads/" . $fileName
+    )) {
+        echo "<script>
+        alert('Failed to upload transcript.');
+        </script>";
+        exit();
+    }
+
+    $sql = "
+    INSERT INTO tutor_application
+    (
+        matricNoStudent,
+        name,
+        programme,
+        institution,
+        currentStatus,
+        academicBackground,
+        academicStrengths,
+        cgpa,
+        expertise,
+        availability,
+        contactNumber,
+        email,
+        reason,
+        transcript,
+        status
+    )
+
+    VALUES
+    (
+        '$matricNoStudent',
+        '$name',
+        '$programme',
+        '$institution',
+        '$currentStatus',
+        '$academicBackground',
+        '$academicStrengths',
+        '$cgpa',
+        '$expertise',
+        '$availability',
+        '$contactNumber',
+        '$email',
+        '$reason',
+        '$fileName',
+        'Pending'
+    )";
+
+    if (mysqli_query($conn, $sql)) {
+        echo "
+        <script>
+
+        alert('Application submitted successfully.');
+
+        window.location='student_dashboard.php';
+
+        </script>
+        ";
+    } else {
+        echo mysqli_error($conn);
     }
 }
 
@@ -122,346 +239,292 @@ else if($cgpa < 3.50 || $cgpa > 4.00)
 
 <!DOCTYPE html>
 <html>
+
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Rakan Akademik</title>
 
-<title>Rakan Akademik Registration</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial;
+            background: url('images/edubackground.jpg');
+            background-size: cover;
+        }
 
-<style>
+        .container {
+            width: 900px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, .2);
+        }
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Segoe UI,sans-serif;
-}
+        h2 {
+            text-align: center;
+            color: #2748A5;
+            margin-bottom: 30px;
+        }
 
-body{
-    background:#fff;
-}
+        .form-group {
+            margin-bottom: 18px;
+        }
 
-.header{
-    height:95px;
-    background:#2748A5;
-    position:relative;
-}
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
 
-.headerBackground{
-    position:absolute;
-    top:22px;
-    left:0;
-    width:100%;
-    height:73px;
-    background:url("images/edubackground.jpg");
-    background-size:cover;
-    background-position:center;
-    opacity:0.4;
-}
+        input,
+        textarea,
+        select {
 
-.logoArea{
-    position:relative;
-    z-index:2;
-    padding-top:20px;
-    padding-left:25px;
-}
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
 
-.logoUtem{
-    height:50px;
-}
+        textarea {
+            resize: vertical;
+        }
 
-.logoFtmk{
-    height:48px;
-    margin-left:12px;
-}
+        .checkbox-group {
 
-.mainContent{
-    width:100%;
-    min-height:calc(100vh - 95px);
-    display:flex;
-}
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
 
-.leftPanel{
-    width:55%;
-    background:#f8fbff;
-    position:relative;
-}
+        .checkbox-group label {
 
-.poster{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
+            font-weight: normal;
+        }
 
-.rightPanel{
-    width:45%;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:#fff;
-}
+        .button-group {
 
-.registerBox{
-    width:420px;
-    background:#EEF3FA;
-    border:1px solid #dcdcdc;
-    border-radius:8px;
-    padding:30px;
-}
+            text-align: center;
+            margin-top: 30px;
+        }
 
-.registerBox h2{
-    text-align:center;
-    margin-bottom:25px;
-    color:#222;
-}
+        .btn {
 
-.formLabel{
-    display:block;
-    margin-bottom:6px;
-    margin-top:10px;
-    font-weight:500;
-}
+            background: #2748A5;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
 
-.textBox{
-    width:100%;
-    padding:10px;
-    border:1px solid #ccc;
-    border-radius:4px;
-}
+        .btn:hover {
 
-.genderArea{
-    margin-top:8px;
-    margin-bottom:10px;
-}
-
-.genderArea label{
-    margin-right:25px;
-}
-
-.subjectArea{
-    margin-top:8px;
-    margin-bottom:10px;
-}
-
-.subjectArea label{
-    display:block;
-    margin-bottom:5px;
-}
-
-.registerButton{
-    width:100%;
-    margin-top:20px;
-    padding:12px;
-    border:none;
-    border-radius:4px;
-    background:#2748A5;
-    color:white;
-    cursor:pointer;
-    font-size:15px;
-}
-
-.registerButton:hover{
-    background:#1d3987;
-}
-
-.backLogin{
-    text-align:center;
-    margin-top:15px;
-}
-
-.backLogin a{
-    text-decoration:none;
-    color:#2748A5;
-}
-
-.backLogin a:hover{
-    text-decoration:underline;
-}
-
-@media screen and (max-width:900px){
-
-    .mainContent{
-        flex-direction:column;
-    }
-
-    .leftPanel,
-    .rightPanel{
-        width:100%;
-    }
-
-    .leftPanel{
-        height:350px;
-    }
-
-    .registerBox{
-        width:90%;
-        margin:30px 0;
-    }
-}
-
-</style>
+            background: #18357d;
+        }
+    </style>
 
 </head>
 
 <body>
 
-<div class="header">
+    <div class="container">
 
-    <div class="headerBackground"></div>
+        <h2>Register As Rakan Akademik</h2>
 
-    <div class="logoArea">
+        <form
+            method="POST"
+            enctype="multipart/form-data">
 
-        <img src="images/utem.png" class="logoUtem">
-        <img src="images/ftmk.png" class="logoFtmk">
+            <div class="form-group">
 
-    </div>
+                <label>Name</label>
 
-</div>
-
-<div class="mainContent">
-
-    <div class="leftPanel">
-
-        <img src="images/posterRegister.png" class="poster">
-
-    </div>
-
-    <div class="rightPanel">
-
-        <div class="registerBox">
-
-            <h2>Register As Rakan Akademik</h2>
-
-            <form method="POST">
-
-                <label class="formLabel">Full Name</label>
                 <input
                     type="text"
-                    name="txtName"
-                    class="textBox"
-                    required>
+                    name="name"
+                    value="<?php echo htmlspecialchars($name); ?>"
+                    readonly>
 
-                <label class="formLabel">Matric Number</label>
+            </div>
+
+            <div class="form-group">
+
+                <label>Programme</label>
+
                 <input
                     type="text"
-                    name="txtMatric"
-                    class="textBox"
-                    placeholder="Example: B032310123"
-                    required>
+                    name="programme"
+                    value="<?php echo htmlspecialchars($programme); ?>"
+                    readonly>
 
-                <label class="formLabel">Email</label>
-                <input
-                    type="email"
-                    name="txtEmail"
-                    class="textBox"
-                    required>
+            </div>
 
-                <label class="formLabel">Mobile Phone</label>
+            <div class="form-group">
+
+                <label>Institution</label>
+
                 <input
                     type="text"
-                    name="txtPhone"
-                    class="textBox"
+                    name="institution"
                     required>
 
-                <label class="formLabel">CGPA</label>
+            </div>
+
+            <div class="form-group">
+
+                <label>Current Status</label>
+
+                <input
+                    type="text"
+                    name="currentStatus"
+                    required>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Academic Background</label>
+
+                <textarea
+                    name="academicBackground"
+                    rows="4"
+                    required></textarea>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Academic Strengths</label>
+
+                <textarea
+                    name="academicStrengths"
+                    rows="4"
+                    required></textarea>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>CGPA</label>
+
                 <input
                     type="number"
-                    name="txtCGPA"
-                    class="textBox"
+                    step="0.01"
                     min="3.50"
                     max="4.00"
-                    step="0.01"
-                    placeholder="Example: 3.75"
+                    name="cgpa"
                     required>
 
-                <label class="formLabel">Expert Subject</label>
+            </div>
 
-                <div class="subjectArea">
+            <div class="form-group">
+
+                <label>Expertise</label>
+
+                <div class="checkbox-group">
 
                     <label>
                         <input
                             type="checkbox"
-                            name="subject[]"
+                            name="expertise[]"
                             value="Programming">
-
                         Programming
                     </label>
 
                     <label>
                         <input
                             type="checkbox"
-                            name="subject[]"
-                            value="Data Structure & Algorithm">
-
-                        Data Structure & Algorithm
+                            name="expertise[]"
+                            value="Data Structure">
+                        Data Structure
                     </label>
 
                 </div>
 
-                <label class="formLabel">Gender</label>
+            </div>
+            <div class="form-group">
 
-                <div class="genderArea">
+                <label>Availability</label>
 
-                    <label>
-                        <input
-                            type="radio"
-                            name="gender"
-                            value="Male"
-                            required>
-
-                        Male
-                    </label>
-
-                    <label>
-                        <input
-                            type="radio"
-                            name="gender"
-                            value="Female">
-
-                        Female
-                    </label>
-
-                </div>
-
-                <label class="formLabel">Password</label>
                 <input
-                    type="password"
-                    name="txtPassword"
-                    class="textBox"
+                    type="text"
+                    name="availability"
+                    placeholder="Example: Monday - Friday (8.00PM - 10.00PM)"
                     required>
-
-                <label class="formLabel">
-                    Confirm Password
-                </label>
-
-                <input
-                    type="password"
-                    name="txtConfirmPassword"
-                    class="textBox"
-                    required>
-
-                <input
-                    type="submit"
-                    name="btnRegister"
-                    value="Register As Rakan Akademik"
-                    class="registerButton">
-
-            </form>
-
-            <div class="backLogin">
-
-                <a href="login.php">
-                    Back To Login
-                </a>
 
             </div>
 
-        </div>
+            <div class="form-group">
+
+                <label>Contact Number</label>
+
+                <input
+                    type="text"
+                    name="contactNumber"
+                    value="<?php echo htmlspecialchars($contactNumber); ?>"
+                    readonly>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Email</label>
+
+                <input
+                    type="email"
+                    name="email"
+                    value="<?php echo htmlspecialchars($email); ?>"
+                    readonly>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Reason To Become Rakan Akademik</label>
+
+                <textarea
+                    name="reason"
+                    rows="5"
+                    required
+                    placeholder="State why you would like to become a Rakan Akademik..."></textarea>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Upload Transcript (PDF Only)</label>
+
+                <input
+                    type="file"
+                    name="transcript"
+                    accept=".pdf"
+                    required>
+
+            </div>
+
+            <div class="button-group">
+
+                <button
+                    type="submit"
+                    name="btnSubmit"
+                    class="btn">
+
+                    Submit Application
+
+                </button>
+
+            </div>
+
+        </form>
 
     </div>
 
-</div>
-
 </body>
+
 </html>

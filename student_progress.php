@@ -1,3 +1,54 @@
+<?php
+include("db_connect.php");
+
+$sql = "SELECT
+            q.category,
+            COUNT(qa.attemptID) AS total_attempt,
+
+            ROUND(MAX((qa.score / qa.total_question) * 100),0) AS highest_score,
+
+            ROUND(AVG((qa.score / qa.total_question) * 100),0) AS average_score
+
+        FROM quiz_attempts qa
+
+        JOIN quiz q
+        ON qa.quizID = q.quizID
+
+        GROUP BY q.category
+
+        ORDER BY q.category";
+
+$result = mysqli_query($conn, $sql);
+$summary_sql = "SELECT
+
+COUNT(attemptID) AS total_quiz,
+
+ROUND(AVG((score / total_question) * 100),0) AS overall_average
+
+FROM quiz_attempts";
+
+$summary_result = mysqli_query($conn, $summary_sql);
+
+$summary = mysqli_fetch_assoc($summary_result);
+$best_sql = "SELECT
+                q.category,
+                ROUND(AVG((qa.score / qa.total_question) * 100),0) AS avg_score
+
+            FROM quiz_attempts qa
+
+            JOIN quiz q
+            ON qa.quizID = q.quizID
+
+            GROUP BY q.category
+
+            ORDER BY avg_score DESC
+
+            LIMIT 1";
+
+$best_result = mysqli_query($conn, $best_sql);
+
+$best = mysqli_fetch_assoc($best_result);
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -82,24 +133,42 @@
     }
 
     .score{
-    font-weight:bold;
-    font-size:18px;
+        display:inline-block;
+        min-width:55px;
+        padding:6px 12px;
+        border-radius:20px;
+        font-weight:bold;
+        font-size:15px;
+        color:white;
+        text-align:center;
     }
 
     .high{
-        color:#28a745;
+        background:#28a745;
     }
 
     .medium{
-        color:#0d47a1;
+        background:#0d47a1;
     }
 
     .low{
-        color:#ffc107;
+        background:#ffc107;
+        color:#333;
     }
 
     .fail{
-        color:#dc3545;
+        background:#dc3545;
+    }
+
+    .subject-link{
+    color:#2748A5;
+    text-decoration:underline;
+    font-weight:bold;
+    transition:0.3s;
+    }
+
+    .subject-link:hover{
+    color:#1a2f75;
     }
 
     </style>
@@ -125,7 +194,7 @@
 </header>
 
 <div class="menu-bar">
-    <a href="progress.php" class="active-menu">Progress Tracker</a>
+    <a href="student_progress.php" class="active-menu">Progress Tracker</a>
 </div>
 
 <div class="main-content">
@@ -145,31 +214,47 @@
                 <th>Average Score</th>
             </tr>
 
-            <tr>
-                <td>Programming</td>
-                <td>8</td>
-                <td>95%</td>
-                <td>82%</td>
-            </tr>
+          <?php
+while($row = mysqli_fetch_assoc($result))
+{
+?>
+<tr>
 
-            <tr>
-                <td>Data Structure & Algorithm</td>
-                <td>6</td>
-                <td>88%</td>
-                <td>75%</td>
-            </tr>
+    <td>
+        <a href="subject_progress.php?subject=<?php echo urlencode($row['category']); ?>" class="subject-link">
+            <?php echo $row['category']; ?>
+        </a>
+    </td>
 
+    <td><?php echo $row['total_attempt']; ?></td>
+
+    <td>
+        <span class="score high">
+            <?php echo $row['highest_score']; ?>%
+        </span>
+    </td>
+
+    <td>
+        <span class="score medium">
+            <?php echo $row['average_score']; ?>%
+        </span>
+    </td>
+
+</tr>
+<?php
+}
+?>
         </table>
 
         <div class="overall-box">
 
             <h3>Overall Summary</h3>
 
-            <p><strong>Total Quiz :</strong> 14</p>
+            <p><strong>Total Quiz :</strong> <?php echo $summary['total_quiz']; ?></p>
 
-            <p><strong>Overall Average :</strong> 79%</p>
+            <p><strong>Overall Average :</strong> <?php echo $summary['overall_average']; ?>%</p>
 
-            <p><strong>Best Subject :</strong> Programming</p>
+            <p><strong>Best Subject :</strong> <?php echo $best['category']; ?></p>
 
         </div>
 

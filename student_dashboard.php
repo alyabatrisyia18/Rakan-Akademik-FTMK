@@ -1,3 +1,7 @@
+<?php
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -68,10 +72,30 @@
             color:white;
             text-align:center;
             padding:20px;
+            position:relative;
         }
-
+        
         .welcome h1{
             font-size:32px;
+        }
+
+        .apply-btn{ 
+            position:absolute;
+            right:30px;
+            bottom:15px;
+            background:whitw;
+            color:black;
+            padding:10px 20px;
+            border:none;
+            border-radius:30px;
+            font-size:15px;
+            cursor:pointer;
+            transition:0.3s;
+        }
+
+        .back-btn{
+            cursor:pointer;
+            font-size:28px;
         }
 
         .menu-container{
@@ -109,6 +133,16 @@
     </style>
 </head>
 <body>
+<?php
+if(isset($_SESSION['approvedMessage']))
+{
+    echo "<script>
+    alert('Congratulations! Your Rakan Akademik application has been approved.');
+    </script>";
+
+    unset($_SESSION['approvedMessage']);
+}
+?>
 
 <header>
     <div class="logo">
@@ -124,7 +158,14 @@
 
 <section class="welcome">
     <h1>WELCOME TO STUDENT</h1>
+
+    <button class="apply-btn"
+        onclick="window.location.href='register_rakan.php'"><i class="fas fa-user-plus"></i> Apply Tutor </button>
 </section>
+
+<div class="back-container">
+    <button class="back-btn" onclick="window.location.href='choose_role.php'"><i class="fas fa-arrow-left"></i></button>
+</div>
 
 <section class="menu-container">
 
@@ -154,8 +195,8 @@
 function openPage(page){
 
     switch(page){
-        case "learning module":
-            window.location.href="";
+        case "module":
+            window.location.href="moduleStudent.php";
             break;
 
         case "quiz":
@@ -163,7 +204,7 @@ function openPage(page){
             break;
 
         case "timetable":
-            window.location.href="";
+            window.location.href="booking.php";
             break;
 
         case "mentor":
@@ -175,6 +216,6 @@ function openPage(page){
     }
 }
 </script>
-
+//
 </body>
 </html>

@@ -2,32 +2,37 @@
 
 include("db_connect.php");
 
-if(isset($_POST["btnReset"]))
-{
-    $userId = $_POST["txtUserId"];
+if (isset($_POST["btnReset"])) {
+    $matric = $_POST["txtmatric"];
     $email = $_POST["txtEmail"];
     $password = $_POST["txtPassword"];
     $confirmPassword = $_POST["txtConfirmPassword"];
 
-    if($password != $confirmPassword)
-    {
+    $matric = mysqli_real_escape_string(
+        $conn,
+        trim($_POST["txtmatric"])
+    );
+
+    $email = mysqli_real_escape_string(
+        $conn,
+        trim($_POST["txtEmail"])
+    );
+
+    if ($password != $confirmPassword) {
         echo "
         <script>
         alert('Password does not match!');
         </script>
         ";
-    }
-    else
-    {
+    } else {
         $checkUser = mysqli_query(
             $conn,
             "SELECT * FROM user
-             WHERE userId='$userId'
+             WHERE matricNoStudent='$matric'
              AND email='$email'"
         );
 
-        if(mysqli_num_rows($checkUser) > 0)
-        {
+        if (mysqli_num_rows($checkUser) > 0) {
             $hashedPassword = password_hash(
                 $password,
                 PASSWORD_DEFAULT
@@ -37,7 +42,7 @@ if(isset($_POST["btnReset"]))
                 $conn,
                 "UPDATE user
                  SET password='$hashedPassword'
-                 WHERE userId='$userId'"
+                 WHERE matricNoStudent='$matric'"
             );
 
             echo "
@@ -46,9 +51,7 @@ if(isset($_POST["btnReset"]))
             window.location='login.php';
             </script>
             ";
-        }
-        else
-        {
+        } else {
             echo "
             <script>
             alert('Invalid User ID or Email');
@@ -56,128 +59,138 @@ if(isset($_POST["btnReset"]))
             ";
         }
     }
+    if (strlen($password) < 8) {
+
+        echo "<script>
+
+alert('Password must be at least 8 characters.');
+
+</script>";
+
+        exit();
+    }
 }
 
 ?>
 
 <!DOCTYPE html>
 <html>
+
 <head>
 
-<meta charset='UTF-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
 
-<title>Forgot Password</title>
+    <title>Forgot Password</title>
 
-<style>
+    <style>
+        body {
+            font-family: Segoe UI, sans-serif;
+            background: #EEF3FA;
+        }
 
-body{
-    font-family:Segoe UI,sans-serif;
-    background:#EEF3FA;
-}
+        .resetBox {
+            width: 420px;
+            background: white;
+            padding: 30px;
+            margin: 80px auto;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
 
-.resetBox{
-    width:420px;
-    background:white;
-    padding:30px;
-    margin:80px auto;
-    border-radius:8px;
-    box-shadow:0 0 10px rgba(0,0,0,0.1);
-}
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-h2{
-    text-align:center;
-    margin-bottom:20px;
-}
+        .textBox {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
 
-.textBox{
-    width:100%;
-    padding:10px;
-    margin-bottom:15px;
-    border:1px solid #ccc;
-    border-radius:4px;
-}
+        .resetButton {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            background: #2748A5;
+            color: white;
+            cursor: pointer;
+        }
 
-.resetButton{
-    width:100%;
-    padding:12px;
-    border:none;
-    background:#2748A5;
-    color:white;
-    cursor:pointer;
-}
+        .resetButton:hover {
+            background: #1d3987;
+        }
 
-.resetButton:hover{
-    background:#1d3987;
-}
+        .backLogin {
+            text-align: center;
+            margin-top: 15px;
+        }
 
-.backLogin{
-    text-align:center;
-    margin-top:15px;
-}
-
-.backLogin a{
-    text-decoration:none;
-    color:#2748A5;
-}
-
-</style>
+        .backLogin a {
+            text-decoration: none;
+            color: #2748A5;
+        }
+    </style>
 
 </head>
 
 <body>
 
-<div class="resetBox">
+    <div class="resetBox">
 
-    <h2>Reset Password</h2>
+        <h2>Reset Password</h2>
 
-    <form method="POST">
+        <form method="POST">
 
-        <input
-            type="text"
-            name="txtUserId"
-            class="textBox"
-            placeholder="User ID"
-            required>
+            <input
+                type="text"
+                name="txtmatric"
+                class="textBox"
+                placeholder="User ID"
+                required>
 
-        <input
-            type="email"
-            name="txtEmail"
-            class="textBox"
-            placeholder="Registered Email"
-            required>
+            <input
+                type="email"
+                name="txtEmail"
+                class="textBox"
+                placeholder="Registered Email"
+                required>
 
-        <input
-            type="password"
-            name="txtPassword"
-            class="textBox"
-            placeholder="New Password"
-            required>
+            <input
+                type="password"
+                name="txtPassword"
+                class="textBox"
+                placeholder="New Password"
+                required>
 
-        <input
-            type="password"
-            name="txtConfirmPassword"
-            class="textBox"
-            placeholder="Confirm Password"
-            required>
+            <input
+                type="password"
+                name="txtConfirmPassword"
+                class="textBox"
+                placeholder="Confirm Password"
+                required>
 
-        <input
-            type="submit"
-            name="btnReset"
-            value="Reset Password"
-            class="resetButton">
+            <input
+                type="submit"
+                name="btnReset"
+                value="Reset Password"
+                class="resetButton">
 
-    </form>
+        </form>
 
-    <div class="backLogin">
+        <div class="backLogin">
 
-        <a href="login.php">
-            Back To Login
-        </a>
+            <a href="login.php">
+                Back To Login
+            </a>
+
+        </div>
 
     </div>
 
-</div>
-
 </body>
+
 </html>
