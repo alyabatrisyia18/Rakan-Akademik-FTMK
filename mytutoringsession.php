@@ -9,7 +9,7 @@ $upcomingSql = "
 SELECT *
 FROM `teaching record`
 WHERE matricNoTutor='$matricNoTutor'
-AND sessionDate >= CURDATE()
+AND TIMESTAMP(sessionDate, endTime) > NOW()
 ORDER BY sessionDate ASC
 ";
 $upcomingResult = mysqli_query($conn, $upcomingSql);
@@ -19,7 +19,7 @@ $completedSql = "
 SELECT *
 FROM `teaching record`
 WHERE matricNoTutor='$matricNoTutor'
-AND sessionDate < CURDATE()
+AND TIMESTAMP(sessionDate, endTime) <= NOW()
 ORDER BY sessionDate DESC
 ";
 $completedResult = mysqli_query($conn, $completedSql);
@@ -65,44 +65,63 @@ $completedResult = mysqli_query($conn, $completedSql);
     </div>
 
     <div class="content">
+        
+    <h1>My Tutoring Session</h1>
+        <div class="tab">
 
-        <h1>My Tutoring Session</h1>
+            <span
+                id="upcomingTab"
+                class="active-tab"
+                onclick="showUpcoming()">
 
-        <h2>Upcoming Sessions</h2>
+                Upcoming
 
-        <table>
-            <tr>
-                <th>DATE</th>
-                <th>SUBJECT</th>
-                <th>TIME</th>
-                <th>SLOT</th>
-                <th>ACTION</th>
-            </tr>
+            </span>
 
-            <?php
-            while ($row = mysqli_fetch_assoc($upcomingResult)) {
-                $recordID = $row['recordID'];
+            <span
+                id="completedTab"
+                onclick="showCompleted()">
 
-                $countSql = "SELECT COUNT(*) AS total FROM booking WHERE recordID='$recordID'";
-                $countResult = mysqli_query($conn, $countSql);
-                $countRow = mysqli_fetch_assoc($countResult);
-                $totalStudent = $countRow['total'];
-            ?>
+                Completed
+
+            </span>
+
+        </div>
+
+        <div id="upcomingTable">
+
+            <table>
                 <tr>
-                    <td><?php echo date("d/m/Y", strtotime($row['sessionDate'])); ?></td>
-                    <td><?php echo $row['subject']; ?></td>
-                    <td><?php echo date("h:i A", strtotime($row['startTime'])) . " - " . date("h:i A", strtotime($row['endTime'])); ?></td>
-                    <td><?php echo $totalStudent . "/10"; ?></td>
-                    <td><button class="upcoming">UPCOMING</button></td>
+                    <th>DATE</th>
+                    <th>SUBJECT</th>
+                    <th>TIME</th>
+                    <th>SLOT</th>
+                    <th>ACTION</th>
                 </tr>
-            <?php } ?>
-        </table>
 
-        <br><br>
+                <?php
+                while ($row = mysqli_fetch_assoc($upcomingResult)) {
+                    $recordID = $row['recordID'];
 
-        <h2>Completed Sessions</h2>
+                    $countSql = "SELECT COUNT(*) AS total FROM booking WHERE recordID='$recordID'";
+                    $countResult = mysqli_query($conn, $countSql);
+                    $countRow = mysqli_fetch_assoc($countResult);
+                    $totalStudent = $countRow['total'];
+                ?>
+                    <tr>
+                        <td><?php echo date("d/m/Y", strtotime($row['sessionDate'])); ?></td>
+                        <td><?php echo $row['subject']; ?></td>
+                        <td><?php echo date("h:i A", strtotime($row['startTime'])) . " - " . date("h:i A", strtotime($row['endTime'])); ?></td>
+                        <td><?php echo $totalStudent . "/10"; ?></td>
+                        <td><button class="upcoming">UPCOMING</button></td>
+                    </tr>
+                <?php } ?>
+            </table>
 
-        <table>
+        </div>
+
+        <div id="completedTable" style="display:none;">
+            <table>
             <tr>
                 <th>DATE</th>
                 <th>SUBJECT</th>
@@ -128,7 +147,9 @@ $completedResult = mysqli_query($conn, $completedSql);
                     <td><button class="complete">COMPLETE</button></td>
                 </tr>
             <?php } ?>
-        </table>
+            </table>
+
+        </div>
 
     </div>
 
@@ -143,6 +164,22 @@ $completedResult = mysqli_query($conn, $completedSql);
                 content.style.marginLeft = "80px";
             else
                 content.style.marginLeft = "250px";
+        }
+
+        function showUpcoming() {
+            document.getElementById("upcomingTable").style.display = "block";
+            document.getElementById("completedTable").style.display = "none";
+
+            document.getElementById("upcomingTab").classList.add("active-tab");
+            document.getElementById("completedTab").classList.remove("active-tab");
+        }
+
+        function showCompleted() {
+            document.getElementById("upcomingTable").style.display = "none";
+            document.getElementById("completedTable").style.display = "block";
+
+            document.getElementById("completedTab").classList.add("active-tab");
+            document.getElementById("upcomingTab").classList.remove("active-tab");
         }
     </script>
 
