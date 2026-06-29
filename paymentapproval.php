@@ -135,8 +135,6 @@ $result = mysqli_query($conn, $sql);
 
         <div class="header-icons">
 
-            <i class="far fa-user-circle"></i>
-
             <i class="fas fa-home"
                 onclick="location.href='admin_dashboard.php'"
                 title="Dashboard"></i>
