@@ -196,7 +196,7 @@ function openPage(page){
 
     switch(page){
         case "learning module":
-            window.location.href="";
+            window.location.href="moduleStudent.php";
             break;
 
         case "quiz":
