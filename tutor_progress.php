@@ -271,7 +271,6 @@ $best=mysqli_fetch_assoc($best_result);
         <img src="images/logoRakan.png" alt="">
         <img src="images/logoUtem.png" alt="">
         <img src="images/logoFtmk.png" alt="">
-        <img class="quiz-logo" src="images/quiz.jpg" alt="">
     </div>
 
     <div class="icons">
