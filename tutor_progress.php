@@ -1,49 +1,102 @@
 <?php
+session_start();
+include("db_connect.php");
 
-$students = [
+/*
+   Tukar ikut session login tutor korang
+   Contoh:
+   $_SESSION['matricNoTutor']
+*/
 
-[
-"studentID"=>"D032410021",
-"name"=>"Alya Batrisyia",
-"subject"=>"Programming",
-"attempt"=>5,
-"highest"=>95,
-"average"=>90
-],
+$tutorID = $_SESSION['matric'];
 
-[
-"studentID"=>"D032410022",
-"name"=>"Nur Adnin",
-"subject"=>"Data Structure",
-"attempt"=>4,
-"highest"=>88,
-"average"=>82
-],
+/* ===========================
+   Student Performance
+=========================== */
 
-[
-"studentID"=>"D032410023",
-"name"=>"Sofea",
-"subject"=>"Web Programming",
-"attempt"=>3,
-"highest"=>80,
-"average"=>75
-],
+$sql = "SELECT
 
-[
-"studentID"=>"D032410024",
-"name"=>"Ayuni",
-"subject"=>"Database",
-"attempt"=>6,
-"highest"=>98,
-"average"=>91
-]
+u.matricNoStudent,
+u.name,
 
-];
+q.category,
 
-$totalStudent = 4;
-$totalQuiz = 18;
-$overallAverage = 85;
-$bestSubject = "Programming";
+COUNT(qa.attemptID) AS total_attempt,
+
+ROUND(MAX((qa.score/qa.total_question)*100),0) AS highest_score,
+
+ROUND(AVG((qa.score/qa.total_question)*100),0) AS average_score
+
+FROM quiz q
+
+INNER JOIN quiz_attempts qa
+ON q.quizID = qa.quizID
+
+INNER JOIN user u
+ON qa.matricNoStudent = u.matricNoStudent
+
+WHERE q.matricNoTutor='$tutorID'
+
+GROUP BY
+u.matricNoStudent,
+u.name,
+q.category
+
+ORDER BY u.name";
+
+$result = mysqli_query($conn,$sql);
+
+
+/* ===========================
+   Overall Summary
+=========================== */
+
+$summary_sql = "SELECT
+
+COUNT(DISTINCT qa.matricNoStudent) AS total_student,
+
+COUNT(qa.attemptID) AS total_attempt,
+
+ROUND(AVG((qa.score/qa.total_question)*100),0) AS overall_average
+
+FROM quiz q
+
+INNER JOIN quiz_attempts qa
+ON q.quizID=qa.quizID
+
+WHERE q.matricNoTutor='$tutorID'";
+
+$summary_result=mysqli_query($conn,$summary_sql);
+
+$summary=mysqli_fetch_assoc($summary_result);
+
+
+/* ===========================
+   Best Subject
+=========================== */
+
+$best_sql="SELECT
+
+q.category,
+
+ROUND(AVG((qa.score/qa.total_question)*100),0) AS avg_score
+
+FROM quiz q
+
+INNER JOIN quiz_attempts qa
+ON q.quizID=qa.quizID
+
+WHERE q.matricNoTutor='$tutorID'
+
+GROUP BY q.category
+
+ORDER BY avg_score DESC
+
+LIMIT 1";
+
+$best_result=mysqli_query($conn,$best_sql);
+
+$best=mysqli_fetch_assoc($best_result);
 
 ?>
 <!DOCTYPE html>
@@ -266,7 +319,7 @@ Monitor your students quiz performance and learning progress.
 </tr>
           <?php
 
-foreach($students as $student)
+while($student = mysqli_fetch_assoc($result))
 {
 
 ?>
@@ -275,7 +328,7 @@ foreach($students as $student)
 
 <td>
 
-<?php echo $student['studentID']; ?>
+<?php echo $student['matricNoStudent']; ?>
 
 </td>
 
@@ -287,13 +340,13 @@ foreach($students as $student)
 
 <td>
 
-<?php echo $student['subject']; ?>
+<?php echo $student['category']; ?>
 
 </td>
 
 <td>
 
-<?php echo $student['attempt']; ?>
+<?php echo $student['total_attempt']; ?>
 
 </td>
 
@@ -301,7 +354,7 @@ foreach($students as $student)
 
 <span class="score high">
 
-<?php echo $student['highest']; ?>%
+<?php echo $student['highest_score']; ?>
 
 </span>
 
@@ -311,7 +364,7 @@ foreach($students as $student)
 
 <span class="score medium">
 
-<?php echo $student['average']; ?>%
+<?php echo $student['average_score']; ?>
 
 </span>
 
@@ -342,22 +395,22 @@ View
 
     <p>
         <strong>Total Students :</strong>
-        <?php echo $totalStudent; ?>
+        <?php echo $summary['total_student']; ?>
     </p>
 
     <p>
         <strong>Total Quiz Attempts :</strong>
-        <?php echo $totalQuiz; ?>
+        <?php echo $summary['total_attempt']; ?>
     </p>
 
     <p>
         <strong>Overall Average :</strong>
-        <?php echo $overallAverage; ?>%
+        <?php echo $summary['overall_average']; ?>%
     </p>
 
     <p>
         <strong>Best Subject :</strong>
-        <?php echo $bestSubject; ?>
+        <?php echo $best['category']; ?>
     </p>
 
 </div>
