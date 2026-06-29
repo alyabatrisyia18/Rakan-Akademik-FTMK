@@ -2,496 +2,607 @@
 session_start();
 include("db_connect.php");
 
-if(isset($_POST["btnLogin"]))
-{
+if (isset($_POST["btnLogin"])) {
     $username = trim($_POST["txtUser"]);
     $password = $_POST["txtPassword"];
-    
-    if($username == "admin" && $password == "1234")
-    {
-        $_SESSION['userId'] = "admin";
+
+    if ($username == "admin" && $password == "1234") {
+        $_SESSION['matric'] = "admin";
         $_SESSION['name'] = "Administrator";
         $_SESSION['role'] = "Admin";
 
         echo "
         <script>
-            alert('Admin Login Successful');
-            window.location.href='admin_dashboard.php';
+
+        alert('Admin Login Successful');
+
+        window.location='admin_dashboard.php';
+
         </script>
         ";
+
         exit();
     }
 
-    $sql = "SELECT * FROM user WHERE userId='$username'";
-    $result = mysqli_query($conn, $sql);
+    $sql = mysqli_query($conn, "
+    SELECT *
+    FROM user
+    WHERE matricNoStudent='$username'
+    ");
 
-    if(mysqli_num_rows($result) > 0)
-    {
-        $row = mysqli_fetch_assoc($result);
-
-        if(password_verify($password, $row['password']))
-        {
-
-            if(strtolower($row['status']) != "active")
-            {
-                echo "
-                <script>
-                    alert('Your account is inactive.');
-                    window.location.href='login.php';
-                </script>
-                ";
-                exit();
-            }
-            
-            $_SESSION['userId'] = $row['userId'];
-            $_SESSION['name'] = $row['name'];
-            $_SESSION['role'] = trim($row['role']);
-            $role = strtolower(trim($row['role']));
-            if($role == "student"){
-                echo "
-                <script>
-                alert('Login Successful');
-                window.location.href='student_dashboard.php';
-                </script>
-                ";
-                }
-                else if($role == "tutor"){
-                    echo "
-                    <script>
-                    alert('Login Successful');
-                    window.location.href='dashboard.php';</script>";
-                    }
-                    else if($role == "student,tutor"){
-                        echo "
-                        <script>
-                        alert('Login Successful');
-                        window.location.href='choose_role.php';
-                        </script>";
-                        }
-                    else{
-                        echo "
-                        <script>
-                        alert('Invalid user role.');
-                        window.location.href='login.php'; </script>";
-                    }
-                        exit();
-        }
-        else
-        {
-            echo "
-            <script>
-                alert('Wrong Password');
-            </script>
-            ";
-        }
-    }
-    else
-    {
+    if (mysqli_num_rows($sql) == 0) {
         echo "
         <script>
-            alert('User Not Found');
+
+        alert('User not found.');
+
         </script>
         ";
-    }
-}
-?>
 
+        exit();
+    }
+
+    $row = mysqli_fetch_assoc($sql);
+
+    if (!password_verify($password, $row['password'])) {
+        echo "
+        <script>
+
+        alert('Wrong Password');
+
+        </script>
+        ";
+
+        exit();
+    }
+
+    if (strtolower($row['status']) != "active") {
+        echo "
+        <script>
+
+        alert('Your account is inactive.');
+
+        </script>
+        ";
+
+        exit();
+    }
+
+    $_SESSION['matric'] = $row['matricNoStudent'];
+    $_SESSION['name'] = $row['name'];
+    $_SESSION['role'] = trim($row['role']);
+
+    $matric = $row['matricNoStudent'];
+
+    $popup = mysqli_query($conn, "
+SELECT *
+FROM tutor_application
+WHERE matricNoStudent='$matric'
+AND popupStatus='0'
+LIMIT 1
+");
+
+    if (mysqli_num_rows($popup) > 0) {
+        $dataPopup = mysqli_fetch_assoc($popup);
+
+        $_SESSION['popupStatus'] = $dataPopup['status'];
+
+        mysqli_query($conn, "
+    UPDATE tutor_application
+    SET popupStatus='1'
+    WHERE applicationID='" . $dataPopup['applicationID'] . "'
+    ");
+    }
+
+    $roles = array_map('trim', explode(",", $row['role']));
+
+
+    if (in_array("Tutor", $roles)) {
+
+        echo "
+    <script>
+
+    alert('Login Successful');
+
+    window.location='choose_role.php';
+
+    </script>
+    ";
+    } else if (in_array("Student", $roles)) {
+
+        echo "
+    <script>
+
+    alert('Login Successful');
+
+    window.location='student_dashboard.php';
+
+    </script>
+    ";
+    } else {
+
+        echo "
+    <script>
+
+    alert('Invalid user role.');
+
+    window.location='login.php';
+
+    </script>
+    ";
+    }
+
+    exit();
+}
+
+?>
 <!DOCTYPE html>
 <html>
+
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<title>Rakan Akademik</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
+    <link rel="stylesheet"
+        href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+    <title>Rakan Akademik</title>
 
-body{
-    font-family:Segoe UI, sans-serif;
-    background:white;
-    overflow:hidden;
-}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-.header{
-    height:95px;
-    background:#2748A5;
-    position:relative;
-    overflow:hidden;
-}
+        body {
+            font-family: Segoe UI, sans-serif;
+            background: white;
+            overflow: hidden;
+        }
 
-.headerBackground{
-    position:absolute;
-    top:22px;
-    left:0;
-    width:100%;
-    height:73px;
-    background:url("images/edubackground.jpg");
-    background-size:cover;
-    background-position:center;
-    opacity:0.4;
-}
+        .header {
+            height: 95px;
+            background: #2748A5;
+            position: relative;
+            overflow: hidden;
+        }
 
-.logoArea{
-    position:relative;
-    z-index:2;
-    height:95px;
-    padding-top:20px;
-    padding-left:25px;
-}
+        .headerBackground {
+            position: absolute;
+            top: 22px;
+            left: 0;
+            width: 100%;
+            height: 73px;
+            background: url("images/edubackground.jpg");
+            background-size: cover;
+            background-position: center;
+            opacity: 0.4;
+        }
 
-.logoUtem{
-    height:50px;
-}
+        .logoArea {
+            position: relative;
+            z-index: 2;
+            height: 95px;
+            padding-top: 20px;
+            padding-left: 25px;
+        }
 
-.logoFtmk{
-    height:48px;
-    margin-left:12px;
-}
+        .logoUtem {
+            height: 50px;
+        }
 
-.mainContent{
-    height:calc(100vh - 95px);
-}
+        .logoFtmk {
+            height: 48px;
+            margin-left: 12px;
+        }
 
-.leftPanel{
-    width:50%;
-    height:100%;
-    float:left;
-    position:relative;
-    overflow:hidden;
-}
+        .mainContent {
+            height: calc(100vh - 95px);
+        }
 
-.rightPanel{
-    width:50%;
-    height:100%;
-    float:left;
-    position:relative;
-}
+        .leftPanel {
+            width: 50%;
+            height: 100%;
+            float: left;
+            position: relative;
+            overflow: hidden;
+        }
 
-.circleTop{
-    width:500px;
-    height:350px;
-    background:#DCECF8;
-    border-radius:50%;
-    position:absolute;
-    top:130px;
-    left:50%;
-    transform:translateX(-50%);
-}
+        .rightPanel {
+            width: 50%;
+            height: 100%;
+            float: left;
+            position: relative;
+        }
 
-.circleBottom{
-    width:250px;
-    height:250px;
-    background:#DCECF8;
-    border-radius:50%;
-    position:absolute;
-    left:-120px;
-    bottom:-120px;
-}
+        .circleTop {
+            width: 500px;
+            height: 350px;
+            background: #DCECF8;
+            border-radius: 50%;
+            position: absolute;
+            top: 130px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
 
-.mainImage{
-    width:55%;
-    max-width:380px;
-    position:absolute;
-    left:50%;
-    top:50%;
-    transform:translate(-50%, -50%);
-}
+        .circleBottom {
+            width: 250px;
+            height: 250px;
+            background: #DCECF8;
+            border-radius: 50%;
+            position: absolute;
+            left: -120px;
+            bottom: -120px;
+        }
 
-.footerText{
-    position:absolute;
-    bottom:28px;
-    width:100%;
-    text-align:center;
-    font-size:13px;
-    color:#666;
-}
+        .mainImage {
+            width: 55%;
+            max-width: 380px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
 
-.loginBox{
-    width:430px;
-    position:absolute;
-    left:50%;
-    top:50%;
-    transform:translate(-50%, -50%);
-}
+        .footerText {
+            position: absolute;
+            bottom: 28px;
+            width: 100%;
+            text-align: center;
+            font-size: 13px;
+            color: #666;
+        }
 
-.logoRakan{
-    width:250px;
-    display:block;
-    margin:auto;
-    margin-bottom:50px;
-}
+        .loginBox {
+            width: 430px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
 
-.textBox{
-    width:100%;
-    padding:10px 0;
-    border:none;
-    border-bottom:1px solid #d6d6d6;
-    margin-bottom:25px;
-}
+        .logoRakan {
+            width: 250px;
+            display: block;
+            margin: auto;
+            margin-bottom: 50px;
+        }
 
-.textBox:focus{
-    outline:none;
-    border-bottom:2px solid #6CB6E9;
-}
+        .textBox {
+            width: 100%;
+            padding: 10px 0;
+            border: none;
+            border-bottom: 1px solid #d6d6d6;
+            margin-bottom: 25px;
+        }
 
-.passwordBox{
-    position:relative;
-}
+        .textBox:focus {
+            outline: none;
+            border-bottom: 2px solid #6CB6E9;
+        }
 
-.eyeIcon{
-    position:absolute;
-    right:10px;
-    top:8px;
-    cursor:pointer;
-    font-size:18px;
-    color:#666;
-}
+        .passwordBox {
+            position: relative;
+        }
 
-.optionArea{
-    margin-top:10px;
-    font-size:14px;
-}
+        .eyeIcon {
+            position: absolute;
+            right: 10px;
+            top: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            color: #666;
+        }
 
-.optionArea a{
-    float:right;
-    text-decoration:none;
-    color:#4f84c4;
-}
+        .optionArea {
+            margin-top: 10px;
+            font-size: 14px;
+        }
 
-.loginButton{
-    width:100%;
-    padding:10px;
-    margin-top:22px;
-    border:none;
-    background:#6CB6E9;
-    color:white;
-    cursor:pointer;
-}
+        .optionArea a {
+            float: right;
+            text-decoration: none;
+            color: #4f84c4;
+        }
 
-.loginButton:hover{
-    background:#54A8E2;
-}
+        .loginButton {
+            width: 100%;
+            padding: 10px;
+            margin-top: 22px;
+            border: none;
+            background: #6CB6E9;
+            color: white;
+            cursor: pointer;
+        }
 
-.signupArea{
-    text-align:center;
-    margin-top:35px;
-}
+        .loginButton:hover {
+            background: #54A8E2;
+        }
 
-.signupButton{
-    padding:6px 24px;
-    margin-left:12px;
-    border:none;
-    background:#6CB6E9;
-    color:white;
-    cursor:pointer;
-}
+        .signupArea {
+            text-align: center;
+            margin-top: 35px;
+        }
 
-.signupButton:hover{
-    background:#54A8E2;
-}
+        .signupButton {
+            padding: 6px 24px;
+            margin-left: 12px;
+            border: none;
+            background: #6CB6E9;
+            color: white;
+            cursor: pointer;
+        }
 
-.modal{
-    display:none;
-    position:fixed;
-    left:0;
-    top:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.45);
-}
+        .signupButton:hover {
+            background: #54A8E2;
+        }
 
-.modalBox{
-    width:420px;
-    background:white;
-    position:absolute;
-    left:50%;
-    top:50%;
-    transform:translate(-50%, -50%);
-}
+        .modal {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+        }
 
-.modalHeader{
-    padding:15px 20px;
-    border-bottom:1px solid #ddd;
-}
+        .modalBox {
+            width: 420px;
+            background: white;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
 
-.closeButton{
-    float:right;
-    cursor:pointer;
-    font-size:22px;
-}
+        .modalHeader {
+            padding: 15px 20px;
+            border-bottom: 1px solid #ddd;
+        }
 
-.modalBody{
-    padding:20px;
-}
+        .closeButton {
+            float: right;
+            cursor: pointer;
+            font-size: 22px;
+        }
 
-.registerButton{
-    display:block;
-    text-align:center;
-    padding:15px;
-    margin-bottom:15px;
-    text-decoration:none;
-    border:1px solid #ddd;
-    color:#333;
-}
+        .modalBody {
+            padding: 20px;
+        }
 
-.registerButton:hover{
-    background:#f5f5f5;
-}
+        .registerButton {
+            display: block;
+            text-align: center;
+            padding: 15px;
+            margin-bottom: 15px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            color: #333;
+        }
+
+        .registerButton:hover {
+            background: #f5f5f5;
+        }
 
 
-@media screen and (max-width:768px){
+        @media screen and (max-width:768px) {
 
-    body{
-        overflow:auto;
-    }
+            body {
+                overflow: auto;
+            }
 
-    .leftPanel,
-    .rightPanel{
-        width:100%;
-        float:none;
-    }
+            .leftPanel,
+            .rightPanel {
+                width: 100%;
+                float: none;
+            }
 
-    .leftPanel{
-        height:350px;
-    }
+            .leftPanel {
+                height: 350px;
+            }
 
-    .circleTop{
-        width:320px;
-        height:220px;
-        top:70px;
-    }
+            .circleTop {
+                width: 320px;
+                height: 220px;
+                top: 70px;
+            }
 
-    .circleBottom{
-        width:180px;
-        height:180px;
-        left:-90px;
-        bottom:-90px;
-    }
+            .circleBottom {
+                width: 180px;
+                height: 180px;
+                left: -90px;
+                bottom: -90px;
+            }
 
-    .mainImage{
-        width:70%;
-        max-width:250px;
-    }
+            .mainImage {
+                width: 70%;
+                max-width: 250px;
+            }
 
-    .loginBox{
-        width:90%;
-        position:relative;
-        left:auto;
-        top:auto;
-        transform:none;
-        margin:40px auto;
-    }
+            .loginBox {
+                width: 90%;
+                position: relative;
+                left: auto;
+                top: auto;
+                transform: none;
+                margin: 40px auto;
+            }
 
-    .logoRakan{
-        width:180px;
-        margin-bottom:35px;
-    }
-}
-
-</style>
-
+            .logoRakan {
+                width: 180px;
+                margin-bottom: 35px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="header">
+    <div class="header">
 
-    <div class="headerBackground"></div>
+        <div class="headerBackground"></div>
 
-    <div class="logoArea">
+        <div class="logoArea">
 
-        <img src="images/utem.png" class="logoUtem">
+            <img src="images/utem.png" class="logoUtem">
 
-        <img src="images/ftmk.png" class="logoFtmk">
+            <img src="images/ftmk.png" class="logoFtmk">
 
-    </div>
-
-</div>
-
-<div class="mainContent">
-
-    <div class="leftPanel">
-
-        <div class="circleTop"></div>
-        <div class="circleBottom"></div>
-
-        <img src="images/logoMain.png" class="mainImage">
-
-        <div class="footerText">
-            Copyright © 2026 Rakan Akademik | Faculty of Information & Communication Technology
         </div>
 
     </div>
 
-    <div class="rightPanel">
+    <div class="mainContent">
 
-        <div class="loginBox">
+        <div class="leftPanel">
 
-            <img src="images/logoRakan.png" class="logoRakan">
+            <div class="circleTop"></div>
 
-            <form method="POST">
+            <div class="circleBottom"></div>
 
-                <input
-                    type="text"
-                    name="txtUser"
-                    class="textBox"
-                    placeholder="Matric Number / Admin">
+            <img
+                src="images/logoMain.png"
+                class="mainImage">
 
-                <div class="passwordBox">
+            <div class="footerText">
+
+                Copyright ©️ 2026 Rakan Akademik |
+                Faculty of Information & Communication Technology
+
+            </div>
+
+        </div>
+
+        <div class="rightPanel">
+
+            <div class="loginBox">
+
+                <img
+                    src="images/logoRakan.png"
+                    class="logoRakan">
+
+                <form method="POST">
 
                     <input
-                        type="password"
-                        id="password"
-                        name="txtPassword"
+
+                        type="text"
+
+                        name="txtUser"
+
                         class="textBox"
-                        placeholder="Password">
-                        
-                        <span 
-                        class="eyeIcon glyphicon glyphicon-eye-close"
-                        onclick="togglePassword()">
+
+                        placeholder="Matric Number"
+
+                        required>
+
+                    <div class="passwordBox">
+
+                        <input
+
+                            type="password"
+
+                            id="password"
+
+                            name="txtPassword"
+
+                            class="textBox"
+
+                            placeholder="Password"
+
+                            required>
+
+                        <span
+
+                            class="eyeIcon glyphicon glyphicon-eye-close"
+
+                            onclick="togglePassword()">
+
                         </span>
 
+                    </div>
+
+                    <div class="optionArea">
+
+                        <label>
+
+                            <input type="checkbox">
+
+                            Remember Me
+
+                        </label>
+
+                        <a href="forgot_password.php">
+
+                            Forgot Password?
+
+                        </a>
+
+                    </div>
+
+                    <input
+
+                        type="submit"
+
+                        name="btnLogin"
+
+                        value="Log In"
+
+                        class="loginButton">
+
+                </form>
+
+                <div class="signupArea">
+
+                    Don't have an account?
+
+                    <button
+
+                        class="signupButton"
+
+                        onclick="openModal()">
+
+                        Sign Up
+
+                    </button>
+
                 </div>
 
-                <div class="optionArea">
+            </div>
 
-                    <label>
-                        <input type="checkbox">
-                        Remember Me
-                    </label>
+        </div>
 
-                    <a href="#">
-                        Forgot Password?
-                    </a>
+    </div>
+    <div id="signupModal" class="modal">
 
-                </div>
+        <div class="modalBox">
 
-                <input
-                    type="submit"
-                    name="btnLogin"
-                    value="Log In"
-                    class="loginButton">
+            <div class="modalHeader">
 
-            </form>
+                <span
+                    class="closeButton"
+                    onclick="closeModal()">
 
-            <div class="signupArea">
+                    &times;
 
-                Don't have an account?
+                </span>
 
-                <button
-                    class="signupButton"
-                    onclick="openModal()">
+                <h3>Register As Student</h3>
 
-                    Sign Up
+            </div>
 
-                </button>
+            <div class="modalBody">
+
+                <a
+                    href="register_student.php"
+                    class="registerButton">
+
+                    Register As Student
+
+                </a>
 
             </div>
 
@@ -499,74 +610,43 @@ body{
 
     </div>
 
-</div>
+    <script>
+        function togglePassword() {
+            var passwordField =
+                document.getElementById("password");
 
-<div id="signupModal" class="modal">
+            var eyeIcon =
+                document.querySelector(".eyeIcon");
 
-    <div class="modalBox">
+            if (passwordField.type == "password") {
+                passwordField.type = "text";
 
-        <div class="modalHeader">
+                eyeIcon.classList.remove("glyphicon-eye-close");
+                eyeIcon.classList.add("glyphicon-eye-open");
+            } else {
+                passwordField.type = "password";
 
-            <span
-                class="closeButton"
-                onclick="closeModal()">
+                eyeIcon.classList.remove("glyphicon-eye-open");
+                eyeIcon.classList.add("glyphicon-eye-close");
+            }
+        }
 
-                &times;
+        function openModal() {
+            document.getElementById("signupModal").style.display = "block";
+        }
 
-            </span>
+        function closeModal() {
+            document.getElementById("signupModal").style.display = "none";
+        }
 
-            <h3>Register As Student</h3>
+        window.onclick = function(event) {
+            var modal = document.getElementById("signupModal");
 
-        </div>
-
-        <div class="modalBody">
-
-            <a href="register_student.php" class="registerButton">
-                Register As Student
-            </a>
-        </div>
-
-    </div>
-
-</div>
-
-<script>
-
-function togglePassword()
-{
-    var passwordField =
-        document.getElementById("password");
-
-    var eyeIcon =
-        document.querySelector(".eyeIcon");
-
-    if(passwordField.type == "password")
-    {
-        passwordField.type = "text";
-
-        eyeIcon.classList.remove("glyphicon-eye-close");
-        eyeIcon.classList.add("glyphicon-eye-open");
-    }
-    else
-    {
-        passwordField.type = "password";
-
-        eyeIcon.classList.remove("glyphicon-eye-open");
-        eyeIcon.classList.add("glyphicon-eye-close");
-    }
-}
-
-function openModal()
-{
-    document.getElementById("signupModal").style.display="block";
-}
-
-function closeModal()
-{
-    document.getElementById("signupModal").style.display="none";
-}
-
-</script>
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
 
 </body>
 </html>

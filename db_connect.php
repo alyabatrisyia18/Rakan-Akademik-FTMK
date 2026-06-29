@@ -2,10 +2,10 @@
 
 $conn = mysqli_connect(
     "127.0.0.1",
-    "sofea",
-    "abc123",
+    "root",
+    "",
     "rakan_akademik",
-    3307
+    3306
 );
 
 if(!$conn)
