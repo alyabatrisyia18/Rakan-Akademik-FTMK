@@ -53,7 +53,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 
 
         <div class="header-icons">
-            <i class="far fa-user-circle"></i>
+            <i class="far fa-user-circle" onclick="location.href='profile.php'" title="profile"></i>
             <i class="fas fa-home" onclick="location.href='dashboard.php'" title="Dashboard"></i>
         </div>
 
