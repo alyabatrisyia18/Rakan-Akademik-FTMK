@@ -19,6 +19,7 @@ $sql = "SELECT
 u.matricNoStudent,
 u.name,
 
+q.quizID,
 q.category,
 
 COUNT(qa.attemptID) AS total_attempt,
@@ -40,6 +41,7 @@ WHERE q.matricNoTutor='$tutorID'
 GROUP BY
 u.matricNoStudent,
 u.name,
+q.quizID,
 q.category
 
 ORDER BY u.name";
@@ -371,9 +373,9 @@ while($student = mysqli_fetch_assoc($result))
 
 <td>
 
-<a href="tutor_student_progress.php" class="subject-link">
+<a href="details_progress.php?student=<?php echo $student['matricNoStudent']; ?>&quiz=<?php echo $student['quizID']; ?>" class="view-btn">
 
-View
+    <i class="fas fa-eye"></i> View
 
 </a>
 
