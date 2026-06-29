@@ -9,8 +9,6 @@ if (!isset($_SESSION['matric'])) {
 
 $matricNoTutor = $_SESSION['matric'];
 
-/* Ambil maklumat tutor */
-
 $sql = mysqli_query($conn, "
 SELECT *
 FROM tutor
@@ -31,8 +29,6 @@ if (mysqli_num_rows($sql) == 0) {
 }
 
 $data = mysqli_fetch_assoc($sql);
-
-/* Assign data */
 
 $name = $data['name'];
 $programme = $data['programme'];
@@ -259,8 +255,6 @@ $email = $data['email'];
                 </button>
 
             </a>
-
-            &nbsp;&nbsp;
 
             <a href="dashboard.php">
 
