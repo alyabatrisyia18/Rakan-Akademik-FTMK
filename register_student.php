@@ -7,6 +7,14 @@ if (isset($_POST["btnRegister"])) {
     $matric = strtoupper(mysqli_real_escape_string($conn, trim($_POST["txtMatric"])));
     $course = mysqli_real_escape_string($conn, trim($_POST["txtCourse"]));
     $email = mysqli_real_escape_string($conn, trim($_POST["txtEmail"]));
+    if (strpos(strtolower($email), "@student.utem.edu.my") === false) {
+        echo "<script>
+    alert('Please use your UTeM student email.');
+    window.location='register_student.php';
+    </script>";
+    die();
+        
+    }
     $phone = mysqli_real_escape_string($conn, trim($_POST["txtPhone"]));
     $gender = mysqli_real_escape_string($conn, $_POST["gender"]);
     $password = $_POST["txtPassword"];
@@ -14,30 +22,18 @@ if (isset($_POST["btnRegister"])) {
 
     if ($password != $confirmPassword) {
         echo "<script>
-
     alert('Password does not match.');
-
+window.location='register_student.php';
     </script>";
-
-        exit();
+    die();
     }
 
     if (strlen($password) < 8) {
-
         echo "<script>
-
     alert('Password must be at least 8 characters.');
-
+    window.location='register_student.php';
     </script>";
-
-        exit();
-    }
-
-    if ($password != $confirmPassword) {
-        echo "<script>
-        alert('Password does not match!');
-        </script>";
-        exit();
+    die();
     }
 
     $check = mysqli_query($conn, "
@@ -54,9 +50,10 @@ email='$email'
 
     if (mysqli_num_rows($check) > 0) {
         echo "<script>
-        alert('Matric Number Already Registered!');
-        </script>";
-        exit();
+        alert('Matric number or email has already been registered.');
+       window.location='register_student.php';
+    </script>";
+    die();
     }
 
     $hashedPassword = password_hash(
@@ -375,6 +372,7 @@ email='$email'
                         type="email"
                         name="txtEmail"
                         class="textBox"
+                        placeholder="Example: b032410001@student.utem.edu.my"
                         required>
 
                     <label class="formLabel">Mobile Phone</label>
@@ -451,4 +449,3 @@ email='$email'
 </body>
 
 </html>
-```

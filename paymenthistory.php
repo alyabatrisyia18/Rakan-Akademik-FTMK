@@ -4,29 +4,28 @@ include("db_connect.php");
 
 $sql = "
 SELECT
-p.paymentID,
-p.payment_date,
-p.paymentStatus,
+    p.paymentID,
+    p.payment_date,
+    p.paymentStatus,
+    p.amount,
 
-tr.subject,
-tr.sessionDate,
-tr.hours,
-tr.proofFile,
+    tr.subject,
+    tr.sessionDate,
+    tr.hours,
+    tr.proofFile,
 
-u.name,
-
-p.amount
+    u.name
 
 FROM payment p
 
-JOIN `teaching record` tr
+INNER JOIN `teaching record` tr
 ON p.recordID = tr.recordID
 
-JOIN tutor t
+INNER JOIN tutor t
 ON tr.matricNoTutor = t.matricNoTutor
 
-JOIN user u
-ON t.userID = u.userID
+INNER JOIN user u
+ON t.matricNoStudent = u.matricNoStudent
 
 ORDER BY p.payment_date DESC
 ";
@@ -67,13 +66,11 @@ $result = mysqli_query($conn, $sql);
 
         </div>
 
-        <div class="header-icons">
 
+        <i class="fas fa-home"
+            onclick="location.href='admin_dashboard.php'"></i>
 
-            <i class="fas fa-home"
-                onclick="location.href='admin_dashboard.php'"></i>
-
-        </div>
+    </div>
 
     </div>
 
@@ -160,33 +157,19 @@ $result = mysqli_query($conn, $sql);
                     </td>
 
                     <td>
-                        <?php
 
-                        if ($row['paymentStatus'] == "Paid") {
+<?php
+if(strtolower($row['paymentStatus']) == "paid")
+{
+    echo "<span class='approved'>PAID</span>";
+}
+else
+{
+    echo "<span class='reject'>REJECTED</span>";
+}
+?>
 
-                        ?>
-
-                            <span class="approved">
-                                PAID
-                            </span>
-
-                        <?php
-
-                        } else {
-
-                        ?>
-
-                            <span class="reject">
-                                REJECTED
-                            </span>
-
-                        <?php
-
-                        }
-
-                        ?>
-
-                    </td>
+</td>
 
                 </tr>
 

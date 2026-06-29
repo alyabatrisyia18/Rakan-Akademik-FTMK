@@ -171,6 +171,26 @@ $best = mysqli_fetch_assoc($best_result);
     color:#1a2f75;
     }
 
+    .back-btn{
+    text-align:center;
+    margin-top:30px;
+}
+
+.back-btn a{
+    display:inline-block;
+    background:#2748A5;
+    color:white;
+    text-decoration:none;
+    padding:12px 28px;
+    border-radius:8px;
+    font-weight:bold;
+    transition:.3s;
+}
+
+.back-btn a:hover{
+    background:#1b3275;
+}
+
     </style>
 
 </head>
@@ -257,7 +277,16 @@ while($row = mysqli_fetch_assoc($result))
             <p><strong>Best Subject :</strong> <?php echo $best['category']; ?></p>
 
         </div>
+<div class="back-btn">
 
+    <a href="category.php">
+
+        <i class="fas fa-arrow-left"></i>
+        Back
+
+    </a>
+
+</div>
     </div>
 
 </div>

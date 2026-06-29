@@ -105,17 +105,14 @@ if (!$hasStudent || !$hasTutor) {
 
             </p>
 
-            <a
-                href="student_dashboard.php"
-                class="btn">
+            
+                <a href="set_role.php?dashboard=student" class="btn">
 
                 Student Dashboard
 
             </a>
 
-            <a
-                href="dashboard.php"
-                class="btn">
+            <a href="set_role.php?dashboard=tutor" class="btn">
 
                 Rakan Akademik Dashboard
 

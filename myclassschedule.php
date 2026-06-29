@@ -99,9 +99,11 @@ $pastResult = mysqli_query($conn, $pastSql);
         </div>
 
         <div class="header-icons">
-            <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
             <i class="fas fa-home"
-                onclick="location.href='student_dashboard.php'"></i>
+           onclick="location.href='student_dashboard.php'"
+           title="Dashboard"></i>
+
+        <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
         </div>
 
     </div>
