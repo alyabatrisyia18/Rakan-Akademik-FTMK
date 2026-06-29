@@ -1,3 +1,7 @@
+<?php
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -137,6 +141,16 @@
     </style>
 </head>
 <body>
+<?php
+if(isset($_SESSION['approvedMessage']))
+{
+    echo "<script>
+    alert('Congratulations! Your Rakan Akademik application has been approved.');
+    </script>";
+
+    unset($_SESSION['approvedMessage']);
+}
+?>
 
 <header>
     <div class="logo">

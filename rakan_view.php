@@ -1,266 +1,283 @@
 <?php
 session_start();
+include("db_connect.php");
 
-if (!isset($_SESSION['userId'])) {
-
+if (!isset($_SESSION['matric'])) {
     header("Location: login.php");
     exit();
 }
 
-$userId = $_SESSION['userId'];
-$role_clean = strtolower(trim($_SESSION['role']));
+$matricNoTutor = $_SESSION['matric'];
 
-if (!in_array($role_clean, ['tutor','rakan'])) {
-    header("Location: dashboard.php");
-    exit();
-}
+/* Ambil maklumat tutor */
 
-include("db_connect.php");
+$sql = mysqli_query($conn, "
+SELECT *
+FROM tutor
+WHERE matricNoTutor='$matricNoTutor'
+");
 
-$sqlCheck = mysqli_query($conn,
-"SELECT * FROM rakan_profile
-WHERE matricNoTutor='$userId'");
-
-$data = mysqli_fetch_assoc($sqlCheck);
-
-if(!$data)
-{
+if (mysqli_num_rows($sql) == 0) {
     echo "
     <script>
-    alert('Please complete your profile first.');
-    window.location='rakan_form.php';
+
+    alert('Tutor profile not found.');
+
+    window.location='dashboard.php';
+
     </script>
     ";
     exit();
 }
 
-$image = "images/profile.jpg";
+$data = mysqli_fetch_assoc($sql);
 
-if(
-    !empty($data['photo']) &&
-    file_exists("imagess/".$data['photo'])
-){
-    $image = "imagess/".$data['photo'];
-}
+/* Assign data */
+
+$name = $data['name'];
+$programme = $data['programme'];
+$institution = $data['institution'];
+$currentStatus = $data['currentStatus'];
+$academicBackground = $data['academicBackground'];
+$academicStrengths = $data['academicStrengths'];
+$cgpa = $data['cgpa'];
+$expertise = $data['expertise'];
+$availability = $data['availability'];
+$contactNumber = $data['contactNumber'];
+$email = $data['email'];
+
 ?>
-
 <!DOCTYPE html>
 <html>
 
 <head>
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<title>Rakan Akademik</title>
 
-<style>
-    
-body{
-    margin:0;
-    font-family: Arial, sans-serif;
-    background-image: url('images/edubackground.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-}
+    <meta charset="UTF-8">
 
-.container{
-    width: 1100px;
-    margin: 30px auto;
-    padding: 30px;
-    background: rgba(255,255,255,0.85);
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    backdrop-filter: blur(5px);
-}
+    <title>Rakan Akademik Profile</title>
 
-.back-btn{
-    text-decoration: none;
-    font-size: 26px;
-    color: #1f3c88;
-    font-weight: bold;
-}
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial;
+            background: url('images/edubackground.jpg');
+            background-size: cover;
+        }
 
-.title{
-    text-align: center;
-    color: #1f3c88;
-    font-size: 42px;
-    font-weight: bold;
-    margin-bottom: 30px;
-}
+        .container {
+            width: 1000px;
+            margin: 40px auto;
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, .2);
+        }
 
-.content{
-    display: flex;
-    gap: 25px;
-    align-items: flex-start;
-}
+        .title {
+            text-align: center;
+            color: #2748A5;
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
 
-/* responsive flex improvement */
-.left-box,
-.right-box{
-    flex: 1;
-    background: rgba(220,236,248,0.7);
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
+        .content {
+            display: flex;
+            gap: 25px;
+        }
 
-.photo-section{
-    width: 180px;
-    text-align: center;
-}
+        .left,
+        .right {
+            flex: 1;
+            background: #f5f8ff;
+            padding: 20px;
+            border-radius: 10px;
+        }
 
-.photo-section img{
-    width: 140px;
-    height: 140px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 4px solid #3fa9f5;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
+        p {
+            line-height: 1.8;
+        }
 
-.section-title{
-    font-weight: bold;
-    margin-top: 20px;
-    color: #1f3c88;
-}
+        .section-title {
+            font-weight: bold;
+            color: #2748A5;
+            margin-top: 20px;
+            margin-bottom: 8px;
+        }
 
-p{
-    line-height: 1.6;
-    font-size: 15px;
-}
+        .button {
+            text-align: center;
+            margin-top: 30px;
+        }
 
-.edit-area{
-    text-align: center;
-    margin-top: 40px;
-}
+        .edit-btn {
+            background: #2748A5;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
 
-.edit-btn{
-    background: #3fa9f5;
-    color: white;
-    border: none;
-    padding: 12px 35px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    transition: 0.3s;
-}
-
-.edit-btn:hover{
-    background: #1b8ce3;
-    transform: translateY(-2px);
-}
-</style>
+        .edit-btn:hover {
+            background: #18357d;
+        }
+    </style>
 
 </head>
 
 <body>
 
-<div class="container">
+    <div class="container">
 
-<a href="dashboard.php" class="back-btn">
-←
-</a>
+        <div class="title">
 
-<div class="title">
-Rakan Akademik
-</div>
+            Rakan Akademik
 
-<div class="content">
+        </div>
 
-<div class="photo-section">
+        <div class="content">
 
-<img src="<?php echo $image; ?>">
+            <div class="left">
 
-</div>
+                <p>
 
-<div class="left-box">
+                    <strong>Name :</strong>
 
-<p>
-<strong>Name :</strong>
-<?php echo $data['name']; ?>
-</p>
+                    <?php echo htmlspecialchars($name); ?>
 
-<p>
-<strong>Programme :</strong>
-<?php echo $data['programme']; ?>
-</p>
+                </p>
 
-<p>
-<strong>Institution :</strong>
-<?php echo $data['institution']; ?>
-</p>
+                <p>
 
-<p>
-<strong>Current Status :</strong>
-<?php echo htmlspecialchars($data['currentStatus']); ?>
-</p>
+                    <strong>Programme :</strong>
 
-<div class="section-title">
-Academic Background
-</div>
+                    <?php echo htmlspecialchars($programme); ?>
 
-<p>
-<?php echo nl2br(htmlspecialchars($data['academicBackground'])); ?>
-</p>
+                </p>
 
-<div class="section-title">
-Academic Strengths
-</div>
+                <p>
 
-<p>
-<?php echo nl2br(htmlspecialchars($data['academicStrengths'])); ?>
-</p>
+                    <strong>Institution :</strong>
 
-</div>
+                    <?php echo htmlspecialchars($institution); ?>
 
-<div class="right-box">
+                </p>
 
-<p>
-<strong>CGPA :</strong>
-<?php echo $data['cgpa']; ?>
-</p>
+                <p>
 
-<div class="section-title">
-Availability
-</div>
+                    <strong>Current Status :</strong>
 
-<p>
-<?php echo $data['availability']; ?>
-</p>
+                    <?php echo htmlspecialchars($currentStatus); ?>
 
-<div class="section-title">
-Contact
-</div>
+                </p>
 
-<p>
-Email :
-<?php echo $data['email']; ?>
-</p>
+                <div class="section-title">
 
-<p>
-Phone :
-<?php echo htmlspecialchars($data['contactNumber']); ?>
-</p>
+                    Academic Background
 
-</div>
+                </div>
 
-</div>
+                <p>
 
-<div class="edit-area">
+                    <?php echo nl2br(htmlspecialchars($academicBackground)); ?>
 
-<a href="rakan_form.php">
+                </p>
 
-<button class="edit-btn">
-Edit Profile
-</button>
+                <div class="section-title">
 
-</a>
+                    Academic Strengths
 
-</div>
+                </div>
 
-</div>
+                <p>
+
+                    <?php echo nl2br(htmlspecialchars($academicStrengths)); ?>
+
+                </p>
+
+            </div>
+
+            <div class="right">
+
+                <p>
+
+                    <strong>CGPA :</strong>
+
+                    <?php echo htmlspecialchars($cgpa); ?>
+
+                </p>
+
+                <p>
+
+                    <strong>Expertise :</strong>
+
+                    <?php echo htmlspecialchars($expertise); ?>
+
+                </p>
+
+                <p>
+
+                    <strong>Availability :</strong>
+
+                    <?php echo nl2br(htmlspecialchars($availability)); ?>
+
+                </p>
+
+                <p>
+
+                    <strong>Contact Number :</strong>
+
+                    <?php echo htmlspecialchars($contactNumber); ?>
+
+                </p>
+
+                <p>
+
+                    <strong>Email :</strong>
+
+                    <?php echo htmlspecialchars($email); ?>
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="button">
+
+            <a href="rakan_form.php">
+
+                <button
+                    type="button"
+                    class="edit-btn">
+
+                    Edit Profile
+
+                </button>
+
+            </a>
+
+            &nbsp;&nbsp;
+
+            <a href="dashboard.php">
+
+                <button
+                    type="button"
+                    class="edit-btn">
+
+                    Back
+
+                </button>
+
+            </a>
+
+        </div>
+
+    </div>
 
 </body>
+
 </html>

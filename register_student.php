@@ -4,103 +4,146 @@ include("db_connect.php");
 
 if(isset($_POST["btnRegister"]))
 {
-    $name = $_POST["txtName"];
-    $matric = $_POST["txtMatric"];
-    $course = $_POST["txtCourse"];
-    $email = $_POST["txtEmail"];
-    $phone = $_POST["txtPhone"];
-    $gender = $_POST["gender"];
+    $name = mysqli_real_escape_string($conn, trim($_POST["txtName"]));
+    $matric = strtoupper(mysqli_real_escape_string($conn, trim($_POST["txtMatric"])));
+    $course = mysqli_real_escape_string($conn, trim($_POST["txtCourse"]));
+    $email = mysqli_real_escape_string($conn, trim($_POST["txtEmail"]));
+    $phone = mysqli_real_escape_string($conn, trim($_POST["txtPhone"]));
+    $gender = mysqli_real_escape_string($conn, $_POST["gender"]);
     $password = $_POST["txtPassword"];
     $confirmPassword = $_POST["txtConfirmPassword"];
-    
+
+    if($password != $confirmPassword)
+{
+    echo "<script>
+
+    alert('Password does not match.');
+
+    </script>";
+
+    exit();
+}
+
+if(strlen($password)<8)
+{
+
+    echo "<script>
+
+    alert('Password must be at least 8 characters.');
+
+    </script>";
+
+    exit();
+
+}
+
     if($password != $confirmPassword)
     {
-        echo "<script>alert('Password does not match!');</script>";
+        echo "<script>
+        alert('Password does not match!');
+        </script>";
+        exit();
     }
-    else
+
+    $check = mysqli_query($conn,"
+SELECT *
+
+FROM user
+
+WHERE matricNoStudent='$matric'
+
+OR
+
+email='$email'
+    ");
+
+    if(mysqli_num_rows($check) > 0)
     {
-        $checkUser = mysqli_query(
-            $conn,
-            "SELECT * FROM user WHERE userId='$matric'"
-        );
-
-        if(mysqli_num_rows($checkUser) > 0)
-        {
-            echo "<script>
-                    alert('Matric Number Already Registered!');
-                  </script>";
-        }
-        else
-        {
-            $hashedPassword = password_hash(
-                $password,
-                PASSWORD_DEFAULT
-            );
-
-            $sqlUser = "
-            INSERT INTO user
-            (
-                userId,
-                name,
-                email,
-                mobile_phone,
-                gender,
-                password,
-                status,
-                role
-            )
-            VALUES
-            (
-                '$matric',
-                '$name',
-                '$email',
-                '$phone',
-                '$gender',
-                '$hashedPassword',
-                'Active',
-                'Student'
-            )";
-
-            if(mysqli_query($conn, $sqlUser))
-            {
-                $sqlStudent = "
-                INSERT INTO student
-                (
-                    matricNoStudent,
-                    userID,
-                    course
-                )
-                VALUES
-                (
-                    '$matric',
-                    '$matric',
-                    '$course'
-                )";
-                
-                if(mysqli_query($conn, $sqlStudent)){
-
-                echo "<script>
-                alert('Registration Successful');
-                window.location='login.php';
-                </script>";
-                }
-                else
-                {
-                mysqli_query($conn,"DELETE FROM user WHERE userId='$matric'");
-
-                echo "<script>
-                alert('Student registration failed.');
-                </script>";
-                }
-            }
-            else
-            {
-                echo "<script>
-                        alert('Registration Failed!');
-                      </script>";
-            }
-        }
+        echo "<script>
+        alert('Matric Number Already Registered!');
+        </script>";
+        exit();
     }
+
+    $hashedPassword = password_hash(
+        $password,
+        PASSWORD_DEFAULT
+    );
+
+    mysqli_begin_transaction($conn);
+
+    try
+    {
+
+        mysqli_query($conn,"
+        INSERT INTO user
+        (
+            matricNoStudent,
+            name,
+            email,
+            mobile_phone,
+            gender,
+            password,
+            status,
+            role
+        )
+
+        VALUES
+        (
+            '$matric',
+            '$name',
+            '$email',
+            '$phone',
+            '$gender',
+            '$hashedPassword',
+            'Active',
+            'Student'
+        )
+        ");
+
+        mysqli_query($conn,"
+        INSERT INTO student
+        (
+            matricNoStudent,
+            course
+        )
+
+        VALUES
+        (
+            '$matric',
+            '$course'
+        )
+        ");
+
+        mysqli_commit($conn);
+
+        echo "
+        <script>
+
+        alert('Registration Successful');
+
+        window.location='login.php';
+
+        </script>
+        ";
+
+    }
+
+    catch(Exception $e)
+    {
+
+        mysqli_rollback($conn);
+
+        echo "
+        <script>
+
+        alert('Registration Failed');
+
+        </script>
+        ";
+
+    }
+
 }
 
 ?>
