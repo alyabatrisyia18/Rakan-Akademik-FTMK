@@ -141,6 +141,33 @@ ORDER BY name ASC
 
     <div class="container">
 
+        <div class="icon-section">
+
+            <div class="home-btn"
+                onclick="location.href='student_dashboard.php'">
+                <i class="fas fa-home"></i>
+            </div>
+
+            <a href="profile.php" class="profile-link">
+
+                <div class="search-box">
+                    <input type="text" placeholder="Search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                </div>
+                <div class="icon-section">
+
+                    <div class="profile-icon">
+                        <i class="fa-regular fa-user"></i>
+                    </div>
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="main-panel">
+
         <div class="title">
 
             Rakan Akademik
