@@ -140,8 +140,6 @@ tr:hover{
 
 <img src="images/logoFtmk.png">
 
-<img class="quiz-logo" src="images/quiz.jpg">
-
 </div>
 
 </header>
