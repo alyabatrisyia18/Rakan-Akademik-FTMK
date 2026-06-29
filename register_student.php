@@ -2,8 +2,7 @@
 
 include("db_connect.php");
 
-if(isset($_POST["btnRegister"]))
-{
+if (isset($_POST["btnRegister"])) {
     $name = mysqli_real_escape_string($conn, trim($_POST["txtName"]));
     $matric = strtoupper(mysqli_real_escape_string($conn, trim($_POST["txtMatric"])));
     $course = mysqli_real_escape_string($conn, trim($_POST["txtCourse"]));
@@ -13,39 +12,35 @@ if(isset($_POST["btnRegister"]))
     $password = $_POST["txtPassword"];
     $confirmPassword = $_POST["txtConfirmPassword"];
 
-    if($password != $confirmPassword)
-{
-    echo "<script>
+    if ($password != $confirmPassword) {
+        echo "<script>
 
     alert('Password does not match.');
 
     </script>";
 
-    exit();
-}
+        exit();
+    }
 
-if(strlen($password)<8)
-{
+    if (strlen($password) < 8) {
 
-    echo "<script>
+        echo "<script>
 
     alert('Password must be at least 8 characters.');
 
     </script>";
 
-    exit();
+        exit();
+    }
 
-}
-
-    if($password != $confirmPassword)
-    {
+    if ($password != $confirmPassword) {
         echo "<script>
         alert('Password does not match!');
         </script>";
         exit();
     }
 
-    $check = mysqli_query($conn,"
+    $check = mysqli_query($conn, "
 SELECT *
 
 FROM user
@@ -57,8 +52,7 @@ OR
 email='$email'
     ");
 
-    if(mysqli_num_rows($check) > 0)
-    {
+    if (mysqli_num_rows($check) > 0) {
         echo "<script>
         alert('Matric Number Already Registered!');
         </script>";
@@ -72,10 +66,9 @@ email='$email'
 
     mysqli_begin_transaction($conn);
 
-    try
-    {
+    try {
 
-        mysqli_query($conn,"
+        mysqli_query($conn, "
         INSERT INTO user
         (
             matricNoStudent,
@@ -101,7 +94,7 @@ email='$email'
         )
         ");
 
-        mysqli_query($conn,"
+        mysqli_query($conn, "
         INSERT INTO student
         (
             matricNoStudent,
@@ -126,11 +119,7 @@ email='$email'
 
         </script>
         ";
-
-    }
-
-    catch(Exception $e)
-    {
+    } catch (Exception $e) {
 
         mysqli_rollback($conn);
 
@@ -141,318 +130,317 @@ email='$email'
 
         </script>
         ";
-
     }
-
 }
 
 ?>
 
 <!DOCTYPE html>
 <html>
+
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Student Registration</title>
+    <title>Student Registration</title>
 
-<style>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Segoe UI, sans-serif;
+        }
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Segoe UI,sans-serif;
-}
-
-body{
-    background:#fff;
-}
-
-
-.header{
-    height:95px;
-    background:#2748A5;
-    position:relative;
-}
-
-.headerBackground{
-    position:absolute;
-    top:22px;
-    left:0;
-    width:100%;
-    height:73px;
-    background:url("images/edubackground.jpg");
-    background-size:cover;
-    background-position:center;
-    opacity:0.4;
-}
-
-.logoArea{
-    position:relative;
-    z-index:2;
-    padding-top:20px;
-    padding-left:25px;
-}
-
-.logoUtem{
-    height:50px;
-}
-
-.logoFtmk{
-    height:48px;
-    margin-left:12px;
-}
+        body {
+            background: #fff;
+        }
 
 
-.mainContent{
-    width:100%;
-    min-height:calc(100vh - 95px);
-    display:flex;
-}
+        .header {
+            height: 95px;
+            background: #2748A5;
+            position: relative;
+        }
+
+        .headerBackground {
+            position: absolute;
+            top: 22px;
+            left: 0;
+            width: 100%;
+            height: 73px;
+            background: url("images/edubackground.jpg");
+            background-size: cover;
+            background-position: center;
+            opacity: 0.4;
+        }
+
+        .logoArea {
+            position: relative;
+            z-index: 2;
+            padding-top: 20px;
+            padding-left: 25px;
+        }
+
+        .logoUtem {
+            height: 50px;
+        }
+
+        .logoFtmk {
+            height: 48px;
+            margin-left: 12px;
+        }
 
 
-.leftPanel{
-    width:55%;
-    background:#f8fbff;
-    position:relative;
-}
-
-.poster{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
+        .mainContent {
+            width: 100%;
+            min-height: calc(100vh - 95px);
+            display: flex;
+        }
 
 
-.rightPanel{
-    width:45%;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:#fff;
-}
+        .leftPanel {
+            width: 55%;
+            background: #f8fbff;
+            position: relative;
+        }
 
-.registerBox{
-    width:420px;
-    background:#EEF3FA;
-    border:1px solid #dcdcdc;
-    border-radius:8px;
-    padding:30px;
-}
-
-.registerBox h2{
-    text-align:center;
-    margin-bottom:25px;
-    color:#222;
-}
-
-.formLabel{
-    display:block;
-    margin-bottom:6px;
-    margin-top:10px;
-    font-weight:500;
-}
-
-.textBox{
-    width:100%;
-    padding:10px;
-    border:1px solid #ccc;
-    border-radius:4px;
-}
-
-.genderArea{
-    margin-top:8px;
-    margin-bottom:10px;
-}
-
-.genderArea label{
-    margin-right:25px;
-}
-
-.registerButton{
-    width:100%;
-    margin-top:20px;
-    padding:12px;
-    border:none;
-    border-radius:4px;
-    background:#2748A5;
-    color:white;
-    cursor:pointer;
-    font-size:15px;
-}
-
-.registerButton:hover{
-    background:#1d3987;
-}
-
-.backLogin{
-    text-align:center;
-    margin-top:15px;
-}
-
-.backLogin a{
-    text-decoration:none;
-    color:#2748A5;
-}
-
-.backLogin a:hover{
-    text-decoration:underline;
-}
+        .poster {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
 
-@media screen and (max-width:900px){
+        .rightPanel {
+            width: 45%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #fff;
+        }
 
-    .mainContent{
-        flex-direction:column;
-    }
+        .registerBox {
+            width: 420px;
+            background: #EEF3FA;
+            border: 1px solid #dcdcdc;
+            border-radius: 8px;
+            padding: 30px;
+        }
 
-    .leftPanel,
-    .rightPanel{
-        width:100%;
-    }
+        .registerBox h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #222;
+        }
 
-    .leftPanel{
-        height:350px;
-    }
+        .formLabel {
+            display: block;
+            margin-bottom: 6px;
+            margin-top: 10px;
+            font-weight: 500;
+        }
 
-    .registerBox{
-        width:90%;
-        margin:30px 0;
-    }
-}
+        .textBox {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
 
-</style>
+        .genderArea {
+            margin-top: 8px;
+            margin-bottom: 10px;
+        }
+
+        .genderArea label {
+            margin-right: 25px;
+        }
+
+        .registerButton {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            background: #2748A5;
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .registerButton:hover {
+            background: #1d3987;
+        }
+
+        .backLogin {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .backLogin a {
+            text-decoration: none;
+            color: #2748A5;
+        }
+
+        .backLogin a:hover {
+            text-decoration: underline;
+        }
+
+
+        @media screen and (max-width:900px) {
+
+            .mainContent {
+                flex-direction: column;
+            }
+
+            .leftPanel,
+            .rightPanel {
+                width: 100%;
+            }
+
+            .leftPanel {
+                height: 350px;
+            }
+
+            .registerBox {
+                width: 90%;
+                margin: 30px 0;
+            }
+        }
+    </style>
 
 </head>
 
 <body>
 
-<div class="header">
+    <div class="header">
 
-    <div class="headerBackground"></div>
+        <div class="headerBackground"></div>
 
-    <div class="logoArea">
+        <div class="logoArea">
 
-        <img src="images/utem.png" class="logoUtem">
+            <img src="images/utem.png" class="logoUtem">
 
-        <img src="images/ftmk.png" class="logoFtmk">
+            <img src="images/ftmk.png" class="logoFtmk">
 
-    </div>
-
-</div>
-
-<div class="mainContent">
-
-    <div class="leftPanel">
-
-        <img
-            src="images/posterRegister.png"
-            class="poster">
+        </div>
 
     </div>
 
-    <div class="rightPanel">
+    <div class="mainContent">
 
-        <div class="registerBox">
+        <div class="leftPanel">
 
-            <h2>Sign Up As Student</h2>
+            <img
+                src="images/posterRegister.png"
+                class="poster">
 
-            <form method="POST">
+        </div>
 
-                <label class="formLabel">Name</label>
-                <input
-                    type="text"
-                    name="txtName"
-                    class="textBox"
-                    required>
+        <div class="rightPanel">
 
-                <label class="formLabel">Matric Number</label>
-                <input
-                    type="text"
-                    name="txtMatric"
-                    class="textBox"
-                    placeholder="Example: B032310123"
-                    required>
+            <div class="registerBox">
 
-                <label class="formLabel">Course</label>
-                <input
-                    type="text"
-                    name="txtCourse"
-                    class="textBox"
-                    placeholder="Example: Diploma in Computer Science"
-                    required>
+                <h2>Sign Up As Student</h2>
 
-                <label class="formLabel">Email</label>
-                <input
-                    type="email"
-                    name="txtEmail"
-                    class="textBox"
-                    required>
+                <form method="POST">
 
-                <label class="formLabel">Mobile Phone</label>
-                <input
-                    type="text"
-                    name="txtPhone"
-                    class="textBox"
-                    required>
+                    <label class="formLabel">Name</label>
+                    <input
+                        type="text"
+                        name="txtName"
+                        class="textBox"
+                        required>
 
-                <label class="formLabel">Gender</label>
+                    <label class="formLabel">Matric Number</label>
+                    <input
+                        type="text"
+                        name="txtMatric"
+                        class="textBox"
+                        placeholder="Example: B032310123"
+                        required>
 
-                <div class="genderArea">
+                    <label class="formLabel">Course</label>
+                    <input
+                        type="text"
+                        name="txtCourse"
+                        class="textBox"
+                        placeholder="Example: Diploma in Computer Science"
+                        required>
 
-                    <label>
-                        <input
-                            type="radio"
-                            name="gender"
-                            value="Male"
-                            required>
+                    <label class="formLabel">Email</label>
+                    <input
+                        type="email"
+                        name="txtEmail"
+                        class="textBox"
+                        required>
 
-                        Male
+                    <label class="formLabel">Mobile Phone</label>
+                    <input
+                        type="text"
+                        name="txtPhone"
+                        class="textBox"
+                        required>
+
+                    <label class="formLabel">Gender</label>
+
+                    <div class="genderArea">
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="gender"
+                                value="Male"
+                                required>
+
+                            Male
+                        </label>
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="gender"
+                                value="Female">
+
+                            Female
+                        </label>
+
+                    </div>
+
+                    <label class="formLabel">Password</label>
+                    <input
+                        type="password"
+                        name="txtPassword"
+                        class="textBox"
+                        required>
+
+                    <label class="formLabel">
+                        Confirm Password
                     </label>
 
-                    <label>
-                        <input
-                            type="radio"
-                            name="gender"
-                            value="Female">
+                    <input
+                        type="password"
+                        name="txtConfirmPassword"
+                        class="textBox"
+                        required>
 
-                        Female
-                    </label>
+                    <input
+                        type="submit"
+                        name="btnRegister"
+                        value="Sign Up"
+                        class="registerButton">
+
+                </form>
+
+                <div class="backLogin">
+
+                    <a href="login.php">
+                        Back To Login
+                    </a>
 
                 </div>
-
-                <label class="formLabel">Password</label>
-                <input
-                    type="password"
-                    name="txtPassword"
-                    class="textBox"
-                    required>
-
-                <label class="formLabel">
-                    Confirm Password
-                </label>
-
-                <input
-                    type="password"
-                    name="txtConfirmPassword"
-                    class="textBox"
-                    required>
-
-                <input
-                    type="submit"
-                    name="btnRegister"
-                    value="Sign Up"
-                    class="registerButton">
-
-            </form>
-
-            <div class="backLogin">
-
-                <a href="login.php">
-                    Back To Login
-                </a>
 
             </div>
 
@@ -460,8 +448,7 @@ body{
 
     </div>
 
-</div>
-
 </body>
+
 </html>
 ```
