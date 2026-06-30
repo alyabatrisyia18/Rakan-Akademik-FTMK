@@ -161,9 +161,9 @@
             <h2>Payment Approvals</h2>
         </div>
 
-        <div class="card">
+        <div class="card" onclick="location.href='adminData.php'">
             <img src="images/timetable.jpg" alt="">
-            <h2>View Bookings</h2>
+            <h2>Data Analysis</h2>
         </div>
 
     </section>
