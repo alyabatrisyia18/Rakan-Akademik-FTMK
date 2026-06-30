@@ -22,8 +22,6 @@ if (isset($_POST["approve"])) {
 
     if (mysqli_query($conn, $sql)) {
 
-        /* Get application information */
-
         $getApplication = mysqli_query($conn,"
         SELECT *
         FROM tutor_application

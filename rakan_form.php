@@ -10,9 +10,11 @@ if (!isset($_SESSION['matric'])) {
 $matricNoTutor = $_SESSION['matric'];
 
 $sql = mysqli_query($conn, "
-SELECT *
+SELECT tutor.*, user.name, user.email, user.mobile_phone
 FROM tutor
-WHERE matricNoTutor='$matricNoTutor'
+INNER JOIN user
+ON tutor.matricNoTutor=user.matricNoStudent
+WHERE tutor.matricNoTutor='$matricNoTutor'
 ");
 
 if (mysqli_num_rows($sql) == 0) {
@@ -33,7 +35,7 @@ $academicBackground = $data['academicBackground'];
 $academicStrengths = $data['academicStrengths'];
 $cgpa = $data['cgpa'];
 $availability = $data['availability'];
-$contactNumber = $data['contactNumber'];
+$contactNumber = $data['mobile_phone'];
 $email = $data['email'];
 $expertise = $data['expertise'];
 
@@ -98,26 +100,30 @@ if (isset($_POST['btnSubmit'])) {
 
     $expertise = implode(", ", $_POST['expertise']);
 
-    $update = mysqli_query($conn, "
-    UPDATE tutor
-    SET
+    $updateTutor = mysqli_query($conn, "
+UPDATE tutor
+SET
+programme='$programme',
+institution='$institution',
+currentStatus='$currentStatus',
+academicBackground='$academicBackground',
+academicStrengths='$academicStrengths',
+cgpa='$cgpa',
+expertise='$expertise',
+availability='$availability'
+WHERE matricNoTutor='$matricNoTutor'
+");
 
-    name='$name',
-    programme='$programme',
-    institution='$institution',
-    currentStatus='$currentStatus',
-    academicBackground='$academicBackground',
-    academicStrengths='$academicStrengths',
-    cgpa='$cgpa',
-    expertise='$expertise',
-    availability='$availability',
-    contactNumber='$contactNumber',
-    email='$email'
+    $updateUser = mysqli_query($conn, "
+UPDATE user
+SET
+name='$name',
+email='$email',
+mobile_phone='$contactNumber'
+WHERE matricNoStudent='$matricNoTutor'
+");
 
-    WHERE matricNoTutor='$matricNoTutor'
-    ");
-
-    if ($update) {
+    if ($updateTutor && $updateUser) {
         echo "<script>
 
         alert('Profile updated successfully.');
@@ -190,7 +196,8 @@ if (isset($_POST['btnSubmit'])) {
         }
 
         input,
-        textarea {
+        textarea,
+        select {
 
             width: 100%;
             padding: 10px;
@@ -323,11 +330,43 @@ if (isset($_POST['btnSubmit'])) {
 
                         <label>Current Status</label>
 
-                        <input
-                            type="text"
+                        <select
                             name="currentStatus"
-                            value="<?php echo htmlspecialchars($currentStatus); ?>"
                             required>
+
+                            <option value="">-- Select Current Status --</option>
+
+                            <option value="Year 1 Semester 1"
+                                <?php if ($currentStatus == "Year 1 Semester 1") echo "selected"; ?>>
+                                Year 1 Semester 1
+                            </option>
+
+                            <option value="Year 1 Semester 2"
+                                <?php if ($currentStatus == "Year 1 Semester 2") echo "selected"; ?>>
+                                Year 1 Semester 2
+                            </option>
+
+                            <option value="Year 2 Semester 1"
+                                <?php if ($currentStatus == "Year 2 Semester 1") echo "selected"; ?>>
+                                Year 2 Semester 1
+                            </option>
+
+                            <option value="Year 2 Semester 2"
+                                <?php if ($currentStatus == "Year 2 Semester 2") echo "selected"; ?>>
+                                Year 2 Semester 2
+                            </option>
+
+                            <option value="Year 3 Semester 1"
+                                <?php if ($currentStatus == "Year 3 Semester 1") echo "selected"; ?>>
+                                Year 3 Semester 1
+                            </option>
+
+                            <option value="Year 3 Semester 2"
+                                <?php if ($currentStatus == "Year 3 Semester 2") echo "selected"; ?>>
+                                Year 3 Semester 2
+                            </option>
+
+                        </select>
 
                     </div>
 
