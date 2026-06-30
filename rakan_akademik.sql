@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 30, 2026 at 09:53 AM
+-- Generation Time: Jun 30, 2026 at 09:24 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -94,14 +94,6 @@ CREATE TABLE `quiz` (
   `attempts` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `quiz`
---
-
-INSERT INTO `quiz` (`quizID`, `matricNoTutor`, `title`, `description`, `category`, `difficulty`, `cover`, `time_limit`, `attempts`) VALUES
-('Q1782805417', 'D032410688', 'Programming II', 'Test your knowledge about programming II', 'Programming', 'Medium', 'uploads/1782805417_download.jpg', 10, 2),
-('Q1782805806', 'D041910322', 'DSA', 'Test your brain ', 'Data Structure & Algorithm', 'Hard', 'uploads/1782805806_Data Structures and Algorithm.jpg', 10, 2);
-
 -- --------------------------------------------------------
 
 --
@@ -117,14 +109,6 @@ CREATE TABLE `quiz_attempts` (
   `user_answer` text NOT NULL,
   `attempt_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `quiz_attempts`
---
-
-INSERT INTO `quiz_attempts` (`attemptID`, `quizID`, `matricNoStudent`, `score`, `total_question`, `user_answer`, `attempt_date`) VALUES
-(11, 'Q1782805417', 'D032410657', 1, 5, '{\"43\":\"A\",\"44\":\"C\",\"45\":\"A\",\"46\":\"A\",\"47\":\"B\"}', '2026-06-30 07:52:08'),
-(12, 'Q1782805806', 'D032410657', 3, 4, '{\"48\":\"A\",\"49\":\"D\",\"50\":\"A\",\"51\":\"D\"}', '2026-06-30 07:52:22');
 
 -- --------------------------------------------------------
 
@@ -142,21 +126,6 @@ CREATE TABLE `quiz_question` (
   `optionD` varchar(255) NOT NULL,
   `correct_answer` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `quiz_question`
---
-
-INSERT INTO `quiz_question` (`questionID`, `quizID`, `question`, `optionA`, `optionB`, `optionC`, `optionD`, `correct_answer`) VALUES
-(43, 'Q1782805417', 'Which PHP function is used to connect to a MySQL database using MySQLi?', 'mysqli_open()', 'mysqli_connect()', 'mysql_connect()', 'db_connect()', 'B'),
-(44, 'Q1782805417', 'Which symbol is used to concatenate two strings in PHP?', '+', '&', '.', '=', 'C'),
-(45, 'Q1782805417', 'Which SQL statement is used to retrieve data from a table?', 'INSERT', 'UPDATE', 'SELECT', 'DELETE', 'C'),
-(46, 'Q1782805417', 'Which function starts a session in PHP?', 'session_open()', 'start_session()', 'session_start()', 'session_begin()', 'C'),
-(47, 'Q1782805417', 'Which statement is used to repeat a block of code when the number of iterations is known?', 'while', 'do...while', 'foreach', 'for', 'D'),
-(48, 'Q1782805806', 'Which data structure is most suitable for implementing recursion?', 'Queue', 'Stack', 'Linked List', 'Heap', 'B'),
-(49, 'Q1782805806', 'What is the worst-case time complexity of Quick Sort?', 'O(n)', 'O(log n)', 'O(n log n)', 'O(n²)', 'D'),
-(50, 'Q1782805806', 'Which operation on a balanced Binary Search Tree has time complexity O(log n)?', 'All of the above', 'Search', 'Insert', 'Delete', 'A'),
-(51, 'Q1782805806', 'Which tree guarantees minimum height after insertions and deletions? ', 'Binary Tree', 'Huffman Tree', 'Huffman Tree', 'AVL Tree', 'D');
 
 -- --------------------------------------------------------
 
@@ -307,9 +276,9 @@ CREATE TABLE `tutor_application` (
 --
 
 INSERT INTO `tutor_application` (`applicationID`, `matricNoStudent`, `cgpa`, `expertise`, `availability`, `contactNumber`, `email`, `reason`, `transcript`, `applicationDate`, `status`, `popupStatus`, `name`, `programme`, `institution`, `currentStatus`, `academicBackground`, `academicStrengths`) VALUES
-(6, 'D032410688', 3.82, 'Programming, Data Structure', 'Monday – Friday (8:00 PM – 10:00 PM), Saturday (10:00 AM – 1:00 PM)', '0176234510', 'd032410688@student.utem.edu.my', 'I want to become a Rakan Akademik to help other students succeed in their studies while improving my communication and leadership skills.', '1782802941_Transcript_Nur_Iman_Sofea.pdf', '2026-06-30 15:02:21', 'Approved', 1, 'Nur Iman Sofea Binti Omar', 'Diploma in Science Computer', 'Universiti Teknikal Malaysia Melaka (UTeM)', 'Active Student', 'I am currently pursuing a Diploma in Computer Science at UTeM. Throughout my studies, I have consistently performed well in programming, database systems, web development, and data structures while actively participating in group projects and practical assignments', 'Strong problem-solving skills, programming fundamentals, object-oriented programming, database management, web development, teamwork, communication, and analytical thinking.'),
-(7, 'B041910321', 3.87, 'Programming', 'Monday – Friday (8:00 PM – 10:00 PM), Saturday (9:00 AM – 12:00 PM)', '01259641030', 'b041910321@student.utem.edu.my', 'I want to become a Rakan Akademik to help fellow students improve their understanding of computer science subjects (programming) while enhancing my communication and leadership skills.', '1782803546_Transcript_Ahmad_Haziq.pdf', '2026-06-30 15:12:26', 'Approved', 1, 'Ahmad Haziq Bin Azman', 'Bachelor of Computer Science (Software Development)', 'Universiti Teknikal Malaysia Melaka (UTeM)', 'Active Student', 'I am currently pursuing a Bachelor of Computer Science (Software Development) at UTeM. My academic focus is on programming, software development, data structures, algorithms, and web application development. I have completed several programming projects using Java, PHP, HTML, CSS, JavaScript, and MySQL.', 'Strong programming skills, object-oriented programming (Java), PHP, web development, problem-solving, data structures and algorithms, database management (MySQL), and software development.'),
-(8, 'D041910322', 3.90, 'Data Structure', 'Monday – Friday (8:00 PM – 10:00 PM), Saturday (10:00 AM – 1:00 PM)', '01117849658', 'd041910322@student.utem.edu.my', 'I want to become a Rakan Akademik to help fellow students understand database concepts and improve their practical skills while developing my communication and leadership abilities.', '1782804074_Transcript_Nur_Syazwani.pdf', '2026-06-30 15:21:14', 'Approved', 1, 'Nur Aina Syazwani Binti Hassan', 'Diploma in Science Computer', 'Universiti Teknikal Malaysia Melaka (UTeM)', 'Active Student', 'I am currently pursuing a Diploma in Computer Science at UTeM. My academic focus is on database management, SQL, data modelling, and web application development. I have completed several projects involving MySQL, database design, and PHP-based systems.', 'Strong database management skills, SQL, database design, ERD, normalization, MySQL, problem-solving, and web development.');
+(6, 'D032410688', 3.82, 'Programming, Data Structure', 'Monday – Friday (8:00 PM – 10:00 PM), Saturday (10:00 AM – 1:00 PM)', '0176234510', 'd032410688@student.utem.edu.my', 'I want to become a Rakan Akademik to help other students succeed in their studies while improving my communication and leadership skills.', '1782802941_Transcript_Nur_Iman_Sofea.pdf', '2026-06-30 15:02:21', 'Approved', 0, 'Nur Iman Sofea Binti Omar', 'Diploma in Science Computer', 'Universiti Teknikal Malaysia Melaka (UTeM)', 'Active Student', 'I am currently pursuing a Diploma in Computer Science at UTeM. Throughout my studies, I have consistently performed well in programming, database systems, web development, and data structures while actively participating in group projects and practical assignments', 'Strong problem-solving skills, programming fundamentals, object-oriented programming, database management, web development, teamwork, communication, and analytical thinking.'),
+(7, 'B041910321', 3.87, 'Programming', 'Monday – Friday (8:00 PM – 10:00 PM), Saturday (9:00 AM – 12:00 PM)', '01259641030', 'b041910321@student.utem.edu.my', 'I want to become a Rakan Akademik to help fellow students improve their understanding of computer science subjects (programming) while enhancing my communication and leadership skills.', '1782803546_Transcript_Ahmad_Haziq.pdf', '2026-06-30 15:12:26', 'Approved', 0, 'Ahmad Haziq Bin Azman', 'Bachelor of Computer Science (Software Development)', 'Universiti Teknikal Malaysia Melaka (UTeM)', 'Active Student', 'I am currently pursuing a Bachelor of Computer Science (Software Development) at UTeM. My academic focus is on programming, software development, data structures, algorithms, and web application development. I have completed several programming projects using Java, PHP, HTML, CSS, JavaScript, and MySQL.', 'Strong programming skills, object-oriented programming (Java), PHP, web development, problem-solving, data structures and algorithms, database management (MySQL), and software development.'),
+(8, 'D041910322', 3.90, 'Data Structure', 'Monday – Friday (8:00 PM – 10:00 PM), Saturday (10:00 AM – 1:00 PM)', '01117849658', 'd041910322@student.utem.edu.my', 'I want to become a Rakan Akademik to help fellow students understand database concepts and improve their practical skills while developing my communication and leadership abilities.', '1782804074_Transcript_Nur_Syazwani.pdf', '2026-06-30 15:21:14', 'Approved', 0, 'Nur Aina Syazwani Binti Hassan', 'Diploma in Science Computer', 'Universiti Teknikal Malaysia Melaka (UTeM)', 'Active Student', 'I am currently pursuing a Diploma in Computer Science at UTeM. My academic focus is on database management, SQL, data modelling, and web application development. I have completed several projects involving MySQL, database design, and PHP-based systems.', 'Strong database management skills, SQL, database design, ERD, normalization, MySQL, problem-solving, and web development.');
 
 -- --------------------------------------------------------
 
@@ -462,13 +431,13 @@ ALTER TABLE `chapters`
 -- AUTO_INCREMENT for table `quiz_attempts`
 --
 ALTER TABLE `quiz_attempts`
-  MODIFY `attemptID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `attemptID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `quiz_question`
 --
 ALTER TABLE `quiz_question`
-  MODIFY `questionID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+  MODIFY `questionID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT for table `resources`
