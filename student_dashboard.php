@@ -130,6 +130,29 @@ session_start();
         .card h2{
             margin-top:15px;
         }
+
+        .logout-container{
+            width:100%;
+            display:flex;
+            justify-content:center;
+            margin:20px 0 40px;
+        }
+        
+        .logout-btn{
+            background:#d9534f;
+            color:white;
+            border:none;
+            padding:12px 35px;
+            border-radius:30px;
+            font-size:18px;
+            cursor:pointer;
+            transition:0.3s;
+        }
+        
+        .logout-btn:hover{
+            background:#c9302c;
+            transform:scale(1.05);
+        }
     </style>
 </head>
 <body>
@@ -188,8 +211,13 @@ if(isset($_SESSION['approvedMessage']))
         <img src="images/tutor.jpg" alt="">
         <h2>Rakan Akademik</h2>
     </div>
-
 </section>
+
+<div class="logout-container">
+    <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+</div>
 
 <script>
 function openPage(page){
