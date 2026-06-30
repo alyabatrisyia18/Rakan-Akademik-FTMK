@@ -378,10 +378,37 @@ if (isset($_POST['btnSubmit'])) {
 
                 <label>Current Status</label>
 
-                <input
-                    type="text"
+                <select
                     name="currentStatus"
                     required>
+
+                    <option value="">-- Select Current Status --</option>
+
+                    <option value="Year 1 Semester 1">
+                        Year 1 Semester 1
+                    </option>
+
+                    <option value="Year 1 Semester 2">
+                        Year 1 Semester 2
+                    </option>
+
+                    <option value="Year 2 Semester 1">
+                        Year 2 Semester 1
+                    </option>
+
+                    <option value="Year 2 Semester 2">
+                        Year 2 Semester 2
+                    </option>
+
+                    <option value="Year 3 Semester 1">
+                        Year 3 Semester 1
+                    </option>
+
+                    <option value="Year 3 Semester 2">
+                        Year 3 Semester 2
+                    </option>
+
+                </select>
 
             </div>
 
@@ -475,10 +502,10 @@ if (isset($_POST['btnSubmit'])) {
                 <label>Email</label>
 
                 <input
-    type="email"
-    name="email"
-    value="<?php echo strtolower($matricNoStudent); ?>@student.utem.edu.my"
-    readonly>
+                    type="email"
+                    name="email"
+                    value="<?php echo strtolower($matricNoStudent); ?>@student.utem.edu.my"
+                    readonly>
 
             </div>
 
