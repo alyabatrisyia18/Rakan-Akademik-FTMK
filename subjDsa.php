@@ -11,9 +11,8 @@ $matric = $_SESSION['matric'];
 
 // Check expertise tutor untuk DSA
 $checkExpertise = mysqli_query($conn, "
-    SELECT expertise FROM tutor_application
-    WHERE matricNoStudent='$matric'
-    AND status='Approved'
+    SELECT expertise FROM tutor
+    WHERE matricNoTutor='$matric'
 ");
 
 $canEdit = false;
