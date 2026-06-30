@@ -1,29 +1,21 @@
 <?php
 session_start();
 
-if(isset($_SESSION['popupStatus']))
-{
+if (isset($_SESSION['popupStatus'])) {
 
-    if($_SESSION['popupStatus']=="Approved")
-    {
+    if ($_SESSION['popupStatus'] == "Approved") {
 
         echo "<script>
         alert('Congratulations! Your tutor application has been approved.');
         </script>";
-
-    }
-
-    elseif($_SESSION['popupStatus']=="Rejected")
-    {
+    } elseif ($_SESSION['popupStatus'] == "Rejected") {
 
         echo "<script>
         alert('Sorry. Your tutor application has been rejected.');
         </script>";
-
     }
 
     unset($_SESSION['popupStatus']);
-
 }
 
 if (!isset($_SESSION['matric'])) {
@@ -58,58 +50,97 @@ if (!$hasStudent || !$hasTutor) {
     <title>Choose Dashboard</title>
 
     <style>
-        body {
+        * {
             margin: 0;
-            font-family: Segoe UI, sans-serif;
-            background-image: url('images/edubackground.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url('images/edubackground.jpg') center center/cover no-repeat fixed;
         }
 
         .container {
             width: 100%;
-            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
 
         .box {
-            width: 420px;
-            background: rgba(255, 255, 255, .9);
-            padding: 40px;
-            border-radius: 15px;
+            width: 450px;
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 45px 40px;
             text-align: center;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, .2);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
         }
 
         h1 {
-            color: #1f3f98;
-            margin-bottom: 10px;
+            color: #184D9A;
+            font-size: 32px;
+            margin-bottom: 15px;
         }
 
         p {
-            color: #555;
-            margin-bottom: 25px;
+            color: #666;
+            font-size: 17px;
+            margin-bottom: 35px;
+            line-height: 1.6;
+        }
+
+        p b {
+            color: #184D9A;
         }
 
         .btn {
             display: block;
             width: 100%;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 18px;
+            border-radius: 12px;
             text-decoration: none;
-            color: white;
-            background: #3fa9f5;
+            color: #fff;
+            font-size: 17px;
             font-weight: bold;
-            transition: .3s;
+            transition: 0.3s;
+        }
+
+        .btn:first-of-type {
+            background: #3B82F6;
+        }
+
+        .btn:last-of-type {
+            background: #1E40AF;
         }
 
         .btn:hover {
-            background: #1b8ce3;
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+            opacity: .95;
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        @media(max-width:500px) {
+
+            .box {
+                width: 95%;
+                padding: 35px 25px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
         }
     </style>
 
@@ -131,8 +162,8 @@ if (!$hasStudent || !$hasTutor) {
 
             </p>
 
-            
-                <a href="set_role.php?dashboard=student" class="btn">
+
+            <a href="set_role.php?dashboard=student" class="btn">
 
                 Student Dashboard
 
