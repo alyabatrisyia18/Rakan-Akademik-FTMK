@@ -7,10 +7,10 @@ if(!isset($_SESSION['matric'])){
     exit();
 }
 $matric = $_SESSION['matric'];
+
 $checkExpertise = mysqli_query($conn, "
-    SELECT expertise FROM tutor_application
-    WHERE matricNoStudent='$matric'
-    AND status='Approved'
+    SELECT expertise FROM tutor
+    WHERE matricNoTutor='$matric'
 ");
 
 $canEdit = false;
