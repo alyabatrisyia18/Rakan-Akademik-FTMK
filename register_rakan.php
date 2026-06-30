@@ -47,15 +47,17 @@ $email = $user['email'];
 $contactNumber = $user['mobile_phone'];
 $programme = $student['course'];
 
-$checkApplication = mysqli_query($conn, "
+mysqli_query($conn,"
+DELETE FROM tutor_application
+WHERE matricNoStudent='$matricNoStudent'
+AND status='Rejected'
+");
+
+$checkApplication = mysqli_query($conn,"
 SELECT *
 FROM tutor_application
 WHERE matricNoStudent='$matricNoStudent'
-AND
-(
-status='Pending'
-OR status='Approved'
-)
+AND status IN ('Pending','Approved')
 ");
 
 if (mysqli_num_rows($checkApplication) > 0) {
