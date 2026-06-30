@@ -38,6 +38,7 @@ if (isset($_POST["approve"])) {
         $institution        = $data['institution'];
         $currentStatus      = $data['currentStatus'];
         $academicBackground = $data['academicBackground'];
+        $academicStrengths = $data['academicStrengths'];
         $cgpa               = $data['cgpa'];
         $availability       = $data['availability'];
         $contactNumber      = $data['contactNumber'];
@@ -62,6 +63,7 @@ if (isset($_POST["approve"])) {
                 institution,
                 currentStatus,
                 academicBackground,
+                academicStrengths,
                 cgpa,
                 availability,
                 contactNumber,
@@ -78,6 +80,7 @@ if (isset($_POST["approve"])) {
                 '$institution',
                 '$currentStatus',
                 '$academicBackground',
+                '$academicStrengths',
                 '$cgpa',
                 '$availability',
                 '$contactNumber',
