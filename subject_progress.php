@@ -22,6 +22,7 @@ $summary_result = mysqli_query($conn,$summary_sql);
 $summary = mysqli_fetch_assoc($summary_result);
 $history_sql = "SELECT
 
+qa.attemptID,
 q.quizID,
 q.title,
 
@@ -327,7 +328,7 @@ else
 
 <td>
 
-<a href="view_question.php?quiz=<?php echo $history['quizID']; ?>" class="view-btn">
+<a href="view_question.php?attempt=<?php echo $history['attemptID']; ?>" class="view-btn">
 
 <i class="fas fa-eye"></i>
 
