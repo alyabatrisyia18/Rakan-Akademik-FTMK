@@ -41,8 +41,8 @@ $sql = "
 SELECT *
 FROM `teaching record`
 WHERE matricNoTutor='$matricNoTutor'
-AND sessionDate <= CURDATE()
-AND (approvalStatus IS NULL OR approvalStatus = '')
+AND TIMESTAMP(sessionDate,endTime) <= NOW()
+AND (approvalStatus IS NULL OR approvalStatus='')
 ORDER BY sessionDate DESC
 ";
 
@@ -179,6 +179,21 @@ while ($row = mysqli_fetch_assoc($result)) {
     </div>
 
     <script>
+         function toggleSidebar() {
+            const sidebar =
+                document.getElementById("sidebar");
+
+            const content =
+                document.querySelector(".content");
+
+            sidebar.classList.toggle("collapsed");
+
+            if (sidebar.classList.contains("collapsed")) {
+                content.style.marginLeft = "80px";
+            } else {
+                content.style.marginLeft = "250px";
+            }
+        }
         function calculateEarning() {
             let hour = document.getElementById("hours").value;
 

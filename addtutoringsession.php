@@ -3,6 +3,7 @@ session_start();
 include("db_connect.php");
 $matricNoTutor = $_SESSION['matric'];
 
+
 if (isset($_POST['addSession'])) {
     $subject = $_POST['subject'];
     $sessionDate = $_POST['sessionDate'];
@@ -13,59 +14,113 @@ if (isset($_POST['addSession'])) {
 
     $meetingLink = !empty($_POST['meetingLink'])
         ? $_POST['meetingLink']
-        : '';
+        : "";
 
     $venue = !empty($_POST['venue'])
         ? $_POST['venue']
-        : '';
+        : "";
 
-    if ($sessionType == "Online" && empty($meetingLink)) {
-        echo "<script>
-        alert('Please enter Meeting Link');
-        </script>";
+    $startDateTime = strtotime($sessionDate . " " . $startTime);
+    $endDateTime = strtotime($sessionDate . " " . $endTime);
+    $duration = ($endDateTime - $startDateTime) / 3600;
+
+    if ($endDateTime <= $startDateTime) {
+        echo "
+    <script>
+    alert('End time must be later than start time.');
+    window.history.back();
+    </script>";
+        exit();
+    } elseif ($duration < 1) {
+        echo "
+    <script>
+    alert('Tutoring session must be at least 1 hour.');
+    window.history.back();
+    </script>";
+        exit();
+    } elseif ($startDateTime < time()) {
+        echo "
+    <script>
+    alert('You cannot create a tutoring session in the past.');
+    window.history.back();
+    </script>";
+        exit();
+    } elseif ($sessionType == "Online" && empty($meetingLink)) {
+        echo "
+    <script>
+    alert('Please enter Meeting Link.');
+    window.history.back();
+    </script>";
+        exit();
     } elseif ($sessionType == "Face to Face" && empty($venue)) {
-        echo "<script>
-        alert('Please enter Venue');
-        </script>";
+        echo "
+    <script>
+    alert('Please enter Venue.');
+    window.history.back();
+    </script>";
+        exit();
     } else {
-        // nanti ambil dari login
-        $matricNoTutor = $_SESSION['matric'];
-
-        $recordID = "R" . rand(100, 999);
-
-        $sql = "INSERT INTO `teaching record`
-        (
-            recordID,
-            matricNoTutor,
-            subject,
-            sessionDate,
-            teachingStatus,
-            startTime,
-            endTime,
-            sessionType,
-            meetingLink,
-            venue
+        // Check duplicate session
+        $checkSql = "
+        SELECT *
+        FROM `teaching record`
+        WHERE matricNoTutor='$matricNoTutor'
+        AND sessionDate='$sessionDate'
+        AND (
+            ('$startTime' < endTime)
+            AND
+            ('$endTime' > startTime)
         )
-        VALUES
-        (
-            '$recordID',
-            '$matricNoTutor',
-            '$subject',
-            '$sessionDate',
-            'Available',
-            '$startTime',
-            '$endTime',
-            '$sessionType',
-            '$meetingLink',
-            '$venue'
-        )";
+        ";
 
-        if (mysqli_query($conn, $sql)) {
-            echo "<script>
-            alert('Tutoring Session Added Successfully!');
+        $checkResult = mysqli_query($conn, $checkSql);
+
+        if (mysqli_num_rows($checkResult) > 0) {
+            echo "
+            <script>
+            alert('You already have another tutoring session during this time.');
             </script>";
         } else {
-            echo mysqli_error($conn);
+            $recordID = "R" . rand(100, 999);
+
+            $sql = "
+            INSERT INTO `teaching record`
+            (
+                recordID,
+                matricNoTutor,
+                subject,
+                sessionDate,
+                teachingStatus,
+                startTime,
+                endTime,
+                sessionType,
+                meetingLink,
+                venue
+            )
+            VALUES
+            (
+                '$recordID',
+                '$matricNoTutor',
+                '$subject',
+                '$sessionDate',
+                'Available',
+                '$startTime',
+                '$endTime',
+                '$sessionType',
+                '$meetingLink',
+                '$venue'
+            )
+            ";
+
+            if (mysqli_query($conn, $sql)) {
+                echo "
+                <script>
+                alert('Tutoring Session Added Successfully!');
+                window.location='mytutoringsession.php';
+                </script>";
+            } else {
+                echo mysqli_error($conn);
+            }
         }
     }
 }
@@ -224,6 +279,22 @@ if (isset($_POST['addSession'])) {
     </div>
 
     <script>
+        function toggleSidebar() {
+            const sidebar =
+                document.getElementById("sidebar");
+
+            const content =
+                document.querySelector(".content");
+
+            sidebar.classList.toggle("collapsed");
+
+            if (sidebar.classList.contains("collapsed")) {
+                content.style.marginLeft = "80px";
+            } else {
+                content.style.marginLeft = "250px";
+            }
+        }
+
         function toggleSessionType() {
             let type =
                 document.getElementById("sessionType").value;

@@ -158,18 +158,15 @@ $result = mysqli_query($conn, $sql);
 
                     <td>
 
-<?php
-if(strtolower($row['paymentStatus']) == "paid")
-{
-    echo "<span class='approved'>PAID</span>";
-}
-else
-{
-    echo "<span class='reject'>REJECTED</span>";
-}
-?>
+                        <?php
+                        if (strtolower($row['paymentStatus']) == "paid") {
+                            echo "<span class='approved'>PAID</span>";
+                        } else {
+                            echo "<span class='reject'>REJECTED</span>";
+                        }
+                        ?>
 
-</td>
+                    </td>
 
                 </tr>
 

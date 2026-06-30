@@ -57,7 +57,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 
         <div class="header-icons">
             <i class="fas fa-home" onclick="location.href='dashboard.php'"></i>
-        <i class="far fa-user-circle" onclick="location.href='profile.php'" title="profile"></i>
+            <i class="far fa-user-circle" onclick="location.href='profile.php'" title="profile"></i>
         </div>
 
     </div>
@@ -118,41 +118,55 @@ while ($row = mysqli_fetch_assoc($result)) {
                 <th>STATUS</th>
             </tr>
 
-            <?php foreach ($data as $row) { ?>
+            <?php
+            if (count($data) > 0) {
+                foreach ($data as $row) {
+            ?>
+                    <tr>
+                        <td><?php echo date("d/m/Y", strtotime($row['sessionDate'])); ?></td>
+                        <td><?php echo $row['subject']; ?></td>
+                        <td><?php echo $row['hours']; ?> hrs</td>
+                        <td>RM <?php echo $rate; ?></td>
+                        <td>
+                            RM <?php echo number_format($row['estimatedEarning'], 2); ?>
+                        </td>
+
+                        <td>
+                            <?php
+                            if (!empty($row['approvalDate'])) {
+                                echo date("d/m/Y", strtotime($row['approvalDate']));
+                            } else {
+                                echo "-";
+                            }
+                            ?>
+                        </td>
+
+                        <td>
+                            <?php
+                            if ($row['approvalStatus'] == "Approved") {
+                            ?>
+                                <button class="approved">APPROVED</button>
+                            <?php
+                            } else {
+                            ?>
+                                <button class="reject">REJECTED</button>
+                            <?php
+                            }
+                            ?>
+                        </td>
+                    </tr>
+                <?php
+                }
+            } else {
+                ?>
                 <tr>
-                    <td><?php echo date("d/m/Y", strtotime($row['sessionDate'])); ?></td>
-                    <td><?php echo $row['subject']; ?></td>
-                    <td><?php echo $row['hours']; ?> hrs</td>
-                    <td>RM <?php echo $rate; ?></td>
-                    <td>
-                        RM <?php echo number_format($row['estimatedEarning'], 2); ?>
-                    </td>
-
-                    <td>
-                        <?php
-                        if (!empty($row['approvalDate'])) {
-                            echo date("d/m/Y", strtotime($row['approvalDate']));
-                        } else {
-                            echo "-";
-                        }
-                        ?>
-                    </td>
-
-                    <td>
-                        <?php
-                        if ($row['approvalStatus'] == "Approved") {
-                        ?>
-                            <button class="approved">APPROVED</button>
-                        <?php
-                        } else {
-                        ?>
-                            <button class="reject">REJECTED</button>
-                        <?php
-                        }
-                        ?>
+                    <td colspan="7" style="text-align:center;">
+                        No earnings record found.
                     </td>
                 </tr>
-            <?php } ?>
+            <?php
+            }
+            ?>
 
             <tr class="total-row">
                 <td colspan="5">Total Earnings</td>
@@ -162,6 +176,24 @@ while ($row = mysqli_fetch_assoc($result)) {
             </tr>
         </table>
     </div>
+    <script>
+        function toggleSidebar() {
+            const sidebar =
+                document.getElementById("sidebar");
+
+            const content =
+                document.querySelector(".content");
+
+            sidebar.classList.toggle("collapsed");
+
+            if (sidebar.classList.contains("collapsed")) {
+                content.style.marginLeft = "80px";
+            } else {
+                content.style.marginLeft = "250px";
+            }
+        }
+    </script>
+
 </body>
 
 </html>

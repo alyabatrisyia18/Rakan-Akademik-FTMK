@@ -90,17 +90,6 @@ if (isset($_POST['btnUpdate'])) {
     WHERE matricNoStudent='$matric'
     ");
 
-    if ($isTutor) {
-
-        mysqli_query($conn, "
-        UPDATE tutor
-        SET
-            email='$email',
-            contactNumber='$phone'
-        WHERE matricNoTutor='$matric'
-        ");
-    }
-
     echo "
     <script>
         alert('Profile updated successfully.');
