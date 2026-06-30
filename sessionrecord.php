@@ -113,6 +113,23 @@ $result = mysqli_query($conn, $sql);
         </table>
         <p>Note : Sessions marked as pending are waiting admin review before being approved for payment</p>
     </div>
+    <script>
+         function toggleSidebar() {
+            const sidebar =
+                document.getElementById("sidebar");
+
+            const content =
+                document.querySelector(".content");
+
+            sidebar.classList.toggle("collapsed");
+
+            if (sidebar.classList.contains("collapsed")) {
+                content.style.marginLeft = "80px";
+            } else {
+                content.style.marginLeft = "250px";
+            }
+        }
+    </script>
 </body>
 
 </html>

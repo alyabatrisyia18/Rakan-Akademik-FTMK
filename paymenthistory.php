@@ -67,10 +67,11 @@ $result = mysqli_query($conn, $sql);
         </div>
 
 
-        <i class="fas fa-home"
-            onclick="location.href='admin_dashboard.php'"></i>
-
-    </div>
+        <div class="header-icons">
+            <i class="fas fa-home"
+                onclick="location.href='admin_dashboard.php'"
+                title="Dashboard"></i>
+        </div>
 
     </div>
 
@@ -158,18 +159,15 @@ $result = mysqli_query($conn, $sql);
 
                     <td>
 
-<?php
-if(strtolower($row['paymentStatus']) == "paid")
-{
-    echo "<span class='approved'>PAID</span>";
-}
-else
-{
-    echo "<span class='reject'>REJECTED</span>";
-}
-?>
+                        <?php
+                        if (strtolower($row['paymentStatus']) == "paid") {
+                            echo "<span class='approved'>PAID</span>";
+                        } else {
+                            echo "<span class='reject'>REJECTED</span>";
+                        }
+                        ?>
 
-</td>
+                    </td>
 
                 </tr>
 

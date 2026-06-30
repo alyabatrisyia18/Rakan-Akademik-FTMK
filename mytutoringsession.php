@@ -6,21 +6,39 @@ $matricNoTutor = $_SESSION['matric'];
 
 // Upcoming sessions
 $upcomingSql = "
-SELECT *
-FROM `teaching record`
-WHERE matricNoTutor='$matricNoTutor'
-AND TIMESTAMP(sessionDate, endTime) > NOW()
-ORDER BY sessionDate ASC
+SELECT
+    tr.*
+FROM `teaching record` tr
+
+INNER JOIN tutor
+ON tr.matricNoTutor = tutor.matricNoTutor
+
+INNER JOIN user
+ON tutor.matricNoStudent = user.matricNoStudent
+
+WHERE tr.matricNoTutor='$matricNoTutor'
+AND TIMESTAMP(tr.sessionDate, tr.endTime) > NOW()
+
+ORDER BY tr.sessionDate ASC
 ";
 $upcomingResult = mysqli_query($conn, $upcomingSql);
 
 // Completed sessions
 $completedSql = "
-SELECT *
-FROM `teaching record`
-WHERE matricNoTutor='$matricNoTutor'
-AND TIMESTAMP(sessionDate, endTime) <= NOW()
-ORDER BY sessionDate DESC
+SELECT
+    tr.*
+FROM `teaching record` tr
+
+INNER JOIN tutor
+ON tr.matricNoTutor = tutor.matricNoTutor
+
+INNER JOIN user
+ON tutor.matricNoStudent = user.matricNoStudent
+
+WHERE tr.matricNoTutor='$matricNoTutor'
+AND TIMESTAMP(tr.sessionDate,tr.endTime) <= NOW()
+
+ORDER BY tr.sessionDate DESC
 ";
 $completedResult = mysqli_query($conn, $completedSql);
 ?>
@@ -47,7 +65,7 @@ $completedResult = mysqli_query($conn, $completedSql);
         <div class="header-icons">
             <i class="fas fa-home" onclick="location.href='dashboard.php'"></i>
             <i class="far fa-user-circle" onclick="location.href='profile.php'" title="profile"></i>
-            
+
         </div>
     </div>
 
@@ -66,8 +84,8 @@ $completedResult = mysqli_query($conn, $completedSql);
     </div>
 
     <div class="content">
-        
-    <h1>My Tutoring Session</h1>
+
+        <h1>My Tutoring Session</h1>
         <div class="tab">
 
             <span
@@ -92,6 +110,55 @@ $completedResult = mysqli_query($conn, $completedSql);
         <div id="upcomingTable">
 
             <table>
+                    <tr>
+                        <th>DATE</th>
+                        <th>SUBJECT</th>
+                        <th>TIME</th>
+                        <th>SLOT</th>
+                        <th>ACTION</th>
+                    </tr>
+
+                    <?php
+if(mysqli_num_rows($upcomingResult)>0)
+{
+    while($row=mysqli_fetch_assoc($upcomingResult))
+    {
+        $recordID = $row['recordID'];
+
+        $countSql = "SELECT COUNT(*) AS total
+                     FROM booking
+                     WHERE recordID='$recordID'";
+
+        $countResult = mysqli_query($conn,$countSql);
+        $countRow = mysqli_fetch_assoc($countResult);
+        $totalStudent = $countRow['total'];
+?>
+                        <tr>
+                            <td><?php echo date("d/m/Y", strtotime($row['sessionDate'])); ?></td>
+                            <td><?php echo $row['subject']; ?></td>
+                            <td><?php echo date("h:i A", strtotime($row['startTime'])) . " - " . date("h:i A", strtotime($row['endTime'])); ?></td>
+                            <td><?php echo $totalStudent . "/10"; ?></td>
+                            <td><button class="upcoming">UPCOMING</button></td>
+                        </tr>
+
+                    <?php
+                    }
+                } else {
+                    ?>
+                    <tr>
+                        <td colspan="5" style="text-align:center;">
+                            No upcoming sessions.
+                        </td>
+                    </tr>
+                <?php
+                }
+                ?>
+            </table>
+
+        </div>
+
+        <div id="completedTable" style="display:none;">
+            <table>
                 <tr>
                     <th>DATE</th>
                     <th>SUBJECT</th>
@@ -101,53 +168,34 @@ $completedResult = mysqli_query($conn, $completedSql);
                 </tr>
 
                 <?php
-                while ($row = mysqli_fetch_assoc($upcomingResult)) {
-                    $recordID = $row['recordID'];
+                if (mysqli_num_rows($completedResult) > 0) {
+                    while ($row = mysqli_fetch_assoc($completedResult)) {
+                        $recordID = $row['recordID'];
 
-                    $countSql = "SELECT COUNT(*) AS total FROM booking WHERE recordID='$recordID'";
-                    $countResult = mysqli_query($conn, $countSql);
-                    $countRow = mysqli_fetch_assoc($countResult);
-                    $totalStudent = $countRow['total'];
+                        $countSql = "SELECT COUNT(*) AS total FROM booking WHERE recordID='$recordID'";
+                        $countResult = mysqli_query($conn, $countSql);
+                        $countRow = mysqli_fetch_assoc($countResult);
+                        $totalStudent = $countRow['total'];
                 ?>
+                        <tr>
+                            <td><?php echo date("d/m/Y", strtotime($row['sessionDate'])); ?></td>
+                            <td><?php echo $row['subject']; ?></td>
+                            <td><?php echo date("h:i A", strtotime($row['startTime'])) . " - " . date("h:i A", strtotime($row['endTime'])); ?></td>
+                            <td><?php echo $totalStudent . "/10"; ?></td>
+                            <td><button class="complete">COMPLETE</button></td>
+                        </tr>
+                    <?php
+                    }
+                } else {
+                    ?>
                     <tr>
-                        <td><?php echo date("d/m/Y", strtotime($row['sessionDate'])); ?></td>
-                        <td><?php echo $row['subject']; ?></td>
-                        <td><?php echo date("h:i A", strtotime($row['startTime'])) . " - " . date("h:i A", strtotime($row['endTime'])); ?></td>
-                        <td><?php echo $totalStudent . "/10"; ?></td>
-                        <td><button class="upcoming">UPCOMING</button></td>
+                        <td colspan="5" style="text-align:center;">
+                            No completed sessions.
+                        </td>
                     </tr>
-                <?php } ?>
-            </table>
-
-        </div>
-
-        <div id="completedTable" style="display:none;">
-            <table>
-            <tr>
-                <th>DATE</th>
-                <th>SUBJECT</th>
-                <th>TIME</th>
-                <th>SLOT</th>
-                <th>ACTION</th>
-            </tr>
-
-            <?php
-            while ($row = mysqli_fetch_assoc($completedResult)) {
-                $recordID = $row['recordID'];
-
-                $countSql = "SELECT COUNT(*) AS total FROM booking WHERE recordID='$recordID'";
-                $countResult = mysqli_query($conn, $countSql);
-                $countRow = mysqli_fetch_assoc($countResult);
-                $totalStudent = $countRow['total'];
-            ?>
-                <tr>
-                    <td><?php echo date("d/m/Y", strtotime($row['sessionDate'])); ?></td>
-                    <td><?php echo $row['subject']; ?></td>
-                    <td><?php echo date("h:i A", strtotime($row['startTime'])) . " - " . date("h:i A", strtotime($row['endTime'])); ?></td>
-                    <td><?php echo $totalStudent . "/10"; ?></td>
-                    <td><button class="complete">COMPLETE</button></td>
-                </tr>
-            <?php } ?>
+                <?php
+                }
+                ?>
             </table>
 
         </div>

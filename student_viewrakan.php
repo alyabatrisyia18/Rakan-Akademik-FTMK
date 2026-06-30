@@ -2,34 +2,36 @@
 session_start();
 include("db_connect.php");
 
-if(!isset($_SESSION['matric']))
+if (!isset($_SESSION['matric']))
 {
     header("Location:login.php");
     exit();
 }
 
-if(!isset($_GET['id']))
+if (!isset($_GET['id']))
 {
-    header("Location:student_rakan.php");
+    header("Location:rakan_page.php");
     exit();
 }
 
-$matricNoTutor = mysqli_real_escape_string($conn,$_GET['id']);
+$matricNoTutor = mysqli_real_escape_string($conn, $_GET['id']);
 
-$sql = mysqli_query($conn,"
-SELECT *
+$sql = mysqli_query($conn, "
+SELECT tutor.*, user.name, user.email, user.mobile_phone
 FROM tutor
-WHERE matricNoTutor='$matricNoTutor'
+INNER JOIN user
+ON tutor.matricNoTutor = user.matricNoStudent
+WHERE tutor.matricNoTutor = '$matricNoTutor'
 ");
 
-if(mysqli_num_rows($sql)==0)
+if (mysqli_num_rows($sql) == 0)
 {
     echo "
     <script>
 
     alert('Tutor not found.');
 
-    window.location='student_rakan.php';
+    window.location='rakan_page.php';
 
     </script>
     ";
@@ -39,6 +41,7 @@ if(mysqli_num_rows($sql)==0)
 $data = mysqli_fetch_assoc($sql);
 
 ?>
+
 <!DOCTYPE html>
 
 <html>
@@ -258,7 +261,7 @@ Contact Number
 
 </div>
 
-<?php echo htmlspecialchars($data['contactNumber']); ?>
+<?php echo htmlspecialchars($data['mobile_phone']); ?>
 
 </div>
 
@@ -273,6 +276,7 @@ Email
 <?php echo htmlspecialchars($data['email']); ?>
 
 </div>
+
 </div>
 
 </div>

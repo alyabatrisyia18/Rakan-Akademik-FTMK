@@ -4,9 +4,8 @@ include("db_connect.php");
 
 $matricNoStudent = $_SESSION['matric'];
 
-if(isset($_POST['bookSession']))
-{
-    $bookingID = "B" . rand(100,999);
+if (isset($_POST['bookSession'])) {
+    $bookingID = "B" . rand(100, 999);
 
     $recordID = $_POST['recordID'];
     $matricNoTutor = $_POST['matricNoTutor'];
@@ -41,7 +40,7 @@ if(isset($_POST['bookSession']))
         '$recordID'
     )";
 
-    mysqli_query($conn,$insert);
+    mysqli_query($conn, $insert);
 
     echo "
     <script>
@@ -51,13 +50,23 @@ if(isset($_POST['bookSession']))
 }
 
 
-$sql = "SELECT *
-        FROM `teaching record`
-        INNER JOIN tutor
-        ON `teaching record`.matricNoTutor = tutor.matricNoTutor
-        WHERE teachingStatus='Available'";
+$sql = "
+SELECT
+    `teaching record`.*,
+    tutor.matricNoStudent,
+    user.name
+FROM `teaching record`
 
-$result = mysqli_query($conn,$sql);
+INNER JOIN tutor
+ON `teaching record`.matricNoTutor = tutor.matricNoTutor
+
+INNER JOIN user
+ON tutor.matricNoStudent = user.matricNoStudent
+
+WHERE teachingStatus='Available'
+";
+
+$result = mysqli_query($conn, $sql);
 
 $pastSql = "
 SELECT
@@ -69,7 +78,8 @@ SELECT
     `teaching record`.sessionType,
     `teaching record`.meetingLink,
     `teaching record`.venue,
-    tutor.name
+    user.name
+
 FROM booking
 
 INNER JOIN `teaching record`
@@ -78,10 +88,13 @@ ON booking.recordID = `teaching record`.recordID
 INNER JOIN tutor
 ON booking.matricNoTutor = tutor.matricNoTutor
 
+INNER JOIN user
+ON tutor.matricNoStudent = user.matricNoStudent
+
 WHERE booking.matricNoStudent='$matricNoStudent'
 ";
 
-$pastResult = mysqli_query($conn,$pastSql);
+$pastResult = mysqli_query($conn, $pastSql);
 ?>
 
 <!DOCTYPE html>
@@ -89,412 +102,412 @@ $pastResult = mysqli_query($conn,$pastSql);
 
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Book Tutoring Session</title>
+    <title>Book Tutoring Session</title>
 
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-<link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css">
 
 </head>
 
 <body>
 
-<div class="header">
+    <div class="header">
 
-    <div class="header-left">
+        <div class="header-left">
 
-        <img src="images/logoRakan.png"
-             alt="Rakan Akademik"
-             class="header-logo">
+            <img src="images/logoRakan.png"
+                alt="Rakan Akademik"
+                class="header-logo">
 
-        <img src="images/logoUtem.png"
-             alt="UTeM"
-             class="header-logo">
+            <img src="images/logoUtem.png"
+                alt="UTeM"
+                class="header-logo">
 
-        <img src="images/logoFtmk.png"
-             alt="FTMK"
-             class="header-logo">
+            <img src="images/logoFtmk.png"
+                alt="FTMK"
+                class="header-logo">
 
-    </div>
+        </div>
 
-    <div class="header-icons">
+        <div class="header-icons">
 
-        <i class="fas fa-home"
-           onclick="location.href='student_dashboard.php'"
-           title="Dashboard"></i>
+            <i class="fas fa-home"
+                onclick="location.href='student_dashboard.php'"
+                title="Dashboard"></i>
 
-        <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
-
-        
-
-    </div>
-
-</div>
-
-<div id="sidebar" class="sidebar">
-
-    <div class="menu-btn" onclick="toggleSidebar()">
-        ☰
-    </div>
-
-    <h2>Student</h2>
-    <nav>
-        <ul>
-
-            <li>
-                <a href="booking.php" class="active-menu">
-                    Booking Class
-                </a>
-            </li>
-
-            <li>
-                <a href="myclassschedule.php">
-                    My Class Schedule
-                </a>
-            </li>
-
-        </ul>
-    </nav>
-
-</div>
-<!-- test -->
+            <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
 
 
-<div class="content">
 
-    <h1>Book Tutoring Session</h1>
-
-    <div class="tab">
-
-        <span id="upcomingTab"
-              class="active-tab"
-              onclick="showUpcoming()">
-
-            Upcoming
-
-        </span>
-
-        <span id="bookingtab"
-              onclick="showBookings()">
-
-            My Booking
-
-        </span>
+        </div>
 
     </div>
 
-    <div id="upcomingTable">
+    <div id="sidebar" class="sidebar">
 
-        <table>
+        <div class="menu-btn" onclick="toggleSidebar()">
+            ☰
+        </div>
 
-            <tr>
+        <h2>Student</h2>
+        <nav>
+            <ul>
 
-                <th>DATE & TIME</th>
-                <th>SUBJECT</th>
-                <th>TUTOR NAME</th>
-                <th>ACTION</th>
+                <li>
+                    <a href="booking.php" class="active-menu">
+                        Booking Class
+                    </a>
+                </li>
 
-            </tr>
+                <li>
+                    <a href="myclassschedule.php">
+                        My Class Schedule
+                    </a>
+                </li>
 
-            <?php
-            while($row = mysqli_fetch_assoc($result))
-            {
-                $recordID = $row['recordID'];
+            </ul>
+        </nav>
 
-                $isTutorSession = ($matricNoStudent == $row['matricNoTutor']);
+    </div>
+    <!-- test -->
 
-                $checkBooking = mysqli_query(
-                    $conn,
-                    "SELECT *
+
+    <div class="content">
+
+        <h1>Book Tutoring Session</h1>
+
+        <div class="tab">
+
+            <span id="upcomingTab"
+                class="active-tab"
+                onclick="showUpcoming()">
+
+                Upcoming
+
+            </span>
+
+            <span id="bookingtab"
+                onclick="showBookings()">
+
+                My Booking
+
+            </span>
+
+        </div>
+
+        <div id="upcomingTable">
+
+            <table>
+
+                <tr>
+
+                    <th>DATE & TIME</th>
+                    <th>SUBJECT</th>
+                    <th>TUTOR NAME</th>
+                    <th>ACTION</th>
+
+                </tr>
+
+                <?php
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $recordID = $row['recordID'];
+
+                    $isTutorSession = ($matricNoStudent == $row['matricNoTutor']);
+
+                    $checkBooking = mysqli_query(
+                        $conn,
+                        "SELECT *
                     FROM booking
                     WHERE recordID='$recordID'
 AND matricNoStudent='$matricNoStudent'"
-                );
+                    );
 
-                $alreadyBooked = mysqli_num_rows($checkBooking);
+                    $alreadyBooked = mysqli_num_rows($checkBooking);
 
-                $countSql = "SELECT COUNT(*) AS total
+                    $countSql = "SELECT COUNT(*) AS total
                              FROM booking
                              WHERE recordID='$recordID'";
 
-                $countResult = mysqli_query($conn,$countSql);
+                    $countResult = mysqli_query($conn, $countSql);
 
-                $countRow = mysqli_fetch_assoc($countResult);
+                    $countRow = mysqli_fetch_assoc($countResult);
 
-                $totalStudent = $countRow['total'];
-            ?>
+                    $totalStudent = $countRow['total'];
+                    $isFull = ($totalStudent >= 10);
+                ?>
 
-            <tr>
+                    <tr>
 
-                <td>
+                        <td>
 
-                    <?php
-                    echo date(
-                        "d F Y",
-                        strtotime($row['sessionDate'])
-                    );
-                    ?>
+                            <?php
+                            echo date(
+                                "d F Y",
+                                strtotime($row['sessionDate'])
+                            );
+                            ?>
 
-                    <br>
+                            <br>
 
-                    <small>
+                            <small>
 
-                        <?php
-                        echo date(
-                            "h:i A",
-                            strtotime($row['startTime'])
-                        );
-                        ?>
+                                <?php
+                                echo date(
+                                    "h:i A",
+                                    strtotime($row['startTime'])
+                                );
+                                ?>
 
-                        -
+                                -
 
-                        <?php
-                        echo date(
-                            "h:i A",
-                            strtotime($row['endTime'])
-                        );
-                        ?>
+                                <?php
+                                echo date(
+                                    "h:i A",
+                                    strtotime($row['endTime'])
+                                );
+                                ?>
 
-                    </small>
+                            </small>
 
-                </td>
+                        </td>
 
-                <td>
-                    <?php echo $row['subject']; ?>
-                </td>
+                        <td>
+                            <?php echo $row['subject']; ?>
+                        </td>
 
-                <td>
-                    <?php echo $row['name']; ?>
-                </td>
+                        <td>
+                            <?php echo $row['name']; ?>
+                        </td>
 
-                <td>
+                        <td>
 
-                    <form method="POST">
+                            <form method="POST">
 
-                        <input
-                        type="hidden"
-                        name="recordID"
-                        value="<?php echo $row['recordID']; ?>">
+                                <input
+                                    type="hidden"
+                                    name="recordID"
+                                    value="<?php echo $row['recordID']; ?>">
 
-                        <input
-                        type="hidden"
-                        name="matricNoTutor"
-                        value="<?php echo $row['matricNoTutor']; ?>">
+                                <input
+                                    type="hidden"
+                                    name="matricNoTutor"
+                                    value="<?php echo $row['matricNoTutor']; ?>">
 
-                        <input
-                        type="hidden"
-                        name="subject"
-                        value="<?php echo $row['subject']; ?>">
+                                <input
+                                    type="hidden"
+                                    name="subject"
+                                    value="<?php echo $row['subject']; ?>">
 
-                        <input
-                        type="hidden"
-                        name="startTime"
-                        value="<?php echo $row['startTime']; ?>">
+                                <input
+                                    type="hidden"
+                                    name="startTime"
+                                    value="<?php echo $row['startTime']; ?>">
 
-                        <input
-                        type="hidden"
-                        name="endTime"
-                        value="<?php echo $row['endTime']; ?>">
+                                <input
+                                    type="hidden"
+                                    name="endTime"
+                                    value="<?php echo $row['endTime']; ?>">
 
-                        <?php
-                        if($isTutorSession)
-                        {
-                        ?>
+                                <?php
+                                if ($isTutorSession) {
+                                ?>
 
-                            <button
-                            type="button"
-                            class="available"
-                            onclick="alert('You are the tutor for this session. You cannot attend your own class.')">
+                                    <button
+                                        type="button"
+                                        class="available"
+                                        onclick="alert('You are the tutor for this session. You cannot attend your own class.')">
 
-                                ATTEND
+                                        ATTEND
+
+                                    </button>
+
+                                <?php
+                                } elseif ($alreadyBooked > 0) {
+                                ?>
+
+                                    <button
+                                        type="button"
+                                        class="attended"
+                                        disabled>
+
+                                        ATTENDED
+
+                                    </button>
+
+                                <?php
+                                } elseif ($isFull) {
+                                ?>
+
+                                    <button
+                                        type="button"
+                                        class="attended"
+                                        disabled>
+
+                                        FULL
+
+                                    </button>
+
+                                <?php
+                                } else {
+                                ?>
+
+                                    <button
+                                        type="submit"
+                                        name="bookSession"
+                                        class="available">
+
+                                        ATTEND
+
+                                    </button>
+
+                                <?php
+                                }
+                                ?>
+
+                                <span class="student-count">
+                                    👥 <?php echo $totalStudent; ?>/10
+                                </span>
+
+                            </form>
+
+                        </td>
+
+                    </tr>
+
+                <?php
+                }
+                ?>
+
+            </table>
+
+        </div>
+
+        <div id="bookings" style="display:none;">
+
+            <table>
+
+                <tr>
+                    <th>DATE & TIME</th>
+                    <th>BOOKING ID</th>
+                    <th>SUBJECT</th>
+                    <th>TUTOR</th>
+                    <th>STATUS</th>
+
+                </tr>
+
+                <?php
+                while ($pastRow = mysqli_fetch_assoc($pastResult)) {
+                ?>
+
+                    <tr>
+                        <td>
+
+                            <?php
+                            echo date(
+                                "d F Y",
+                                strtotime($pastRow['sessionDate'])
+                            );
+                            ?>
+
+                            <br>
+
+                            <small>
+
+                                <?php
+                                echo date(
+                                    "h:i A",
+                                    strtotime($pastRow['startTime'])
+                                );
+                                ?>
+
+                                -
+
+                                <?php
+                                echo date(
+                                    "h:i A",
+                                    strtotime($pastRow['endTime'])
+                                );
+                                ?>
+
+                            </small>
+
+                        </td>
+
+                        <td>
+                            <?php echo $pastRow['bookingID']; ?>
+                        </td>
+
+                        <td>
+                            <?php echo $pastRow['subject']; ?>
+                        </td>
+
+                        <td>
+                            <?php echo $pastRow['name']; ?>
+                        </td>
+
+                        <td>
+
+                            <button class="completed">
+
+                                <?php
+                                echo $pastRow['bookingStatus'];
+                                ?>
 
                             </button>
 
-                        <?php
-                        }
-                        elseif($alreadyBooked > 0)
-                        {
-                        ?>
+                        </td>
 
-                            <button
-                            type="button"
-                            class="attended"
-                            disabled>
+                    </tr>
 
-                                ATTENDED
+                <?php
+                }
+                ?>
 
-                            </button>
+            </table>
 
-                        <?php
-                        }
-                        else
-                        {
-                        ?>
-
-                            <button
-                            type="submit"
-                            name="bookSession"
-                            class="available">
-
-                                ATTEND
-
-                            </button>
-
-                        <?php
-                        }
-                        ?>
-
-                        <span class="student-count">
-                            👥 <?php echo $totalStudent; ?>/10
-                        </span>
-
-                    </form>
-
-                </td>
-
-            </tr>
-
-            <?php
-            }
-            ?>
-
-        </table>
+        </div>
 
     </div>
 
-    <div id="bookings" style="display:none;">
+    <script>
+        function toggleSidebar() {
+            const sidebar =
+                document.getElementById("sidebar");
 
-        <table>
+            const content =
+                document.querySelector(".content");
 
-            <tr>
-                <th>DATE & TIME</th>
-                <th>BOOKING ID</th>
-                <th>SUBJECT</th>
-                <th>TUTOR</th>
-                <th>STATUS</th>
+            sidebar.classList.toggle("collapsed");
 
-            </tr>
-
-            <?php
-            while($pastRow = mysqli_fetch_assoc($pastResult))
-            {
-            ?>
-
-            <tr>
-                <td>
-
-                    <?php
-                    echo date(
-    "d F Y",
-    strtotime($pastRow['sessionDate'])
-);
-                    ?>
-
-                    <br>
-
-                    <small>
-
-                        <?php
-                        echo date(
-                            "h:i A",
-                            strtotime($pastRow['startTime'])
-                        );
-                        ?>
-
-                        -
-
-                        <?php
-                        echo date(
-                            "h:i A",
-                            strtotime($pastRow['endTime'])
-                        );
-                        ?>
-
-                    </small>
-
-                </td>
-
-                <td>
-                    <?php echo $pastRow['bookingID']; ?>
-                </td>
-
-                <td>
-                    <?php echo $pastRow['subject']; ?>
-                </td>
-
-                <td>
-                    <?php echo $pastRow['name']; ?>
-                </td>
-
-                <td>
-
-                    <button class="completed">
-
-                        <?php
-                        echo $pastRow['bookingStatus'];
-                        ?>
-
-                    </button>
-
-                </td>
-
-            </tr>
-
-            <?php
+            if (sidebar.classList.contains("collapsed")) {
+                content.style.marginLeft = "80px";
+            } else {
+                content.style.marginLeft = "250px";
             }
-            ?>
+        }
 
-        </table>
+        function showBookings() {
+            document.getElementById("upcomingTable").style.display = "none";
+            document.getElementById("bookings").style.display = "block";
 
-    </div>
+            document.getElementById("upcomingTab").classList.remove("active-tab");
+            document.getElementById("bookingtab").classList.add("active-tab");
+        }
 
-</div>
+        function showUpcoming() {
+            document.getElementById("upcomingTable").style.display = "block";
+            document.getElementById("bookings").style.display = "none";
 
-<script>
-
-function toggleSidebar()
-{
-    const sidebar =
-        document.getElementById("sidebar");
-
-    const content =
-        document.querySelector(".content");
-
-    sidebar.classList.toggle("collapsed");
-
-    if(sidebar.classList.contains("collapsed"))
-    {
-        content.style.marginLeft = "80px";
-    }
-    else
-    {
-        content.style.marginLeft = "250px";
-    }
-}
-
-function showBookings()
-{
-    document.getElementById("upcomingTable").style.display = "none";
-    document.getElementById("bookings").style.display = "block";
-
-    document.getElementById("upcomingTab").classList.remove("active-tab");
-    document.getElementById("bookingtab").classList.add("active-tab");
-}
-
-function showUpcoming()
-{
-    document.getElementById("upcomingTable").style.display = "block";
-    document.getElementById("bookings").style.display = "none";
-
-    document.getElementById("bookingtab").classList.remove("active-tab");
-    document.getElementById("upcomingTab").classList.add("active-tab");
-}
-
-</script>
+            document.getElementById("bookingtab").classList.remove("active-tab");
+            document.getElementById("upcomingTab").classList.add("active-tab");
+        }
+    </script>
 
 </body>
+
 </html>
