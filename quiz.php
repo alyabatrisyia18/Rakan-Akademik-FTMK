@@ -305,7 +305,7 @@ $resultList = mysqli_query($conn, $sqlList);
 </header>
 
 <div class="menu-bar">
-    <a href="tutor_progress.php" class="active-menu">Progress Tracker</a>
+    <a href="tutor_progress.php" class="active-menu">Tutor Progress Tracker</a>
 </div>
 
 <div class="main-container">

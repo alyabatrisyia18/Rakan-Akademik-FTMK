@@ -27,6 +27,14 @@ if (!$quiz) {
     exit();
 }
 
+if ($quiz['matricNoTutor'] == $matricNoStudent) {
+    echo "<script>
+        alert('You cannot attempt your own quiz');
+        window.location.href='category.php';
+    </script>";
+    exit();
+}
+
 $sqlAttempt = "SELECT COUNT(*) AS total_attempt
                FROM quiz_attempts
                WHERE quizID = ? AND matricNoStudent = ?";

@@ -86,6 +86,26 @@ $result = mysqli_query($conn, $sql);
             color: #2748A5;
         }
 
+        .logout-container{
+            text-align:center;
+            margin:30px 0 50px;
+        }
+        
+        .logout-btn{
+            background:#dc3545;
+            color:white;
+            border:none;
+            padding:12px 35px;
+            border-radius:30px;
+            font-size:16px;
+            cursor:pointer;
+            transition:0.3s;
+        }
+        
+        .logout-btn:hover{
+            background:#b52a37;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -141,7 +161,6 @@ $result = mysqli_query($conn, $sql);
 
         <div class="icons">
             <i class="fas fa-home" onclick="location.href='admin_dashboard.php'"></i>
-            <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
         </div>
     </div>
 
@@ -153,9 +172,12 @@ $result = mysqli_query($conn, $sql);
             <th>Matric No</th>
             <th>Name</th>
             <th>Email</th>
+            <th>contactNumber</th>
+            <th>programme</th>
             <th>CGPA</th>
             <th>Expertise</th>
             <th>Availability</th>
+            <th>currentStatus</th>
             <th>Reason</th>
             <th>Transcript</th>
             <th>Action</th>
@@ -193,7 +215,7 @@ $result = mysqli_query($conn, $sql);
                             ?>
                         </td>
 
-                        <td>
+                         <td>
                             <form method="POST" action="approve_reject.php" style="display:inline;">
                                 <input type="hidden" name="applicationID" value="<?php echo $row["applicationID"]; ?>">
                                 <input type="submit" name="approve" value="Approve" class="btn approve">
