@@ -9,8 +9,7 @@ $sql = "SELECT matricNoStudent, name, email, mobile_phone, role, status
         FROM user
         WHERE 1=1";
 
-if($search != "")
-{
+if ($search != "") {
     $sql .= " AND (
                 matricNoStudent LIKE '%$search%'
                 OR name LIKE '%$search%'
@@ -19,16 +18,11 @@ if($search != "")
               )";
 }
 
-if($role == "Student")
-{
+if ($role == "Student") {
     $sql .= " AND role LIKE '%Student%'";
-}
-else if($role == "Tutor")
-{
+} else if ($role == "Tutor") {
     $sql .= " AND role LIKE '%Tutor%'";
-}
-else if($role == "Student,Tutor")
-{
+} else if ($role == "Student,Tutor") {
     $sql .= " AND role='Student,Tutor'";
 }
 
@@ -38,247 +32,231 @@ $result = mysqli_query($conn, $sql);
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <title>User List</title>
 
     <style>
-
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:Arial, sans-serif;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
         }
 
-        body{
-            background-image:url('images/edubackground.jpg');
-            background-size:cover;
-            background-position:center;
-            background-repeat:no-repeat;
-            background-attachment:fixed;
+        body {
+            background-image: url('images/edubackground.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
         }
 
-        header{
-            background:#1f3f98;
-            color:white;
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            padding:15px 30px;
+        header {
+            background: #1f3f98;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
         }
 
-        .logo img{
-            height:60px;
-            width:auto;
+        .logo img {
+            height: 60px;
+            width: auto;
+        }
+        
+        .icons {
+            display: flex;
+            align-items: center;
+            gap: 20px;
         }
 
-        .welcome{
-            background:#284db6;
-            color:white;
-            text-align:center;
-            padding:20px;
+        .icons i {
+            font-size: 26px;
+            cursor: pointer;
+            color: white;
         }
 
-        .welcome h1{
-            font-size:32px;
+        .welcome {
+            background: #284db6;
+            color: white;
+            text-align: center;
+            padding: 20px;
         }
 
-        .container{
-    width:90%;
-    margin:30px auto;
-    background:white;
-    border-radius:15px;
-    padding:25px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.2);
-}
+        .welcome h1 {
+            font-size: 32px;
+        }
 
-.top-bar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:20px;
-}
+        .container {
+            width: 90%;
+            margin: 30px auto;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
 
-.search-box input{
-    width:280px;
-    padding:10px;
-    border:1px solid #ccc;
-    border-radius:8px;
-}
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
 
-.filter select{
-    padding:10px;
-    border-radius:8px;
-    border:1px solid #ccc;
-}
+        .search-box input {
+            width: 280px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
 
-table{
-    width:100%;
-    border-collapse:collapse;
-}
+        .filter select {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
 
-th{
-    background:#1f3f98;
-    color:white;
-    padding:15px;
-}
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-td{
-    padding:12px;
-    border-bottom:1px solid #ddd;
-    text-align:center;
-}
+        th {
+            background: #1f3f98;
+            color: white;
+            padding: 15px;
+        }
 
-tr:nth-child(even){
-    background:#f7f7f7;
-}
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
 
-tr:hover{
-    background:#eef3ff;
-}
+        tr:nth-child(even) {
+            background: #f7f7f7;
+        }
 
-.view-btn{
-    color:#1f3f98;
-    font-size:18px;
-    text-decoration:none;
-}
-   .back-btn{
-    text-align:center;
-    margin-top:30px;
-}
+        tr:hover {
+            background: #eef3ff;
+        }
 
-.back-btn a{
-    display:inline-block;
-    background:#1f3f98;
-    color:white;
-    text-decoration:none;
-    padding:12px 25px;
-    border-radius:8px;
-    font-weight:bold;
-    transition:0.3s;
-}
-
-.back-btn a:hover{
-    background:#16337d;
-}     
-
+        .view-btn {
+            color: #1f3f98;
+            font-size: 18px;
+            text-decoration: none;
+        }
     </style>
 
 </head>
 
 <body>
 
-<header>
+    <header>
 
-    <div class="logo">
-        <img src="images/logoRakan.png" alt="Rakan Akademik Logo">
-        <img src="images/logoUtem.png" alt="UTeM Logo">
-        <img src="images/logoFtmk.png" alt="FTMK Logo">
-    </div>
+        <div class="logo">
+            <img src="images/logoRakan.png" alt="Rakan Akademik Logo">
+            <img src="images/logoUtem.png" alt="UTeM Logo">
+            <img src="images/logoFtmk.png" alt="FTMK Logo">
+        </div>
 
-</header>
+        <div class="icons">
+            <i class="fas fa-home" onclick="location.href='admin_dashboard.php'"></i>
+        </div>
 
-<section class="welcome">
-    <h1>USER LIST</h1>
-</section>
+    </header>
 
-<section class="container">
+    <section class="welcome">
+        <h1>USER LIST</h1>
+    </section>
 
-   <div class="top-bar">
+    <section class="container">
 
-    <form method="GET">
+        <div class="top-bar">
 
-        <div class="search-box">
+            <form method="GET">
 
-            <input
-                type="text"
-                name="search"
-                placeholder="Search user..."
-                value="<?php echo htmlspecialchars($search); ?>">
+                <div class="search-box">
 
-            <button type="submit">
-                <i class="fas fa-search"></i>
-            </button>
+                    <input
+                        type="text"
+                        name="search"
+                        placeholder="Search user..."
+                        value="<?php echo htmlspecialchars($search); ?>">
+
+                    <button type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+
+                </div>
+
+                <div class="filter">
+
+                    <select name="role" onchange="this.form.submit()">
+
+                        <option value="" <?php if ($role == "") echo "selected"; ?>>All Users</option>
+                        <option value="Student" <?php if ($role == "Student") echo "selected"; ?>>Student</option>
+                        <option value="Tutor" <?php if ($role == "Tutor") echo "selected"; ?>>Tutor</option>
+
+                    </select>
+
+                </div>
+
+            </form>
 
         </div>
 
-        <div class="filter">
+        <table>
 
-            <select name="role" onchange="this.form.submit()">
+            <tr>
+                <th>User ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
 
-                <option value="" <?php if($role=="") echo "selected"; ?>>All Users</option>
-                <option value="Student" <?php if($role=="Student") echo "selected"; ?>>Student</option>
-                <option value="Tutor" <?php if($role=="Tutor") echo "selected"; ?>>Tutor</option>
+            <?php
+            while ($row = mysqli_fetch_assoc($result)) {
+            ?>
+                <tr>
 
-            </select>
+                    <td><?php echo $row['matricNoStudent']; ?></td>
 
-        </div>
+                    <td><?php echo $row['name']; ?></td>
 
-    </form>
+                    <td><?php echo $row['email']; ?></td>
 
-</div>
+                    <td><?php echo $row['mobile_phone']; ?></td>
 
-    <table>
+                    <td><?php echo $row['role']; ?></td>
 
-        <tr>
-            <th>User ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone Number</th>
-            <th>Role</th>
-            <th>Status</th>
-            <th>Action</th>
-        </tr>
+                    <td><?php echo $row['status']; ?></td>
 
-       <?php
-while($row = mysqli_fetch_assoc($result))
-{
-?>
-<tr>
+                    <td>
+                        <a href="view_user.php?id=<?php echo $row['matricNoStudent']; ?>" class="view-btn">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                    </td>
 
-    <td><?php echo $row['matricNoStudent']; ?></td>
+                </tr>
+            <?php
+            }
+            ?>
 
-    <td><?php echo $row['name']; ?></td>
-
-    <td><?php echo $row['email']; ?></td>
-
-    <td><?php echo $row['mobile_phone']; ?></td>
-
-    <td><?php echo $row['role']; ?></td>
-
-    <td><?php echo $row['status']; ?></td>
-
-    <td>
-    <a href="view_user.php?id=<?php echo $row['matricNoStudent']; ?>" class="view-btn">
-        <i class="fas fa-eye"></i>
-    </a>
-</td>
-
-</tr>
-<?php
-}
-?>
-
-    </table>
-
-    <div class="back-btn">
-
-    <a href="admin_dashboard.php">
-
-        <i class="fas fa-arrow-left"></i>
-
-        Back
-
-    </a>
-    </div>
-
-</section>
+        </table>
+    </section>
 
 </body>
+
 </html>
