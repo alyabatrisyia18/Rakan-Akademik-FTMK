@@ -1,5 +1,31 @@
 <?php
 session_start();
+
+if(isset($_SESSION['popupStatus']))
+{
+
+    if($_SESSION['popupStatus']=="Approved")
+    {
+
+        echo "<script>
+        alert('Congratulations! Your tutor application has been approved.');
+        </script>";
+
+    }
+
+    elseif($_SESSION['popupStatus']=="Rejected")
+    {
+
+        echo "<script>
+        alert('Sorry. Your tutor application has been rejected.');
+        </script>";
+
+    }
+
+    unset($_SESSION['popupStatus']);
+
+}
+
 ?>
 
 <!DOCTYPE html>
