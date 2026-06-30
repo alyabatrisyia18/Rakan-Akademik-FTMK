@@ -1,10 +1,49 @@
 <?php
 include("db_connect.php");
+$sqlSubject = "
+SELECT
+q.category,
+ROUND(AVG((qa.score/qa.total_question)*100),2) AS averageScore
 
-$programmingAverage = 78;
-$dsaAverage = 65;
-$bestSubject = "Programming";
-$highestAverage = 78;
+FROM quiz_attempts qa
+
+INNER JOIN quiz q
+ON qa.quizID=q.quizID
+
+GROUP BY q.category";
+
+$resultSubject = mysqli_query($conn,$sqlSubject);
+
+$labels = [];
+$scores = [];
+
+$programmingAverage = 0;
+$dsaAverage = 0;
+
+$bestSubject = "";
+$highestAverage = 0;
+
+while($row = mysqli_fetch_assoc($resultSubject))
+{
+    $labels[] = $row['category'];
+    $scores[] = round($row['averageScore'],2);
+
+    if($row['category'] == "Programming")
+    {
+        $programmingAverage = $row['averageScore'];
+    }
+
+    if($row['category'] == "Data Structure & Algorithm")
+    {
+        $dsaAverage = $row['averageScore'];
+    }
+
+    if($row['averageScore'] > $highestAverage)
+    {
+        $highestAverage = $row['averageScore'];
+        $bestSubject = $row['category'];
+    }
+}
 
 $sqlPerformance = "
 SELECT
@@ -231,8 +270,8 @@ $result = mysqli_query($conn, $sql);
 }
 
 .chart-wrapper{
-    width:80%;
-    height: 500px;
+    width:90%;
+    height:320px;
     margin:0 auto;
 }
 
@@ -322,22 +361,64 @@ $result = mysqli_query($conn, $sql);
 
     <div class="summary-card">
         <h3>Total Students</h3>
-        <p>35</p>
+       <?php
+
+$totalStudent=mysqli_query($conn,"
+SELECT COUNT(*) total
+FROM user
+WHERE role LIKE '%Student%'");
+
+$totalStudent=mysqli_fetch_assoc($totalStudent);
+
+?>
+
+<p><?php echo $totalStudent['total']; ?></p>
     </div>
 
     <div class="summary-card">
         <h3>Total Tutors</h3>
-        <p>8</p>
+        <?php
+
+$totalTutor=mysqli_query($conn,"
+SELECT COUNT(*) total
+FROM user
+WHERE role LIKE '%Tutor%'");
+
+$totalTutor=mysqli_fetch_assoc($totalTutor);
+
+?>
+
+<p><?php echo $totalTutor['total']; ?></p>
     </div>
 
     <div class="summary-card">
         <h3>Total Quizzes</h3>
-        <p>12</p>
+        <?php
+
+$totalQuiz=mysqli_query($conn,"
+SELECT COUNT(*) total
+FROM quiz");
+
+$totalQuiz=mysqli_fetch_assoc($totalQuiz);
+
+?>
+
+<p><?php echo $totalQuiz['total']; ?></p>
     </div>
 
     <div class="summary-card">
         <h3>Total Attempts</h3>
-        <p>150</p>
+       <?php
+
+$totalAttempt=mysqli_query($conn,"
+SELECT COUNT(*) total
+FROM quiz_attempts");
+
+$totalAttempt=mysqli_fetch_assoc($totalAttempt);
+
+?>
+
+<p><?php echo $totalAttempt['total']; ?></p>
     </div>
 
 </div>
@@ -446,41 +527,59 @@ $result = mysqli_query($conn, $sql);
 
         data: {
 
-            labels: ['Programming', 'Data Structure & Algorithm'],
+            labels: <?php echo json_encode($labels); ?>,
 
-            datasets: [{
+datasets: [{
 
-                label: 'Average Score (%)',
+    label: 'Average Score (%)',
 
-                data: [78, 65],
+    data: <?php echo json_encode($scores); ?>,
 
                 backgroundColor: ['#7c2e12', '#4CAF50'],
 
-                borderRadius: 8
+                borderRadius: 8,
+                barThickness:140
 
             }]
 
 
         },
 
-        options: {
+      options: {
 
-            responsive: true,
+    responsive: true,
+    maintainAspectRatio: false,
 
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
+    plugins: {
+        legend: {
+            display: false
+        }
+    },
 
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100
+    scales: {
+
+        y: {
+            beginAtZero: true,
+            max: 100,
+            ticks: {
+                stepSize: 10,
+                font: {
+                    size: 14
                 }
             }
+        },
 
+        x: {
+            ticks: {
+                font: {
+                    size: 14
+                }
+            }
         }
+
+    }
+
+}
 
     });
 
