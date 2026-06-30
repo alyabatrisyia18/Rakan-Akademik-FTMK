@@ -220,6 +220,10 @@ if(isset($_SESSION['approvedMessage']))
 </div>
 
 <script>
+function logout(){
+    window.location.href = "logout.php";
+}
+
 function openPage(page){
 
     switch(page){
