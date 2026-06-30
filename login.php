@@ -35,9 +35,8 @@ if (isset($_POST["btnLogin"])) {
         <script>
 
         alert('User not found.');
-
-        </script>
-        ";
+    window.location='login.php';
+    </script>";
 
         exit();
     }
@@ -49,9 +48,8 @@ if (isset($_POST["btnLogin"])) {
         <script>
 
         alert('Wrong Password');
-
-        </script>
-        ";
+    window.location='login.php';
+    </script>";
 
         exit();
     }
@@ -62,8 +60,8 @@ if (isset($_POST["btnLogin"])) {
 
         alert('Your account is inactive.');
 
-        </script>
-        ";
+    window.location='login.php';
+    </script>";
 
         exit();
     }
