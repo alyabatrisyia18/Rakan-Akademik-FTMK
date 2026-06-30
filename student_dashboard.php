@@ -244,6 +244,5 @@ function openPage(page){
     }
 }
 </script>
-//
 </body>
 </html>
