@@ -46,6 +46,13 @@ $result = mysqli_query($conn, $sql);
     <title>Approve Tutor</title>
 
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
         body {
             font-family: Segoe UI, sans-serif;
             background: #f4f6fb;
@@ -232,7 +239,7 @@ $result = mysqli_query($conn, $sql);
             } else {
                 ?>
                 <tr>
-                    <td colspan="9" style="text-align:center;"> No Tutor Awaiting Approval</td>
+                    <td colspan="12" style="text-align:center;"> No Tutor Awaiting Approval</td>
                 </tr>
             <?php
             }
