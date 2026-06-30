@@ -59,7 +59,7 @@ if (isset($_GET['reject'])) {
 
     $recordID = $_GET['reject'];
 
-    mysqli_query($conn,"
+    mysqli_query($conn, "
     UPDATE `teaching record`
     SET
     approvalStatus='Rejected',
@@ -68,7 +68,7 @@ if (isset($_GET['reject'])) {
     ");
 
     // Get earning
-    $getRecord = mysqli_query($conn,"
+    $getRecord = mysqli_query($conn, "
     SELECT estimatedEarning
     FROM `teaching record`
     WHERE recordID='$recordID'
@@ -77,20 +77,19 @@ if (isset($_GET['reject'])) {
     $record = mysqli_fetch_assoc($getRecord);
 
     // Generate Payment ID
-    do{
+    do {
 
-        $paymentID = "PAY".rand(100,999);
+        $paymentID = "PAY" . rand(100, 999);
 
-        $check = mysqli_query($conn,"
+        $check = mysqli_query($conn, "
         SELECT *
         FROM payment
         WHERE paymentID='$paymentID'
         ");
-
-    }while(mysqli_num_rows($check)>0);
+    } while (mysqli_num_rows($check) > 0);
 
     // Insert rejected payment
-    mysqli_query($conn,"
+    mysqli_query($conn, "
     INSERT INTO payment
     (
         paymentID,
@@ -103,7 +102,7 @@ if (isset($_GET['reject'])) {
     (
         '$paymentID',
         '$recordID',
-        '".$record['estimatedEarning']."',
+        '" . $record['estimatedEarning'] . "',
         CURDATE(),
         'Rejected'
     )
@@ -176,11 +175,12 @@ $result = mysqli_query($conn, $sql);
         </div>
 
 
+        <div class="header-icons">
             <i class="fas fa-home"
                 onclick="location.href='admin_dashboard.php'"
                 title="Dashboard"></i>
-
         </div>
+
 
     </div>
 

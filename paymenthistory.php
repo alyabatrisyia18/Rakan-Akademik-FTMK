@@ -67,10 +67,11 @@ $result = mysqli_query($conn, $sql);
         </div>
 
 
-        <i class="fas fa-home"
-            onclick="location.href='admin_dashboard.php'"></i>
-
-    </div>
+        <div class="header-icons">
+            <i class="fas fa-home"
+                onclick="location.href='admin_dashboard.php'"
+                title="Dashboard"></i>
+        </div>
 
     </div>
 
