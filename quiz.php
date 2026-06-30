@@ -9,6 +9,9 @@ if (!isset($_SESSION['matric'])) {
     </script>";
     exit();
 }
+$currentMatric = $_SESSION['matric'];
+$sql = "SELECT * FROM quiz 
+        WHERE matricNoTutor != '$currentMatric'";
 
 if (isset($_POST['publish'])) {
 
@@ -90,6 +93,13 @@ if (isset($_POST['publish'])) {
     </script>";
     exit();
 }
+$sqlList = "
+    SELECT * FROM quiz
+    WHERE matricNoTutor != '$currentMatric'
+    ORDER BY quizID DESC
+";
+
+$resultList = mysqli_query($conn, $sqlList);
 ?>
 
 <!DOCTYPE html>
@@ -295,7 +305,7 @@ if (isset($_POST['publish'])) {
 </header>
 
 <div class="menu-bar">
-    <a href="tutor_progress.php" class="active-menu">Progress Tracker</a>
+    <a href="tutor_progress.php" class="active-menu">Tutor Progress Tracker</a>
 </div>
 
 <div class="main-container">

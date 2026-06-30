@@ -1,5 +1,29 @@
 <?php
+session_start();
 include "db_connect.php";
+
+if(!isset($_SESSION['matric'])){
+    header("Location: login.php");
+    exit();
+}
+
+$matric = $_SESSION['matric'];
+
+// Check expertise tutor untuk DSA
+$checkExpertise = mysqli_query($conn, "
+    SELECT expertise FROM tutor_application
+    WHERE matricNoStudent='$matric'
+    AND status='Approved'
+");
+
+$canEdit = false;
+
+if($row = mysqli_fetch_assoc($checkExpertise)){
+    $expertise = $row['expertise'];
+    if(strpos($expertise, 'Data Structure') !== false){
+        $canEdit = true;
+    }
+}
 
 $query = mysqli_query($conn,
 "SELECT * FROM chapters WHERE subject='Dsa'"
@@ -234,20 +258,26 @@ $query = mysqli_query($conn,
             <i class="fas fa-arrow-left" style="font-size:18px;"></i> DSA
         </h2>
 
+        <?php if($canEdit){ ?>
         <button class="add-btn" onclick="location.href='addChapter.php?subject=Dsa'">
             <i class="fas fa-plus"></i> Add Chapter
         </button>
+        <?php } ?>
 
         <?php while($row = mysqli_fetch_assoc($query)){ ?>
         <div class="chapter">
             <div class="chapter-header" onclick="toggleChapter(this)">
                 <span><?php echo htmlspecialchars($row['chapter_name']); ?></span>
                 <div style="display:flex; align-items:center; gap:8px;">
+
+                    <?php if($canEdit){ ?>
                     <a href="deleteAll.php?type=chapter&id=<?php echo $row['chapter_id']; ?>&subject=Dsa"
                        onclick="event.stopPropagation(); return confirm('Delete this chapter and all its topics?')"
                        style="color:#e74c3c; font-size:12px;">
                         <i class="fas fa-trash"></i>
                     </a>
+                    <?php } ?>
+
                     <i class="fas fa-chevron-down"></i>
                 </div>
             </div>
@@ -261,6 +291,8 @@ $query = mysqli_query($conn,
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <span><?php echo htmlspecialchars($topic['topic_name']); ?></span>
                         <div style="display:flex; align-items:center; gap:6px;">
+
+                            <?php if($canEdit){ ?>
                             <a href="addResource.php?topic_id=<?php echo $topic['topic_id']; ?>&subject=Dsa"
                                onclick="event.stopPropagation()"
                                style="color:#1f3f98; font-size:11px;">
@@ -271,11 +303,14 @@ $query = mysqli_query($conn,
                                style="color:#e74c3c; font-size:11px;">
                                 <i class="fas fa-trash"></i>
                             </a>
+                            <?php } ?>
+
                         </div>
                     </div>
                 </li>
                 <?php } ?>
 
+                <?php if($canEdit){ ?>
                 <li style="text-align:center; background:transparent; cursor:default;">
                     <a href="addTopic.php?chapter_id=<?php echo $row['chapter_id']; ?>&subject=Dsa"
                        onclick="event.stopPropagation()"
@@ -283,6 +318,8 @@ $query = mysqli_query($conn,
                         <i class="fas fa-plus"></i> Add Topic
                     </a>
                 </li>
+                <?php } ?>
+                
             </ul>
         </div>
         <?php } ?>

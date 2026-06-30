@@ -31,12 +31,20 @@ $roles = array_map('trim', explode(",", $role));
 $isTutor = in_array("Tutor", $roles);
 $isStudent = in_array("Student", $roles);
 
-if ($isTutor) {
-    $dashboard = "dashboard.php"; // Rakan Akademik
-} elseif ($isStudent) {
-    $dashboard = "student_dashboard.php";
-} else {
-    $dashboard = "login.php";
+if(isset($_SESSION['dashboard']))
+{
+    if($_SESSION['dashboard']=="student")
+    {
+        $dashboard="student_dashboard.php";
+    }
+    else
+    {
+        $dashboard="dashboard.php";
+    }
+}
+else
+{
+    $dashboard="student_dashboard.php";
 }
 
 $programme = "-";

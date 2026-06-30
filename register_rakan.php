@@ -8,6 +8,7 @@ if (!isset($_SESSION['matric'])) {
 }
 
 $matricNoStudent = $_SESSION['matric'];
+$email = strtolower($matricNoStudent) . "@student.utem.edu.my";
 
 $getUser = mysqli_query($conn, "
 SELECT *
@@ -105,10 +106,7 @@ if (isset($_POST['btnSubmit'])) {
         $_POST['contactNumber']
     );
 
-    $email = mysqli_real_escape_string(
-        $conn,
-        $_POST['email']
-    );
+    $email = strtolower($matricNoStudent) . "@student.utem.edu.my";
 
     $reason = mysqli_real_escape_string(
         $conn,
@@ -477,10 +475,10 @@ if (isset($_POST['btnSubmit'])) {
                 <label>Email</label>
 
                 <input
-                    type="email"
-                    name="email"
-                    value="<?php echo htmlspecialchars($email); ?>"
-                    readonly>
+    type="email"
+    name="email"
+    value="<?php echo strtolower($matricNoStudent); ?>@student.utem.edu.my"
+    readonly>
 
             </div>
 

@@ -13,7 +13,7 @@ if (!isset($_GET['quizID'])) {
 }
 
 $quizID = $_GET['quizID'];
-$userID = $_SESSION['matric'];
+$matricNoStudent = $_SESSION['matric'];
 
 $sqlQuiz = "SELECT * FROM quiz WHERE quizID = ?";
 $stmtQuiz = mysqli_prepare($conn, $sqlQuiz);
@@ -27,16 +27,25 @@ if (!$quiz) {
     exit();
 }
 
-$sqlAttempt = "SELECT COUNT(*) AS total_attempt 
-               FROM quiz_attempts 
-               WHERE quizID = ? AND userID = ?";
+if ($quiz['matricNoTutor'] == $matricNoStudent) {
+    echo "<script>
+        alert('You cannot attempt your own quiz');
+        window.location.href='category.php';
+    </script>";
+    exit();
+}
+
+$sqlAttempt = "SELECT COUNT(*) AS total_attempt
+               FROM quiz_attempts
+               WHERE quizID = ? AND matricNoStudent = ?";
+
 $stmtAttempt = mysqli_prepare($conn, $sqlAttempt);
 
 if (!$stmtAttempt) {
     die("SQL Attempt Error: " . mysqli_error($conn));
 }
 
-mysqli_stmt_bind_param($stmtAttempt, "ss", $quizID, $userID);
+mysqli_stmt_bind_param($stmtAttempt, "ss", $quizID, $matricNoStudent);
 mysqli_stmt_execute($stmtAttempt);
 $attemptResult = mysqli_stmt_get_result($stmtAttempt);
 $attemptData = mysqli_fetch_assoc($attemptResult);
@@ -86,8 +95,8 @@ if (isset($_POST['submit_quiz'])) {
     $userAnswersJson = json_encode($userAnswers);
 
     $sqlSave = "INSERT INTO quiz_attempts
-                (quizID, userID, score, total_question, user_answer)
-                VALUES (?, ?, ?, ?, ?)";
+            (quizID, matricNoStudent, score, total_question, user_answer)
+            VALUES (?, ?, ?, ?, ?)";
 
     $stmtSave = mysqli_prepare($conn, $sqlSave);
 
@@ -99,7 +108,7 @@ if (isset($_POST['submit_quiz'])) {
         $stmtSave,
         "ssiis",
         $quizID,
-        $userID,
+        $matricNoStudent,
         $score,
         $totalQuestion,
         $userAnswersJson

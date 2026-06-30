@@ -2,8 +2,7 @@
 session_start();
 include("db_connect.php");
 
-if(!isset($_SESSION['matric']))
-{
+if (!isset($_SESSION['matric'])) {
     header("Location: login.php");
     exit();
 }
@@ -16,8 +15,7 @@ $checkTutor = mysqli_query($conn, "
     AND status='Approved'
 ");
 
-if(mysqli_num_rows($checkTutor) == 0)
-{
+if (mysqli_num_rows($checkTutor) == 0) {
     echo "<script>
         alert('You are not approved as Rakan Akademik yet!');
         window.location='choose_role.php';
@@ -28,22 +26,23 @@ if(mysqli_num_rows($checkTutor) == 0)
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:Arial, sans-serif;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
         }
 
-        body{
+        body {
             background-image: url('images/edubackground.jpg');
             background-size: cover;
             background-position: center;
@@ -51,159 +50,149 @@ if(mysqli_num_rows($checkTutor) == 0)
             background-attachment: fixed;
         }
 
-        header{
-            background:#1f3f98;
-            color:white;
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            padding:15px 30px;
+        header {
+            background: #1f3f98;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
         }
 
-        .icons i{
-            font-size:24px;
-            margin-left:20px;
-            cursor:pointer;
+        .icons i {
+            font-size: 24px;
+            margin-left: 20px;
+            cursor: pointer;
         }
 
-        .logo img{
-            height:60px;
-            width:auto;
+        .logo img {
+            height: 60px;
+            width: auto;
         }
 
-        .welcome{
-            background:#284db6;
-            color:white;
-            text-align:center;
-            padding:20px;
+        .welcome {
+            background: #284db6;
+            color: white;
+            text-align: center;
+            padding: 20px;
         }
 
-        .welcome h1{
-            font-size:32px;
-        }
-        
-        .back-container{
-            width:85%;
-            margin:20px auto 0;
+        .welcome h1 {
+            font-size: 32px;
         }
 
-        .back-btn{
-            cursor:pointer;
-            font-size:28px;
-            background:none;
-            border:none;
-            color:#1f3f98;
+        .back-btn {
+            cursor: pointer;
+            font-size: 28px;
         }
 
-        .back-btn:hover{
-            color:#284db6;
+        .menu-container {
+            width: 85%;
+            margin: 20px auto 30px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
         }
 
-        .menu-container{
-            width:85%;
-            margin:20px auto 30px;
-            display:grid;
-            grid-template-columns:repeat(2,1fr);
-            gap:25px;
+        .card {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 20px;
+            text-align: center;
+            padding: 30px;
+            cursor: pointer;
+            transition: 0.3s;
         }
 
-        .card{
-            background:white;
-            border:2px solid #ddd;
-            border-radius:20px;
-            text-align:center;
-            padding:30px;
-            cursor:pointer;
-            transition:0.3s;
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
-        .card:hover{
-            transform:translateY(-5px);
-            box-shadow:0 5px 15px rgba(0,0,0,0.2);
+        .card img {
+            width: 180px;
+            height: 180px;
+            object-fit: contain;
         }
 
-        .card img{
-            width:180px;
-            height:180px;
-            object-fit:contain;
-        }
-
-        .card h2{
-            margin-top:15px;
+        .card h2 {
+            margin-top: 15px;
         }
     </style>
 </head>
+
 <body>
 
-<header>
-    <div class="logo">
-        <img src="images/logoRakan.png" alt="Rakan Akademik Logo">
-        <img src="images/logoUtem.png" alt="UTeM Logo">
-        <img src="images/logoFtmk.png" alt="FTMK Logo">
+    <header>
+        <div class="logo">
+            <img src="images/logoRakan.png" alt="Rakan Akademik Logo">
+            <img src="images/logoUtem.png" alt="UTeM Logo">
+            <img src="images/logoFtmk.png" alt="FTMK Logo">
+        </div>
+
+        <div class="icons">
+            <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
+        </div>
+    </header>
+
+    <section class="welcome">
+        <h1>WELCOME TO RAKAN AKADEMIK</h1>
+    </section>
+
+    <div class="back-container">
+        <button class="back-btn" onclick="window.location.href='choose_role.php'"><i class="fas fa-arrow-left"></i></button>
     </div>
 
-    <div class="icons">
-        <i class="far fa-user-circle" onclick="location.href='profile.php'"></i>
-    </div>
-</header>
+    <section class="menu-container">
 
-<section class="welcome">
-    <h1>WELCOME TO RAKAN AKADEMIK</h1>
-</section>
+        <div class="card" onclick="openPage('module')">
+            <img src="images/module.jpg" alt="">
+            <h2>Learning Module</h2>
+        </div>
 
-<div class="back-container">
-    <button class="back-btn" onclick="window.location.href='choose_role.php'"><i class="fas fa-arrow-left"></i></button>
-</div>
+        <div class="card" onclick="openPage('quiz')">
+            <img src="images/quiz.jpg" alt="">
+            <h2>Quiz</h2>
+        </div>
 
-<section class="menu-container">
+        <div class="card" onclick="openPage('timetable')">
+            <img src="images/timetable.jpg" alt="">
+            <h2>Timetable</h2>
+        </div>
 
-    <div class="card" onclick="openPage('module')">
-        <img src="images/module.jpg" alt="">
-        <h2>Learning Module</h2>
-    </div>
+        <div class="card" onclick="openPage('mentor')">
+            <img src="images/tutor.jpg" alt="">
+            <h2>Rakan Akademik</h2>
+        </div>
 
-    <div class="card" onclick="openPage('quiz')">
-        <img src="images/quiz.jpg" alt="">
-        <h2>Quiz</h2>
-    </div>
+    </section>
 
-    <div class="card" onclick="openPage('timetable')">
-        <img src="images/timetable.jpg" alt="">
-        <h2>Timetable</h2>
-    </div>
+    <script>
+        function openPage(page) {
 
-    <div class="card" onclick="openPage('mentor')">
-        <img src="images/tutor.jpg" alt="">
-        <h2>Rakan Akademik</h2>
-    </div>
+            switch (page) {
+                case "module":
+                    window.location.href = "module.php";
+                    break;
 
-</section>
+                case "quiz":
+                    window.location.href = "quiz.php";
+                    break;
 
-<script>
-function openPage(page){
+                case "timetable":
+                    window.location.href = "addtutoringsession.php";
+                    break;
 
-    switch(page){
-        case "module":
-            window.location.href="module.php";
-            break;
+                case "mentor":
+                    window.location.href = "rakan_form.php";
+                    break;
 
-        case "quiz":
-            window.location.href="quiz.php";
-            break;
-
-        case "timetable":
-            window.location.href="addtutoringsession.php";
-            break;
-
-        case "mentor":
-            window.location.href="rakan_form.php";
-            break;
-
-        default:
-            alert("Page not found");
-    }
-}
-</script>
+                default:
+                    alert("Page not found");
+            }
+        }
+    </script>
 
 </body>
+
 </html>

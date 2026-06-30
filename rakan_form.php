@@ -205,46 +205,67 @@ if (isset($_POST['btnSubmit'])) {
         }
 
         .checkbox-group {
-
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
+            display: flex;
+            gap: 20px;
+            margin-top: 8px;
         }
 
-        .checkbox-group label {
-
+        .expertise-card {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
             font-weight: normal;
+        }
+
+        .expertise-card input {
+            width: 18px;
+            height: 18px;
+            accent-color: #2748A5;
+        }
+
+        .expertise-card:hover {
+            background: #f8f8f8;
+            color: black;
         }
 
         .button {
             display: flex;
             justify-content: center;
+            align-items: center;
             gap: 15px;
-            margin-top: 30px;
+            margin-top: 35px;
         }
 
-        button {
-
-            background: #2748A5;
-            color: white;
+        .button button {
+            width: 170px;
+            height: 48px;
             border: none;
-            padding: 12px 30px;
-            border-radius: 6px;
-            cursor: pointer;
+            border-radius: 8px;
             font-size: 16px;
-        }
-
-        button:hover {
-
-            background: #18357d;
+            font-weight: bold;
+            cursor: pointer;
+            transition: .2s;
         }
 
         .back-btn {
             background: #6c757d;
+            color: white;
         }
 
         .back-btn:hover {
-            background: #545b62;
+            background: #5a6268;
+        }
+
+        button[type="submit"] {
+            background: #2748A5;
+            color: white;
+        }
+
+        button[type="submit"]:hover {
+            background: #1d3987;
         }
     </style>
 
@@ -355,26 +376,33 @@ if (isset($_POST['btnSubmit'])) {
 
                         <label>Expertise</label>
 
+                        <?php
+                        $selectedExpertise = explode(", ", $expertise);
+                        ?>
+
                         <div class="checkbox-group">
 
-                            <label>
+                            <label class="expertise-card">
                                 <input
                                     type="checkbox"
                                     name="expertise[]"
-                                    value="Programming">
-                                Programming
+                                    value="Programming"
+                                    <?php if (in_array("Programming", $selectedExpertise)) echo "checked"; ?>>
+
+                                <span>Programming</span>
                             </label>
 
-                            <label>
+                            <label class="expertise-card">
                                 <input
                                     type="checkbox"
                                     name="expertise[]"
-                                    value="Database">
-                                Database
+                                    value="Database"
+                                    <?php if (in_array("Database", $selectedExpertise)) echo "checked"; ?>>
+
+                                <span>Database</span>
                             </label>
 
                         </div>
-
                     </div>
                     <div class="form-group">
 
