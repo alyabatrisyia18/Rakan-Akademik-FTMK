@@ -73,12 +73,12 @@ if (isset($_POST["btnLogin"])) {
     $_SESSION['role'] = trim($row['role']);
 
     $matric = $row['matricNoStudent'];
-
     $popup = mysqli_query($conn, "
 SELECT *
 FROM tutor_application
 WHERE matricNoStudent='$matric'
 AND popupStatus='0'
+AND status IN ('Approved','Rejected')
 LIMIT 1
 ");
 
@@ -649,4 +649,5 @@ LIMIT 1
     </script>
 
 </body>
+
 </html>
