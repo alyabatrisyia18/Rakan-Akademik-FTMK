@@ -1,5 +1,8 @@
 <?php
+session_start();
 include("db_connect.php");
+
+$studentID = $_SESSION['matric'];
 
 $sql = "SELECT
             q.category,
@@ -14,6 +17,8 @@ $sql = "SELECT
         JOIN quiz q
         ON qa.quizID = q.quizID
 
+        WHERE qa.matricNoStudent='$studentID'
+
         GROUP BY q.category
 
         ORDER BY q.category";
@@ -25,7 +30,8 @@ COUNT(attemptID) AS total_quiz,
 
 ROUND(AVG((score / total_question) * 100),0) AS overall_average
 
-FROM quiz_attempts";
+FROM quiz_attempts
+WHERE matricNoStudent='$studentID'";
 
 $summary_result = mysqli_query($conn, $summary_sql);
 
@@ -272,10 +278,19 @@ while($row = mysqli_fetch_assoc($result))
 
             <p><strong>Total Quiz :</strong> <?php echo $summary['total_quiz']; ?></p>
 
-            <p><strong>Overall Average :</strong> <?php echo $summary['overall_average']; ?>%</p>
+            <p><strong>Overall Average :</strong> <?php echo $summary['overall_average'] ?? 0; ?>
 
-            <p><strong>Best Subject :</strong> <?php echo $best['category']; ?></p>
-
+            <p><strong>Best Subject :</strong> 
+            <?php
+if($best)
+{
+    echo $best['category'];
+}
+else
+{
+    echo "-";
+}
+?>
         </div>
 <div class="back-btn">
 
