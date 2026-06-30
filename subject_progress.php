@@ -183,6 +183,38 @@ $history_result = mysqli_query($conn,$history_sql);
         color:#721c24;
     }
 
+    .view-btn{
+
+display:inline-block;
+background:#2748A5;
+color:#fff;
+padding:8px 18px;
+border-radius:8px;
+text-decoration:none;
+font-size:14px;
+font-weight:bold;
+transition:.3s;
+
+}
+
+.view-btn:hover{
+
+background:#1b3275;
+
+}
+
+.status{
+
+font-weight:bold;
+
+}
+
+.completed{
+
+color:#28a745;
+
+}
+
     </style>
 
 </head>
@@ -249,6 +281,7 @@ $history_result = mysqli_query($conn,$history_sql);
     <th>Quiz</th>
     <th>Score</th>
     <th>Status</th>
+    <th>Action</th>
 </tr>
 
 <?php
@@ -284,10 +317,26 @@ else
 <?php echo $history['score']; ?>/<?php echo $history['total_question']; ?>
 </span>
 </td>
-<td>Completed</td>
+
+<td>
+<span class="status completed">
+<i class="fas fa-check-circle"></i> Completed
+</span>
+</td>
+
+<td>
+
+<a href="#" class="view-btn">
+
+<i class="fas fa-eye"></i>
+
+View Details
+
+</a>
+
+</td>
 
 </tr>
-
 <?php
 }
 ?>
