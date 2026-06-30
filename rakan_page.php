@@ -8,9 +8,11 @@ if (!isset($_SESSION['matric'])) {
 }
 
 $sql = mysqli_query($conn, "
-SELECT *
+SELECT tutor.*, user.name
 FROM tutor
-ORDER BY name ASC
+INNER JOIN user
+ON tutor.matricNoTutor=user.matricNoStudent
+ORDER BY user.name ASC
 ");
 
 ?>
@@ -155,6 +157,7 @@ ORDER BY name ASC
                     <div class="profile-icon">
                         <i class="fa-regular fa-user"></i>
                     </div>
+                </div>
             </a>
 
         </div>

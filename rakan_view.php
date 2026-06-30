@@ -10,9 +10,11 @@ if (!isset($_SESSION['matric'])) {
 $matricNoTutor = $_SESSION['matric'];
 
 $sql = mysqli_query($conn, "
-SELECT *
+SELECT tutor.*, user.name, user.email, user.mobile_phone
 FROM tutor
-WHERE matricNoTutor='$matricNoTutor'
+INNER JOIN user
+ON tutor.matricNoTutor=user.matricNoStudent
+WHERE tutor.matricNoTutor='$matricNoTutor'
 ");
 
 if (mysqli_num_rows($sql) == 0) {
@@ -39,7 +41,7 @@ $academicStrengths = $data['academicStrengths'];
 $cgpa = $data['cgpa'];
 $expertise = $data['expertise'];
 $availability = $data['availability'];
-$contactNumber = $data['contactNumber'];
+$contactNumber = $data['mobile_phone'];
 $email = $data['email'];
 
 ?>

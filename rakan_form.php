@@ -10,9 +10,11 @@ if (!isset($_SESSION['matric'])) {
 $matricNoTutor = $_SESSION['matric'];
 
 $sql = mysqli_query($conn, "
-SELECT *
+SELECT tutor.*, user.name, user.email, user.mobile_phone
 FROM tutor
-WHERE matricNoTutor='$matricNoTutor'
+INNER JOIN user
+ON tutor.matricNoTutor=user.matricNoStudent
+WHERE tutor.matricNoTutor='$matricNoTutor'
 ");
 
 if (mysqli_num_rows($sql) == 0) {
@@ -33,7 +35,7 @@ $academicBackground = $data['academicBackground'];
 $academicStrengths = $data['academicStrengths'];
 $cgpa = $data['cgpa'];
 $availability = $data['availability'];
-$contactNumber = $data['contactNumber'];
+$contactNumber = $data['mobile_phone'];
 $email = $data['email'];
 $expertise = $data['expertise'];
 
@@ -98,26 +100,30 @@ if (isset($_POST['btnSubmit'])) {
 
     $expertise = implode(", ", $_POST['expertise']);
 
-    $update = mysqli_query($conn, "
-    UPDATE tutor
-    SET
+    $updateTutor = mysqli_query($conn, "
+UPDATE tutor
+SET
+programme='$programme',
+institution='$institution',
+currentStatus='$currentStatus',
+academicBackground='$academicBackground',
+academicStrengths='$academicStrengths',
+cgpa='$cgpa',
+expertise='$expertise',
+availability='$availability'
+WHERE matricNoTutor='$matricNoTutor'
+");
 
-    name='$name',
-    programme='$programme',
-    institution='$institution',
-    currentStatus='$currentStatus',
-    academicBackground='$academicBackground',
-    academicStrengths='$academicStrengths',
-    cgpa='$cgpa',
-    expertise='$expertise',
-    availability='$availability',
-    contactNumber='$contactNumber',
-    email='$email'
+    $updateUser = mysqli_query($conn, "
+UPDATE user
+SET
+name='$name',
+email='$email',
+mobile_phone='$contactNumber'
+WHERE matricNoStudent='$matricNoTutor'
+");
 
-    WHERE matricNoTutor='$matricNoTutor'
-    ");
-
-    if ($update) {
+    if ($updateTutor && $updateUser) {
         echo "<script>
 
         alert('Profile updated successfully.');
