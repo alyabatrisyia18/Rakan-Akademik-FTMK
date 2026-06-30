@@ -396,10 +396,10 @@ if (isset($_POST['btnSubmit'])) {
                                 <input
                                     type="checkbox"
                                     name="expertise[]"
-                                    value="Database"
-                                    <?php if (in_array("Database", $selectedExpertise)) echo "checked"; ?>>
+                                    value="Data Structure Algorithm"
+                                    <?php if (in_array("Data Structure Algorithm", $selectedExpertise)) echo "checked"; ?>>
 
-                                <span>Database</span>
+                                <span>Data Structure Algorithm</span>
                             </label>
 
                         </div>
