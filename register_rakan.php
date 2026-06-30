@@ -516,6 +516,15 @@ if (isset($_POST['btnSubmit'])) {
                     Submit Application
 
                 </button>
+                <button
+                    type="button"
+                    name="btnBack"
+                    class="btn"
+                    onclick="window.location.href='student_dashboard.php';">
+
+                    Back
+
+                </button>
 
             </div>
 
