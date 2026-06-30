@@ -278,7 +278,7 @@ while($row = mysqli_fetch_assoc($result))
 
             <p><strong>Total Quiz :</strong> <?php echo $summary['total_quiz']; ?></p>
 
-            <p><strong>Overall Average :</strong> <?php echo $summary['overall_average'] ?? 0; ?>
+            <p><strong>Overall Average :</strong> <?php echo $summary['overall_average'] ?? 0; ?>%
 
             <p><strong>Best Subject :</strong> 
             <?php
