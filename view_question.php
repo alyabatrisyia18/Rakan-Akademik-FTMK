@@ -1,53 +1,54 @@
 <?php
+session_start();
 include("db_connect.php");
 
-$subject = isset($_GET['subject']) ? $_GET['subject'] : "Subject";
-$summary_sql = "SELECT
+$studentID = $_SESSION['matric'];
+$attemptID = $_GET['attempt'];
 
-COUNT(qa.attemptID) AS total_attempt,
+$sql = "SELECT
+            qa.user_answer,
+            qa.quizID,
+            q.title,
+            q.category
 
-ROUND(MAX((qa.score/qa.total_question)*100),0) AS highest_score,
+        FROM quiz_attempts qa
 
-ROUND(AVG((qa.score/qa.total_question)*100),0) AS average_score
+        INNER JOIN quiz q
+        ON qa.quizID = q.quizID
 
-FROM quiz_attempts qa
+        WHERE qa.attemptID='$attemptID'
+        AND qa.matricNoStudent='$studentID'
 
-JOIN quiz q
-ON qa.quizID=q.quizID
+        LIMIT 1";
 
-WHERE q.category='$subject'";
+$attempt = mysqli_query($conn,$sql);
 
-$summary_result = mysqli_query($conn,$summary_sql);
+$attemptData = mysqli_fetch_assoc($attempt);
 
-$summary = mysqli_fetch_assoc($summary_result);
-$history_sql = "SELECT
+if(!$attemptData)
+{
+    die("No quiz attempt found.");
+}
 
-qa.attemptID,
-q.quizID,
-q.title,
+$quizID = $attemptData['quizID'];
 
-qa.score,
+$userAnswer = json_decode($attemptData['user_answer'],true);
 
-qa.total_question,
+$sqlQuestion = "SELECT *
 
-qa.attempt_date
+FROM quiz_question
 
-FROM quiz_attempts qa
+WHERE quizID='$quizID'
 
-JOIN quiz q
-ON qa.quizID = q.quizID
+ORDER BY questionID";
 
-WHERE q.category='$subject'
-
-ORDER BY qa.attempt_date DESC";
-
-$history_result = mysqli_query($conn,$history_sql);
+$resultQuestion = mysqli_query($conn,$sqlQuestion);
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title><?php echo htmlspecialchars($subject); ?> Progress</title>
+    <title>Question Review</title>
 
     <link rel="stylesheet" href="style2.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -247,109 +248,146 @@ color:#28a745;
 
     <div class="progress-container">
 
-        <h2><?php echo htmlspecialchars($subject); ?> Progress</h2>
+       <h2>Question Review</h2>
 
-        <p>View detailed progress for this subject.</p>
+<p>Review your quiz answers.</p>
 
-        <div class="summary-box">
+      <div class="summary-box">
 
-            <h3>Subject Summary</h3>
+<h3>Quiz Information</h3>
 
-           <p>
-    <strong>Quiz Attempt :</strong>
-    <?php echo $summary['total_attempt']; ?>
+<p>
+<strong>Quiz :</strong>
+<?php echo $attemptData['title']; ?>
 </p>
 
 <p>
-    <strong>Highest Score :</strong>
-    <span class="score high">
-        <?php echo $summary['highest_score']; ?>%
-    </span>
+<strong>Subject :</strong>
+<?php echo $attemptData['category']; ?>
 </p>
 
-<p>
-    <strong>Average Score :</strong>
-    <span class="score medium">
-        <?php echo $summary['average_score']; ?>%
-    </span>
-</p>
-        </div>
-
-        <h3>Quiz History</h3>
+</div>
+    
+<h3>Question Review</h3>
 
 <table>
 
 <tr>
-    <th>Quiz</th>
-    <th>Score</th>
-    <th>Status</th>
-    <th>Action</th>
+
+<th>No</th>
+
+<th>Question</th>
+
+<th>Your Answer</th>
+
+<th>Correct Answer</th>
+
+<th>Status</th>
+
 </tr>
 
 <?php
-while($history = mysqli_fetch_assoc($history_result))
+
+$no = 1;
+
+while($question = mysqli_fetch_assoc($resultQuestion))
 {
 
-$percent = round(($history['score']/$history['total_question'])*100);
+$qid = $question['questionID'];
 
-if($percent>=80)
+$studentAnswer = "";
+
+if(isset($userAnswer[$qid]))
 {
-    $class="high";
+    $studentAnswer = $userAnswer[$qid];
 }
-elseif($percent>=60)
+
+$studentAnswerText = "";
+
+switch($studentAnswer)
 {
-    $class="medium";
+    case "A":
+        $studentAnswerText = $question['optionA'];
+        break;
+
+    case "B":
+        $studentAnswerText = $question['optionB'];
+        break;
+
+    case "C":
+        $studentAnswerText = $question['optionC'];
+        break;
+
+    case "D":
+        $studentAnswerText = $question['optionD'];
+        break;
 }
-elseif($percent>=40)
+
+$correctAnswerText = "";
+
+switch($question['correct_answer'])
 {
-    $class="low";
+    case "A":
+        $correctAnswerText = $question['optionA'];
+        break;
+
+    case "B":
+        $correctAnswerText = $question['optionB'];
+        break;
+
+    case "C":
+        $correctAnswerText = $question['optionC'];
+        break;
+
+    case "D":
+        $correctAnswerText = $question['optionD'];
+        break;
 }
-else
-{
-    $class="fail";
-}
+
 ?>
 
 <tr>
 
-<td><?php echo $history['title']; ?></td>
+<td><?php echo $no++; ?></td>
 
-<td>
-<span class="score <?php echo $class; ?>">
-<?php echo $history['score']; ?>/<?php echo $history['total_question']; ?>
-</span>
-</td>
+<td><?php echo $question['question']; ?></td>
 
-<td>
-<span class="status completed">
-<i class="fas fa-check-circle"></i> Completed
-</span>
-</td>
+<td><?php echo $studentAnswerText; ?></td>
+
+<td><?php echo $correctAnswerText; ?></td>
 
 <td>
 
-<a href="view_question.php?attempt=<?php echo $history['attemptID']; ?>" class="view-btn">
+<?php
 
-<i class="fas fa-eye"></i>
+if($studentAnswer == $question['correct_answer'])
+{
+    echo "<span style='color:green;font-weight:bold;'>✔ Correct</span>";
+}
+else
+{
+    echo "<span style='color:red;font-weight:bold;'>✘ Wrong</span>";
+}
 
-View Details
-
-</a>
+?>
 
 </td>
 
 </tr>
+
 <?php
+
 }
+
 ?>
 
-        </table>
+</table>
 
-        <div class="back-btn">
-            <a href="student_progress.php">
-            <i class="fas fa-arrow-left"></i> Back
-            </a>
-        </div>
+       <div class="back-btn">
+    <a href="javascript:history.back()">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+</div>
 
     </div>
 

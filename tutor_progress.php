@@ -99,6 +99,12 @@ LIMIT 1";
 $best_result=mysqli_query($conn,$best_sql);
 
 $best=mysqli_fetch_assoc($best_result);
+if(!$best)
+{
+    $best = [
+        "category" => "-"
+    ];
+}
 
 ?>
 <!DOCTYPE html>
@@ -318,10 +324,12 @@ Monitor your students quiz performance and learning progress.
 <th>Action</th>
 
 </tr>
-          <?php
+       <?php
 
-while($student = mysqli_fetch_assoc($result))
+if(mysqli_num_rows($result) > 0)
 {
+    while($student = mysqli_fetch_assoc($result))
+    {
 
 ?>
 
@@ -385,8 +393,20 @@ while($student = mysqli_fetch_assoc($result))
 
 <?php
 
+    }
 }
+else
+{
+?>
 
+<tr>
+    <td colspan="7" style="text-align:center;padding:20px;">
+        No student progress available.
+    </td>
+</tr>
+
+<?php
+}
 ?>
         </table>
 
@@ -396,22 +416,22 @@ while($student = mysqli_fetch_assoc($result))
 
     <p>
         <strong>Total Students :</strong>
-        <?php echo $summary['total_student']; ?>
+   <?php echo $summary['total_student'] ?? 0; ?>
     </p>
 
     <p>
         <strong>Total Quiz Attempts :</strong>
-        <?php echo $summary['total_attempt']; ?>
+       <?php echo $summary['total_attempt'] ?? 0; ?>
     </p>
 
     <p>
         <strong>Overall Average :</strong>
-        <?php echo $summary['overall_average']; ?>%
+        <?php echo $summary['overall_average'] ?? 0; ?>%
     </p>
 
     <p>
         <strong>Best Subject :</strong>
-        <?php echo $best['category']; ?>
+        <?php echo ($best && !empty($best['category'])) ? $best['category'] : "-"; ?>
     </p>
 
 </div>
