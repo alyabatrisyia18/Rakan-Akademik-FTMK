@@ -463,9 +463,9 @@ LIMIT 1
 
         <div class="logoArea">
 
-            <img src="images/utem.png" class="logoUtem">
+            <img src="images/logoUtem.png" class="logoUtem">
 
-            <img src="images/ftmk.png" class="logoFtmk">
+            <img src="images/logoFtmk.png" class="logoFtmk">
 
         </div>
 
