@@ -525,14 +525,6 @@ LIMIT 1
 
                     <div class="optionArea">
 
-                        <label>
-
-                            <input type="checkbox">
-
-                            Remember Me
-
-                        </label>
-
                         <a href="forgot_password.php">
 
                             Forgot Password?
