@@ -12,8 +12,7 @@ if (isset($_POST["btnRegister"])) {
     alert('Please use your UTeM student email.');
     window.location='register_student.php';
     </script>";
-    die();
-        
+        die();
     }
     $phone = mysqli_real_escape_string($conn, trim($_POST["txtPhone"]));
     $gender = mysqli_real_escape_string($conn, $_POST["gender"]);
@@ -25,15 +24,15 @@ if (isset($_POST["btnRegister"])) {
     alert('Password does not match.');
 window.location='register_student.php';
     </script>";
-    die();
+        die();
     }
 
-    if (strlen($password) < 8) {
+    if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/', $password)) {
         echo "<script>
-    alert('Password must be at least 8 characters.');
+    alert('Password must be at least 8 characters and include uppercase, lowercase, number and special character.');
     window.location='register_student.php';
     </script>";
-    die();
+        die();
     }
 
     $check = mysqli_query($conn, "
@@ -53,7 +52,7 @@ email='$email'
         alert('Matric number or email has already been registered.');
        window.location='register_student.php';
     </script>";
-    die();
+        die();
     }
 
     $hashedPassword = password_hash(
