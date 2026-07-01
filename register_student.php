@@ -332,7 +332,7 @@ if (isset($_POST["btnRegister"])) {
                         type="text"
                         name="txtPhone"
                         class="textBox"
-                        required>
+                        placeholder="Example: 0123456789">
 
                     <label class="formLabel">Gender</label>
 
