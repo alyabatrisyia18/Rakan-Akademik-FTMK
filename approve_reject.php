@@ -56,7 +56,6 @@ if (isset($_POST["approve"])) {
             INSERT INTO tutor
             (
                 matricNoTutor,
-                name,
                 programme,
                 institution,
                 currentStatus,
@@ -64,8 +63,6 @@ if (isset($_POST["approve"])) {
                 academicStrengths,
                 cgpa,
                 availability,
-                contactNumber,
-                email,
                 matricNoStudent,
                 expertise
             )
@@ -73,7 +70,6 @@ if (isset($_POST["approve"])) {
             VALUES
             (
                 '$matricNoTutor',
-                '$name',
                 '$programme',
                 '$institution',
                 '$currentStatus',
@@ -81,8 +77,6 @@ if (isset($_POST["approve"])) {
                 '$academicStrengths',
                 '$cgpa',
                 '$availability',
-                '$contactNumber',
-                '$email',
                 '$matricNoTutor',
                 '$expertise'
             )
