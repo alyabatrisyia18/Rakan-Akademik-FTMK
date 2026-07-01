@@ -12,7 +12,7 @@ ON qa.quizID=q.quizID
 
 GROUP BY q.category";
 
-$resultSubject = mysqli_query($conn,$sqlSubject);
+$resultSubject = mysqli_query($conn, $sqlSubject);
 
 $labels = [];
 $scores = [];
@@ -23,23 +23,19 @@ $dsaAverage = 0;
 $bestSubject = "";
 $highestAverage = 0;
 
-while($row = mysqli_fetch_assoc($resultSubject))
-{
+while ($row = mysqli_fetch_assoc($resultSubject)) {
     $labels[] = $row['category'];
-    $scores[] = round($row['averageScore'],2);
+    $scores[] = round($row['averageScore'], 2);
 
-    if($row['category'] == "Programming")
-    {
+    if ($row['category'] == "Programming") {
         $programmingAverage = $row['averageScore'];
     }
 
-    if($row['category'] == "Data Structure & Algorithm")
-    {
+    if ($row['category'] == "Data Structure & Algorithm") {
         $dsaAverage = $row['averageScore'];
     }
 
-    if($row['averageScore'] > $highestAverage)
-    {
+    if ($row['averageScore'] > $highestAverage) {
         $highestAverage = $row['averageScore'];
         $bestSubject = $row['category'];
     }
@@ -59,7 +55,7 @@ FROM quiz_attempts qa
 GROUP BY qa.matricNoStudent
 ) performance";
 
-$resultPerformance = mysqli_query($conn,$sqlPerformance);
+$resultPerformance = mysqli_query($conn, $sqlPerformance);
 $performance = mysqli_fetch_assoc($resultPerformance);
 
 $weak = $performance['weak'];
@@ -115,7 +111,7 @@ $result = mysqli_query($conn, $sql);
             height: 60px;
             width: auto;
         }
-        
+
         .icons {
             display: flex;
             align-items: center;
@@ -144,72 +140,73 @@ $result = mysqli_query($conn, $sql);
             margin: 30px auto;
             background: white;
             border-radius: 15px;
-            padding:20px;
-            margin-bottom:25px;
+            padding: 20px;
+            margin-bottom: 25px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
-.graph-container{
-    width:70%;
-    margin:10px auto;
-    background:#fff;
-    border-radius:15px;
-    padding:15px;
-    height:520px;
-    box-shadow:0 3px 10px rgba(0,0,0,.15);
-}
-.graph-summary{
-    margin-top:20px;
-    display:flex;
-    justify-content:space-around;
-    align-items:center;
-    flex-wrap:wrap;
-}
+        .graph-container {
+            width: 70%;
+            margin: 10px auto;
+            background: #fff;
+            border-radius: 15px;
+            padding: 15px;
+            height: 520px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, .15);
+        }
 
-.summary-item{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    font-size:16px;
-    font-weight:bold;
-    color:#333;
-    margin:8px 15px;
-}
+        .graph-summary {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+        }
 
-.color-box{
-    width:18px;
-    height:18px;
-    border-radius:4px;
-}
+        .summary-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin: 8px 15px;
+        }
 
-.programming{
-    background:#8B2F0D;
-}
+        .color-box {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+        }
 
-.dsa{
-    background:#4CAF50;
-}
+        .programming {
+            background: #8B2F0D;
+        }
 
-.highlight{
-    width:100%;
-    text-align:center;
-    margin-top:20px;
-    color:#2748A5;
-    font-size:17px;
-    font-weight:bold;
-}
+        .dsa {
+            background: #4CAF50;
+        }
 
-.graph-container h2{
-    color:#284db6;
-    text-align:center;
-    margin-bottom:20px;
-    font-size:24px;
-}
+        .highlight {
+            width: 100%;
+            text-align: center;
+            margin-top: 20px;
+            color: #2748A5;
+            font-size: 17px;
+            font-weight: bold;
+        }
 
-#subjectChart{
-    width:100%;
-    height:220px !important;
-}
+        .graph-container h2 {
+            color: #284db6;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        #subjectChart {
+            width: 100%;
+            height: 220px !important;
+        }
 
         table {
             width: 100%;
@@ -242,96 +239,96 @@ $result = mysqli_query($conn, $sql);
             text-decoration: none;
         }
 
-        .summary-container{
-    display:flex;
-    justify-content:space-between;
-    gap:20px;
-    margin-bottom:35px;
-}
+        .summary-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 35px;
+        }
 
-.summary-card{
-    flex:1;
-    background:#284db6;
-    color:white;
-    border-radius:12px;
-    padding:25px;
-    text-align:center;
-    box-shadow:0 3px 10px rgba(0,0,0,.2);
-}
+        .summary-card {
+            flex: 1;
+            background: #284db6;
+            color: white;
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, .2);
+        }
 
-.summary-card h3{
-    margin-bottom:15px;
-    font-size:18px;
-}
+        .summary-card h3 {
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
 
-.summary-card p{
-    font-size:30px;
-    font-weight:bold;
-}
+        .summary-card p {
+            font-size: 30px;
+            font-weight: bold;
+        }
 
-.chart-wrapper{
-    width:90%;
-    height:320px;
-    margin:0 auto;
-}
+        .chart-wrapper {
+            width: 90%;
+            height: 320px;
+            margin: 0 auto;
+        }
 
-.pie-wrapper{
-    width:350px;
-    height:350px;
-    margin:30px auto;
-}
+        .pie-wrapper {
+            width: 350px;
+            height: 350px;
+            margin: 30px auto;
+        }
 
-.performance-layout{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:60px;
-    margin-top:20px;
-    flex-wrap:wrap;
-}
+        .performance-layout {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 60px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
 
-.performance-details{
-    min-width:320px;
-}
+        .performance-details {
+            min-width: 320px;
+        }
 
-.detail-row{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin:25px 0;
-    gap:30px;
-}
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 25px 0;
+            gap: 30px;
+        }
 
-.detail-left{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    font-size:17px;
-}
+        .detail-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 17px;
+        }
 
-.detail-right{
-    text-align:right;
-    font-size:18px;
-}
+        .detail-right {
+            text-align: right;
+            font-size: 18px;
+        }
 
-.dot{
-    width:18px;
-    height:18px;
-    border-radius:50%;
-    display:inline-block;
-}
+        .dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: inline-block;
+        }
 
-.dot.weak{
-    background:#dc3545;
-}
+        .dot.weak {
+            background: #dc3545;
+        }
 
-.dot.good{
-    background:#ffc107;
-}
+        .dot.good {
+            background: #ffc107;
+        }
 
-.dot.excellent{
-    background:#28a745;
-}
+        .dot.excellent {
+            background: #28a745;
+        }
     </style>
 
 </head>
@@ -359,290 +356,288 @@ $result = mysqli_query($conn, $sql);
     <section class="container">
         <div class="summary-container">
 
-    <div class="summary-card">
-        <h3>Total Students</h3>
-       <?php
+            <div class="summary-card">
+                <h3>Total Students</h3>
+                <?php
 
-$totalStudent=mysqli_query($conn,"
+                $totalStudent = mysqli_query($conn, "
 SELECT COUNT(*) total
 FROM user
 WHERE role LIKE '%Student%'");
 
-$totalStudent=mysqli_fetch_assoc($totalStudent);
+                $totalStudent = mysqli_fetch_assoc($totalStudent);
 
-?>
+                ?>
 
-<p><?php echo $totalStudent['total']; ?></p>
-    </div>
+                <p><?php echo $totalStudent['total']; ?></p>
+            </div>
 
-    <div class="summary-card">
-        <h3>Total Tutors</h3>
-        <?php
+            <div class="summary-card">
+                <h3>Total Tutors</h3>
+                <?php
 
-$totalTutor=mysqli_query($conn,"
+                $totalTutor = mysqli_query($conn, "
 SELECT COUNT(*) total
 FROM user
 WHERE role LIKE '%Tutor%'");
 
-$totalTutor=mysqli_fetch_assoc($totalTutor);
+                $totalTutor = mysqli_fetch_assoc($totalTutor);
 
-?>
+                ?>
 
-<p><?php echo $totalTutor['total']; ?></p>
-    </div>
+                <p><?php echo $totalTutor['total']; ?></p>
+            </div>
 
-    <div class="summary-card">
-        <h3>Total Quizzes</h3>
-        <?php
+            <div class="summary-card">
+                <h3>Total Quizzes</h3>
+                <?php
 
-$totalQuiz=mysqli_query($conn,"
+                $totalQuiz = mysqli_query($conn, "
 SELECT COUNT(*) total
 FROM quiz");
 
-$totalQuiz=mysqli_fetch_assoc($totalQuiz);
+                $totalQuiz = mysqli_fetch_assoc($totalQuiz);
 
-?>
+                ?>
 
-<p><?php echo $totalQuiz['total']; ?></p>
-    </div>
+                <p><?php echo $totalQuiz['total']; ?></p>
+            </div>
 
-    <div class="summary-card">
-        <h3>Total Attempts</h3>
-       <?php
+            <div class="summary-card">
+                <h3>Total Attempts</h3>
+                <?php
 
-$totalAttempt=mysqli_query($conn,"
+                $totalAttempt = mysqli_query($conn, "
 SELECT COUNT(*) total
 FROM quiz_attempts");
 
-$totalAttempt=mysqli_fetch_assoc($totalAttempt);
+                $totalAttempt = mysqli_fetch_assoc($totalAttempt);
 
-?>
+                ?>
 
-<p><?php echo $totalAttempt['total']; ?></p>
-    </div>
+                <p><?php echo $totalAttempt['total']; ?></p>
+            </div>
 
-</div>
+        </div>
         <div class="graph-container">
 
-    <h2>Average Quiz Score by Subject</h2>
+            <h2>Average Quiz Score by Subject</h2>
 
-    <div class="chart-wrapper">
-        <div class="graph-summary">
+            <div class="chart-wrapper">
+                <div class="graph-summary">
 
-    <div class="summary-item">
-        <span class="color-box programming"></span>
-        Programming :
-        <b><?php echo round($programmingAverage); ?>%</b>
-    </div>
+                    <div class="summary-item">
+                        <span class="color-box programming"></span>
+                        Programming :
+                        <b><?php echo round($programmingAverage); ?>%</b>
+                    </div>
 
-    <div class="summary-item">
-        <span class="color-box dsa"></span>
-        Data Structure & Algorithm :
-        <b><?php echo round($dsaAverage); ?>%</b>
-    </div>
+                    <div class="summary-item">
+                        <span class="color-box dsa"></span>
+                        Data Structure & Algorithm :
+                        <b><?php echo round($dsaAverage); ?>%</b>
+                    </div>
 
-    <div class="highlight">
-        Highest Average Subject :
-        <b><?php echo $bestSubject; ?></b>
-        (<?php echo $highestAverage; ?>%)
-    </div>
+                    <div class="highlight">
+                        Highest Average Subject :
+                        <b><?php echo $bestSubject; ?></b>
+                        (<?php echo $highestAverage; ?>%)
+                    </div>
 
-</div>
-    <canvas id="subjectChart"></canvas>
-</div>
-
-</div>
-
-<div class="graph-container">
-
-    <h2>Overall Student Performance</h2>
-
- <div class="performance-layout">
-
-    <div class="pie-wrapper">
-        <canvas id="performanceChart"></canvas>
-    </div>
-
-    <div class="performance-details">
-
-        <div class="detail-row">
-
-            <div class="detail-left">
-                <span class="dot weak"></span>
-                <span>Weak (0% - 49%)</span>
-            </div>
-
-            <div class="detail-right">
-                <b><?php echo round(($weak/($weak+$good+$excellent))*100); ?>%</b><br>
-                (<?php echo $weak; ?> Students)
+                </div>
+                <canvas id="subjectChart"></canvas>
             </div>
 
         </div>
 
-        <div class="detail-row">
+        <div class="graph-container">
 
-            <div class="detail-left">
-                <span class="dot good"></span>
-                <span>Good (50% - 79%)</span>
-            </div>
+            <h2>Overall Student Performance</h2>
 
-            <div class="detail-right">
-                <b><?php echo round(($good/($weak+$good+$excellent))*100); ?>%</b><br>
-                (<?php echo $good; ?> Students)
+            <div class="performance-layout">
+
+                <div class="pie-wrapper">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+
+                <div class="performance-details">
+
+                    <div class="detail-row">
+
+                        <div class="detail-left">
+                            <span class="dot weak"></span>
+                            <span>Weak (0% - 49%)</span>
+                        </div>
+
+                        <div class="detail-right">
+                            <b><?php echo round(($weak / ($weak + $good + $excellent)) * 100); ?>%</b><br>
+                            (<?php echo $weak; ?> Students)
+                        </div>
+
+                    </div>
+
+                    <div class="detail-row">
+
+                        <div class="detail-left">
+                            <span class="dot good"></span>
+                            <span>Good (50% - 79%)</span>
+                        </div>
+
+                        <div class="detail-right">
+                            <b><?php echo round(($good / ($weak + $good + $excellent)) * 100); ?>%</b><br>
+                            (<?php echo $good; ?> Students)
+                        </div>
+
+                    </div>
+
+                    <div class="detail-row">
+
+                        <div class="detail-left">
+                            <span class="dot excellent"></span>
+                            <span>Excellent (80% - 100%)</span>
+                        </div>
+
+                        <div class="detail-right">
+                            <b><?php echo round(($excellent / ($weak + $good + $excellent)) * 100); ?>%</b><br>
+                            (<?php echo $excellent; ?> Students)
+                        </div>
+
+                    </div>
+
+                </div>
+
             </div>
 
         </div>
-
-        <div class="detail-row">
-
-            <div class="detail-left">
-                <span class="dot excellent"></span>
-                <span>Excellent (80% - 100%)</span>
-            </div>
-
-            <div class="detail-right">
-                <b><?php echo round(($excellent/($weak+$good+$excellent))*100); ?>%</b><br>
-                (<?php echo $excellent; ?> Students)
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-</div>
 
     </section>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
+        const ctx = document.getElementById('subjectChart');
 
-    const ctx = document.getElementById('subjectChart');
+        new Chart(ctx, {
 
-    new Chart(ctx, {
+            type: 'bar',
 
-        type: 'bar',
+            data: {
 
-        data: {
+                labels: <?php echo json_encode($labels); ?>,
 
-            labels: <?php echo json_encode($labels); ?>,
+                datasets: [{
 
-datasets: [{
+                    label: 'Average Score (%)',
 
-    label: 'Average Score (%)',
+                    data: <?php echo json_encode($scores); ?>,
 
-    data: <?php echo json_encode($scores); ?>,
+                    backgroundColor: ['#7c2e12', '#4CAF50'],
 
-                backgroundColor: ['#7c2e12', '#4CAF50'],
+                    borderRadius: 8,
+                    barThickness: 140
 
-                borderRadius: 8,
-                barThickness:140
-
-            }]
+                }]
 
 
-        },
+            },
 
-      options: {
+            options: {
 
-    responsive: true,
-    maintainAspectRatio: false,
+                responsive: true,
+                maintainAspectRatio: false,
 
-    plugins: {
-        legend: {
-            display: false
-        }
-    },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
 
-    scales: {
+                scales: {
 
-        y: {
-            beginAtZero: true,
-            max: 100,
-            ticks: {
-                stepSize: 10,
-                font: {
-                    size: 14
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            stepSize: 10,
+                            font: {
+                                size: 14
+                            }
+                        }
+                    },
+
+                    x: {
+                        ticks: {
+                            font: {
+                                size: 14
+                            }
+                        }
+                    }
+
                 }
-            }
-        },
 
-        x: {
-            ticks: {
-                font: {
-                    size: 14
+            }
+
+        });
+
+        const performanceCtx = document.getElementById('performanceChart');
+
+        new Chart(performanceCtx, {
+
+            type: 'pie',
+
+            data: {
+
+                labels: [
+                    'Weak',
+                    'Good',
+                    'Excellent'
+                ],
+
+                datasets: [{
+
+                    data: [
+                        <?php echo $weak; ?>,
+                        <?php echo $good; ?>,
+                        <?php echo $excellent; ?>
+                    ],
+
+                    backgroundColor: [
+                        '#dc3545',
+                        '#ffc107',
+                        '#28a745'
+                    ],
+
+                    borderColor: '#fff',
+                    borderWidth: 2
+
+                }]
+
+            },
+
+            options: {
+
+                responsive: true,
+                maintainAspectRatio: true,
+
+                plugins: {
+
+                    legend: {
+                        display: false
+                    },
+
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + " : " + context.raw + " Students";
+                            }
+                        }
+                    }
+
                 }
+
             }
-        }
 
-    }
-
-}
-
-    });
-
-    const performanceCtx = document.getElementById('performanceChart');
-
-new Chart(performanceCtx,{
-
-    type:'pie',
-
-    data:{
-
-        labels:[
-            'Weak',
-            'Good',
-            'Excellent'
-        ],
-
-        datasets:[{
-
-            data:[
-                <?php echo $weak; ?>,
-                <?php echo $good; ?>,
-                <?php echo $excellent; ?>
-            ],
-
-            backgroundColor:[
-                '#dc3545',
-                '#ffc107',
-                '#28a745'
-            ],
-
-            borderColor:'#fff',
-            borderWidth:2
-
-        }]
-
-    },
-
-    options:{
-
-    responsive:true,
-    maintainAspectRatio:true,
-
-    plugins:{
-
-      legend:{
-    display:false
-},
-
-        tooltip:{
-            callbacks:{
-                label:function(context){
-                    return context.label + " : " + context.raw + " Students";
-                }
-            }
-        }
-
-    }
-
-}
-
-});
-
+        });
     </script>
 
 
