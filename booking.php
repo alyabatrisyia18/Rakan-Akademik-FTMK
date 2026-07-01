@@ -8,6 +8,7 @@ if (isset($_POST['bookSession'])) {
     $bookingID = "B" . rand(100, 999);
 
     $recordID = $_POST['recordID'];
+    $matricNoTutor = $_POST['matricNoTutor'];
     $subject = $_POST['subject'];
     $startTime = $_POST['startTime'];
     $endTime = $_POST['endTime'];
@@ -17,6 +18,7 @@ if (isset($_POST['bookSession'])) {
     $insert = "INSERT INTO booking
     (
         bookingID,
+        matricNoTutor,
         matricNoStudent,
         schedule,
         bookingStatus,
@@ -28,6 +30,7 @@ if (isset($_POST['bookSession'])) {
     VALUES
     (
         '$bookingID',
+        '$matricNoTutor',
         '$matricNoStudent',
         '$schedule',
         'Booked',
@@ -83,7 +86,7 @@ INNER JOIN `teaching record`
 ON booking.recordID = `teaching record`.recordID
 
 INNER JOIN tutor
-ON `teaching record`.matricNoTutor = tutor.matricNoTutor
+ON booking.matricNoTutor = tutor.matricNoTutor
 
 INNER JOIN user
 ON tutor.matricNoStudent = user.matricNoStudent
@@ -289,6 +292,11 @@ AND matricNoStudent='$matricNoStudent'"
                                     type="hidden"
                                     name="recordID"
                                     value="<?php echo $row['recordID']; ?>">
+
+                                <input
+                                    type="hidden"
+                                    name="matricNoTutor"
+                                    value="<?php echo $row['matricNoTutor']; ?>">
 
                                 <input
                                     type="hidden"
