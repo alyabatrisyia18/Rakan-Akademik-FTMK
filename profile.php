@@ -343,11 +343,6 @@ if (!$isTutor) {
                         <?php echo htmlspecialchars($role); ?>
                     </p>
 
-                    <p>
-                        <i class="fas fa-envelope"></i>
-                        <?php echo htmlspecialchars($email); ?>
-                    </p>
-
                 </div>
 
             </div>
