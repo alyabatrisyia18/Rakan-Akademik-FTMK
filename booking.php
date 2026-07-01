@@ -64,6 +64,7 @@ INNER JOIN user
 ON tutor.matricNoStudent = user.matricNoStudent
 
 WHERE teachingStatus='Available'
+AND TIMESTAMP(`teaching record`.sessionDate, `teaching record`.startTime) > NOW()
 ";
 
 $result = mysqli_query($conn, $sql);
