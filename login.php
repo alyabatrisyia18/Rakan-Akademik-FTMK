@@ -386,6 +386,23 @@ LIMIT 1
             background: #f5f5f5;
         }
 
+        .signupButton {
+            display: inline-block;
+            padding: 6px 24px;
+            margin-left: 12px;
+            border: none;
+            background: #6CB6E9;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .signupButton:hover {
+            background: #54A8E2;
+            color: white;
+            text-decoration: none;
+        }
+
 
         @media screen and (max-width:768px) {
 
@@ -550,49 +567,14 @@ LIMIT 1
                     Don't have an account?
 
                     <button
-
                         class="signupButton"
-
-                        onclick="openModal()">
+                        onclick="window.location.href='register_student.php'">
 
                         Sign Up
 
                     </button>
 
                 </div>
-
-            </div>
-
-        </div>
-
-    </div>
-    <div id="signupModal" class="modal">
-
-        <div class="modalBox">
-
-            <div class="modalHeader">
-
-                <span
-                    class="closeButton"
-                    onclick="closeModal()">
-
-                    &times;
-
-                </span>
-
-                <h3>Register As Student</h3>
-
-            </div>
-
-            <div class="modalBody">
-
-                <a
-                    href="register_student.php"
-                    class="registerButton">
-
-                    Register As Student
-
-                </a>
 
             </div>
 
@@ -618,22 +600,6 @@ LIMIT 1
 
                 eyeIcon.classList.remove("glyphicon-eye-open");
                 eyeIcon.classList.add("glyphicon-eye-close");
-            }
-        }
-
-        function openModal() {
-            document.getElementById("signupModal").style.display = "block";
-        }
-
-        function closeModal() {
-            document.getElementById("signupModal").style.display = "none";
-        }
-
-        window.onclick = function(event) {
-            var modal = document.getElementById("signupModal");
-
-            if (event.target == modal) {
-                modal.style.display = "none";
             }
         }
     </script>
