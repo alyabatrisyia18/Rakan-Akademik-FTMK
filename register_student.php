@@ -1,134 +1,87 @@
 <?php
-
 include("db_connect.php");
 
 if (isset($_POST["btnRegister"])) {
-    $name = mysqli_real_escape_string($conn, trim($_POST["txtName"]));
-    $matric = strtoupper(mysqli_real_escape_string($conn, trim($_POST["txtMatric"])));
-    $course = mysqli_real_escape_string($conn, trim($_POST["txtCourse"]));
-    $email = mysqli_real_escape_string($conn, trim($_POST["txtEmail"]));
+
+    $name   = trim($_POST["txtName"]);
+    $matric = strtoupper(trim($_POST["txtMatric"]));
+    $course = trim($_POST["txtCourse"]);
+    $email  = trim($_POST["txtEmail"]);
+    $phone  = trim($_POST["txtPhone"]);
+    $gender = $_POST["gender"];
+
+    $password = $_POST["txtPassword"];
+    $confirm  = $_POST["txtConfirmPassword"];
+
+    $name   = mysqli_real_escape_string($conn, $name);
+    $matric = mysqli_real_escape_string($conn, $matric);
+    $course = mysqli_real_escape_string($conn, $course);
+    $email  = mysqli_real_escape_string($conn, $email);
+    $phone  = mysqli_real_escape_string($conn, $phone);
+    $gender = mysqli_real_escape_string($conn, $gender);
+
     if (strpos(strtolower($email), "@student.utem.edu.my") === false) {
         echo "<script>
-    alert('Please use your UTeM student email.');
-    window.location='register_student.php';
-    </script>";
-        die();
+            alert('Please use UTeM student email');
+            window.location='register_student.php';
+        </script>";
+        exit();
     }
-    $phone = mysqli_real_escape_string($conn, trim($_POST["txtPhone"]));
-    $gender = mysqli_real_escape_string($conn, $_POST["gender"]);
-    $password = $_POST["txtPassword"];
-    $confirmPassword = $_POST["txtConfirmPassword"];
 
-    if ($password != $confirmPassword) {
+    if ($password != $confirm) {
         echo "<script>
-    alert('Password does not match.');
-window.location='register_student.php';
-    </script>";
-        die();
+            alert('Password does not match');
+            window.location='register_student.php';
+        </script>";
+        exit();
     }
 
     if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/', $password)) {
         echo "<script>
-    alert('Password must be at least 8 characters and include uppercase, lowercase, number and special character.');
-    window.location='register_student.php';
-    </script>";
-        die();
+            alert('Password must be 8+ chars with uppercase, lowercase, number & symbol');
+            window.location='register_student.php';
+        </script>";
+        exit();
     }
 
-    $check = mysqli_query($conn, "
-SELECT *
-
-FROM user
-
-WHERE matricNoStudent='$matric'
-
-OR
-
-email='$email'
-    ");
+    $check = mysqli_query($conn, "SELECT * FROM user 
+        WHERE matricNoStudent='$matric' OR email='$email'");
 
     if (mysqli_num_rows($check) > 0) {
         echo "<script>
-        alert('Matric number or email has already been registered.');
-       window.location='register_student.php';
-    </script>";
-        die();
+            alert('Matric number or email already exists');
+            window.location='register_student.php';
+        </script>";
+        exit();
     }
 
-    $hashedPassword = password_hash(
-        $password,
-        PASSWORD_DEFAULT
-    );
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
     mysqli_begin_transaction($conn);
 
-    try {
+    $userQuery = "INSERT INTO user 
+    (matricNoStudent, name, email, mobile_phone, gender, password, status, role)
+    VALUES 
+    ('$matric', '$name', '$email', '$phone', '$gender', '$hashedPassword', 'Active', 'Student')";
 
-        mysqli_query($conn, "
-        INSERT INTO user
-        (
-            matricNoStudent,
-            name,
-            email,
-            mobile_phone,
-            gender,
-            password,
-            status,
-            role
-        )
+    $studentQuery = "INSERT INTO student (matricNoStudent, course)
+    VALUES ('$matric', '$course')";
 
-        VALUES
-        (
-            '$matric',
-            '$name',
-            '$email',
-            '$phone',
-            '$gender',
-            '$hashedPassword',
-            'Active',
-            'Student'
-        )
-        ");
-
-        mysqli_query($conn, "
-        INSERT INTO student
-        (
-            matricNoStudent,
-            course
-        )
-
-        VALUES
-        (
-            '$matric',
-            '$course'
-        )
-        ");
-
+    if (mysqli_query($conn, $userQuery) && mysqli_query($conn, $studentQuery)) {
         mysqli_commit($conn);
 
-        echo "
-        <script>
-
-        alert('Registration Successful');
-
-        window.location='login.php';
-
-        </script>
-        ";
-    } catch (Exception $e) {
-
+        echo "<script>
+            alert('Registration Successful');
+            window.location='login.php';
+        </script>";
+    } else {
         mysqli_rollback($conn);
 
-        echo "
-        <script>
-
-        alert('Registration Failed');
-
-        </script>
-        ";
+        echo "<script>
+            alert('Registration Failed');
+        </script>";
     }
 }
-
 ?>
 
 <!DOCTYPE html>
